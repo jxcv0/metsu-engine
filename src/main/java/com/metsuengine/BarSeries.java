@@ -37,4 +37,8 @@ public class BarSeries {
     public void addBar(Bar bar) {
         this.series.add(bar);
     }
+
+    public int getBarCount() {
+        return this.series.size();
+    }
 }

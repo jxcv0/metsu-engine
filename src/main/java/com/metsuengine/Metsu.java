@@ -9,6 +9,8 @@ public class Metsu {
         BarSeries series = CSVManager.buildFromCSV("BTCUSDbybit", "testing_data.csv");
         System.out.println(series.getBar(0).getDeltaRatio());
 
+        Chart.draw(series);
+
         // while (true) {
 
             // Snapshot snapshot = new Snapshot(
