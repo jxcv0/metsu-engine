@@ -1,16 +1,31 @@
 package com.metsuengine;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Snapshot {
 
-    List<Liquidation> liquidations = new ArrayList<>();
-    OrderBook orderBook = null;
+    private ZonedDateTime time = null;
+    private List<Liquidation> liquidations = new ArrayList<>();
+    private OrderBook orderBook = null;
 
-    public Snapshot(List<Liquidation> liquidations, OrderBook orderBook) {
+    public Snapshot(ZonedDateTime time, List<Liquidation> liquidations, OrderBook orderBook) {
+        this.time = time;
         this.liquidations = liquidations;
         this.orderBook = orderBook;
+    }
+
+    public ZonedDateTime getTime() {
+        return this.time;
+    }
+
+    public List<Liquidation> getLiquidations() {
+        return this.liquidations;
+    }
+
+    public OrderBook getOrderBook() {
+        return this.orderBook;
     }
 
     public double getTotalLiquidations(String side) {
