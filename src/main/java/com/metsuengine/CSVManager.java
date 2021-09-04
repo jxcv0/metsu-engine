@@ -45,6 +45,7 @@ public class CSVManager {
                 }
             }
         }
+        
         BarSeries series = build(name, csvLines);
         return series;
     }
