@@ -9,7 +9,8 @@ public class BarSeries {
     private List<Bar> series = new ArrayList<Bar>();
 
     public BarSeries() {
-        this.series = null;
+        this.name = "unnamed";
+        this.series = new ArrayList<>();
     }
 
     public BarSeries(String name, List<Bar> series) {
@@ -27,6 +28,10 @@ public class BarSeries {
 
     public List<Bar> getBarSeries() {
         return this.series;
+    }
+
+    public Bar getBar(int index) {
+        return this.series.get(index);
     }
 
     public void addBar(Bar bar) {

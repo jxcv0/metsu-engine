@@ -6,10 +6,10 @@ import java.time.ZonedDateTime;
 public class Metsu {
     public static void main( String[] args ){
         
-        while (true) {
+        BarSeries series = CSVManager.buildFromCSV("BTCUSDbybit", "testing_data.csv");
+        System.out.println(series.getBar(0).getDeltaRatio());
 
-            BarSeries series = CSVManager.buildFromCSV("BTCUSDbybit", "testing_data.csv");
-            System.out.println(series.getBarSeries().get(0));
+        // while (true) {
 
             // Snapshot snapshot = new Snapshot(
             //     ZonedDateTime.now(ZoneOffset.UTC),
@@ -29,6 +29,6 @@ public class Metsu {
             // } catch (Exception e) {
             //     e.printStackTrace();
             // }
-        }
+        // }
     }
 }
