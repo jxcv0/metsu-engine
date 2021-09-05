@@ -8,7 +8,7 @@ public class Metsu {
         
         BarSeries series = CSVManager.buildFromCSV("BTCUSDbybit", "testing_data.csv");
 
-        Chart.draw(series);
+        Chart.buildChart(series);
 
         // while (true) {
 
