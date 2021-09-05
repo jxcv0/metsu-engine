@@ -1,16 +1,16 @@
 package com.metsuengine;
 
 import java.awt.Dimension;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.DateAxis;
+import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYDifferenceRenderer;
 import org.jfree.chart.ui.ApplicationFrame;
-import org.jfree.data.time.Minute;
+import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 
@@ -22,7 +22,7 @@ public class Chart {
 
         for (int i = 0; i < barSeries.getBarCount(); i++) {
             Bar bar = barSeries.getBar(i);
-            timeSeries.addOrUpdate(new Minute(Date.from(bar.getTime().toInstant())), bar.getPrice());
+            timeSeries.addOrUpdate(new Second(Date.from(bar.getTime().toInstant())), bar.getPrice());
         }
 
         return timeSeries;
@@ -32,8 +32,7 @@ public class Chart {
 
         ChartPanel panel = new ChartPanel(chart);
         panel.setFillZoomRectangle(true);
-        panel.setMouseWheelEnabled(true);
-        panel.setPreferredSize(new Dimension(500, 270));
+        panel.setPreferredSize(new Dimension(1000, 540));
 
         ApplicationFrame frame = new ApplicationFrame("Chart");
         frame.setContentPane(panel);
@@ -43,13 +42,15 @@ public class Chart {
 
     public static void draw(BarSeries barSeries) {
         TimeSeriesCollection dataset = new TimeSeriesCollection();
-        dataset.addSeries(buildTimeSeries("close", barSeries));
+        dataset.addSeries(buildTimeSeries("Close", barSeries));
 
-        JFreeChart chart = ChartFactory.createTimeSeriesChart("test", "date", "price", dataset, true, true, false);
+        JFreeChart chart = ChartFactory.createTimeSeriesChart("test", "time", "price", dataset, true, true, false);
 
         XYPlot plot = (XYPlot) chart.getPlot();
-        DateAxis axis = (DateAxis) plot.getDomainAxis();
-        axis.setDateFormatOverride(new SimpleDateFormat("yyyy-mm-dd"));
+        plot.setDomainPannable(true);
+        plot.setDomainCrosshairLockedOnData(true);
+        plot.setDomainCrosshairVisible(true);
+        plot.setRangeCrosshairVisible(true);
 
         displayChart(chart);
     }

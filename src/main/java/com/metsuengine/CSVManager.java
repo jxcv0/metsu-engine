@@ -60,8 +60,10 @@ public class CSVManager {
 
             Bar bar = new Bar(
                 ZonedDateTime.parse(line[0]),
+                Double.parseDouble(line[1]),
                 Double.parseDouble(line[2]),
-                Double.parseDouble(line[3])                
+                Double.parseDouble(line[3]),
+                Double.parseDouble(line[4])                
             );
 
             series.addBar(bar);

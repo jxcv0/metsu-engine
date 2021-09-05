@@ -56,6 +56,23 @@ public class OrderBook {
         return buyVolume + sellVolume;
     }
 
+    public double getDepth(String side) {
+        int depth = 0;
+        if (side.equals("Buy")) {
+            for (double level : orderBookBid.keySet()) {
+                depth += orderBookBid.get(level);
+            }
+            return depth;
+
+        } else {
+            for (double level : orderBookAsk.keySet()) {
+                depth += orderBookAsk.get(level);
+            }
+            
+            return depth;
+        }
+    }
+
     public double getOrderBookDelta() {
         int buyVolume = 0;
         int sellVolume = 0;
