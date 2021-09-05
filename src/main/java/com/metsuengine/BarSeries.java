@@ -26,7 +26,7 @@ public class BarSeries {
         this.name = name;
     }
 
-    public List<Bar> getBarSeries() {
+    public List<Bar> getSeries() {
         return this.series;
     }
 

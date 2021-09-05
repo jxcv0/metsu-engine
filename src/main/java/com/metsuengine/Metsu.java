@@ -1,14 +1,16 @@
 package com.metsuengine;
 
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
+// import java.time.ZoneOffset;
+// import java.time.ZonedDateTime;
 
 public class Metsu {
     public static void main( String[] args ){
         
         BarSeries series = CSVManager.buildFromCSV("BTCUSDbybit", "testing_data.csv");
 
-        Chart.buildChart(series);
+        Chart.buildTimeSeriesChart(series);
+        Chart.buildRatioChart(series);
+        Chart.buildDifferenceChart(series);
 
         // while (true) {
 
