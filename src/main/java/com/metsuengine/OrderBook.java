@@ -1,9 +1,10 @@
 package com.metsuengine;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 
-public class OrderBook {
+public class OrderBook implements Serializable{
 
     private String name;
     private HashMap<Double, Integer> orderBookBid = new HashMap<Double, Integer>();

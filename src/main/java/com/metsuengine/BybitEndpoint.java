@@ -54,7 +54,7 @@ public class BybitEndpoint {
         return orderBook;
     }
 
-    public static List<Liquidation> getLiquidations(String symbol, ZonedDateTime startTime, String side) {
+    public static List<Liquidation> getLiquidations(String symbol, ZonedDateTime startTime) {
 
         List<Liquidation> liquidations = new ArrayList<Liquidation>();
 
@@ -77,16 +77,13 @@ public class BybitEndpoint {
                 JsonNode result = jsonNode.findValue("result");
 
                 for (JsonNode results : result) {
-
-                    if (results.findValue("side").asText().equals(side)) {
-                        liquidations.add(new Liquidation(
-                            results.findValue("qty").asDouble(),
-                            results.findValue("side").asText(),
-                            epochtoZonedDateTime(results.findValue("time").asLong()),
-                            results.findValue("symbol").asText(),
-                            results.findValue("price").asDouble()));
+                    liquidations.add(new Liquidation(
+                        results.findValue("qty").asDouble(),
+                        results.findValue("side").asText(),
+                        epochtoZonedDateTime(results.findValue("time").asLong()),
+                        results.findValue("symbol").asText(),
+                        results.findValue("price").asDouble()));
                         
-                    }
                 }
             }
 

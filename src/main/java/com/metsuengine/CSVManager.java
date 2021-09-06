@@ -24,7 +24,7 @@ public class CSVManager {
         
     }
 
-    public static BarSeries buildFromCSV(String name, String fileName) {
+    public static FrameSeries buildFromCSV(String name, String fileName) {
 
         InputStream stream = CSVManager.class.getClassLoader().getResourceAsStream(fileName);
 
@@ -46,29 +46,12 @@ public class CSVManager {
             }
         }
         
-        BarSeries series = build(name, csvLines);
+        FrameSeries series = build(name, csvLines);
         return series;
     }
 
-    public static BarSeries build(String name, List<String[]> csvLines) {
-
-        BarSeries series = new BarSeries();
-        series.setName(name);
-
-        for (int i = 0; i < csvLines.size(); i++) {
-            String[] line = csvLines.get(i);
-
-            Bar bar = new Bar(
-                ZonedDateTime.parse(line[0]),
-                Double.parseDouble(line[1]),
-                Double.parseDouble(line[2]),
-                Double.parseDouble(line[3]),
-                Double.parseDouble(line[4])                
-            );
-
-            series.addBar(bar);
-        }
-
-        return series;
+    public static FrameSeries build(String name, List<String[]> csvLines) {
+        // TODO make frames serializeable?
+        return null;
     }
 }

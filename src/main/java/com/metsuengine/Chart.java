@@ -2,6 +2,7 @@ package com.metsuengine;
 
 import java.awt.Dimension;
 import java.util.Date;
+import java.util.List;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -19,52 +20,16 @@ public class Chart {
     // requires new method that takes lists from Barseries or Sapshot
     // makes livecharts possible using Snapshot class
     
-    private static TimeSeries buildTimeSeries(String name, BarSeries barSeries) {
+    private static TimeSeries buildTimeSeries(String name, FrameSeries frameSeries, List<Double> list) {
 
         TimeSeries timeSeries = new TimeSeries(name); 
 
-        for (int i = 0; i < barSeries.getBarCount(); i++) {
-            Bar bar = barSeries.getBar(i);
-            timeSeries.addOrUpdate(new Second(Date.from(bar.getTime().toInstant())), bar.getPrice());
+        for (int i = 0; i < frameSeries.getFrameCount(); i++) {
+            Frame frame = frameSeries.getFrame(i);
+            timeSeries.addOrUpdate(new Second(Date.from(frame.getTime().toInstant())), list.get(i));
         }
 
         return timeSeries;
-    }
-
-    private static TimeSeries buildRatioTimeSeries(String name, BarSeries barSeries) {
-
-        TimeSeries timeSeries = new TimeSeries(name); 
-
-        for (int i = 0; i < barSeries.getBarCount(); i++) {
-            Bar bar = barSeries.getBar(i);
-            timeSeries.addOrUpdate(new Second(Date.from(bar.getTime().toInstant())), bar.getDeltaRatio());
-        }
-
-        return timeSeries;
-    }
-
-    private static TimeSeries buildDifferenceTimeSeries(String name, BarSeries barSeries, String side) {
-
-        TimeSeries timeSeries = new TimeSeries(name);
-        
-        if (side.equals("Bid")) {
-            for (int i = 0; i < barSeries.getBarCount(); i++) {
-                Bar bar = barSeries.getBar(i);
-                timeSeries.addOrUpdate(new Second(Date.from(bar.getTime().toInstant())), bar.getBidDepth());
-            }
-
-            return timeSeries;
-            
-        } else if (side.equals("Ask")) {
-            for (int i = 0; i < barSeries.getBarCount(); i++) {
-                Bar bar = barSeries.getBar(i);
-                timeSeries.addOrUpdate(new Second(Date.from(bar.getTime().toInstant())), bar.getAskDepth());
-            }
-
-            return timeSeries;
-        } else {
-            return null;
-        }
     }
 
     private static void displayChart(JFreeChart chart) {
@@ -79,26 +44,27 @@ public class Chart {
         frame.setVisible(true);
     }
 
-    public static void buildTimeSeriesChart(BarSeries barSeries) {
+    public static void buildTimeSeriesChart(FrameSeries frameSeries) {
         TimeSeriesCollection dataset = new TimeSeriesCollection();
-        dataset.addSeries(buildTimeSeries("Price", barSeries));
-        
+        dataset.addSeries(buildTimeSeries("Price", frameSeries, frameSeries.getSeriesBestBid()));
+        dataset.addSeries(buildTimeSeries("Price", frameSeries, frameSeries.getSeriesBestAsk()));
+
         JFreeChart chart = ChartFactory.createTimeSeriesChart("BTCUSD", "Time", "Price", dataset);
         displayChart(chart);
     }
 
-    public static void buildRatioChart(BarSeries barSeries) {
+    public static void buildRatioChart(FrameSeries frameSeries) {
         TimeSeriesCollection dataset = new TimeSeriesCollection();
-        dataset.addSeries(buildRatioTimeSeries("Ratio", barSeries));
+        dataset.addSeries(buildTimeSeries("Ratio", frameSeries, frameSeries.getSeriesOrderBookRatio()));
 
         JFreeChart chart = ChartFactory.createTimeSeriesChart("BTCUSD OrderBook Ratio", "Time", "Ratio", dataset);
         displayChart(chart);
     }
 
-    public static void buildDifferenceChart(BarSeries barSeries) {
+    public static void buildDifferenceChart(FrameSeries frameSeries) {
         TimeSeriesCollection dataset = new TimeSeriesCollection();
-        dataset.addSeries(buildDifferenceTimeSeries("Bid", barSeries, "Bid"));
-        dataset.addSeries(buildDifferenceTimeSeries("Ask", barSeries, "Ask"));
+        dataset.addSeries(buildTimeSeries("Bid", frameSeries, frameSeries.getSeriesOrderBookDepth("Bid")));
+        dataset.addSeries(buildTimeSeries("Ask", frameSeries, frameSeries.getSeriesOrderBookDepth("Ask")));
 
         JFreeChart chart = ChartFactory.createTimeSeriesChart("OrderBook Depth", "Time", "USD", dataset);
 

@@ -1,16 +1,17 @@
 package com.metsuengine;
 
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Snapshot {
+public class Frame implements Serializable {
 
     private ZonedDateTime time = null;
     private List<Liquidation> liquidations = new ArrayList<>();
     private OrderBook orderBook = null;
 
-    public Snapshot(ZonedDateTime time, List<Liquidation> liquidations, OrderBook orderBook) {
+    public Frame(ZonedDateTime time, List<Liquidation> liquidations, OrderBook orderBook) {
         this.time = time;
         this.liquidations = liquidations;
         this.orderBook = orderBook;

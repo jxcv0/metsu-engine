@@ -1,8 +1,9 @@
 package com.metsuengine;
 
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 
-public class Liquidation {
+public class Liquidation implements Serializable {
 
     private final double size;
     private final String side;
