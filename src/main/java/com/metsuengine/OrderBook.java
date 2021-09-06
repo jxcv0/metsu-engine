@@ -59,19 +59,20 @@ public class OrderBook implements Serializable{
 
     public double getDepth(String side) {
         int depth = 0;
-        if (side.equals("Buy")) {
+        if (side.equals("Bid")) {
             for (double level : orderBookBid.keySet()) {
                 depth += orderBookBid.get(level);
             }
             return depth;
 
-        } else {
+        } else if (side.equals("Ask")) {
             for (double level : orderBookAsk.keySet()) {
                 depth += orderBookAsk.get(level);
             }
             
             return depth;
         }
+        return 0;
     }
 
     public double getOrderBookDelta() {

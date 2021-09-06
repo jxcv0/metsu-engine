@@ -1,41 +1,67 @@
 package com.metsuengine;
 
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 
 public class Metsu {
     public static void main( String[] args ){
+
+        FrameSeries frameSeries = loadFrameSeries("BTCUSD-Bybit.txt");
         
-        // FrameSeries series = CSVManager.buildFromCSV("BTCUSDbybit", "testing_data.csv");
+        Chart.buildTimeSeriesChart(frameSeries);
+        Chart.buildRatioChart(frameSeries);
+        Chart.buildDifferenceChart(frameSeries);
 
-        // Chart.buildTimeSeriesChart(series);
-        // Chart.buildRatioChart(series);
-        // Chart.buildDifferenceChart(series);
+        // FrameSeries frameSeries = new FrameSeries("BTCUSD-Bybit", new ArrayList<Frame>());
+        // createTestingData(frameSeries, 1000);
 
-        while (true) {
+    }
 
+    public static void createTestingData(FrameSeries frameSeries, int duration) {
+        for (int i = 0; i < duration; i++) {
             try {
-                FileOutputStream fileOutputStream = new FileOutputStream("testfile.txt", true);
-                ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
 
-                objectOutputStream.writeObject(new Frame(
-                    ZonedDateTime.now(ZoneOffset.UTC),
-                    BybitEndpoint.getLiquidations("BTCUSD", ZonedDateTime.now(ZoneOffset.UTC).minusMinutes(1)),
+                frameSeries.addFrame(new Frame(ZonedDateTime.now(ZoneOffset.UTC),
+                    BybitEndpoint.getLiquidations("BTCUSD", ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(1)),
                     BybitEndpoint.getOrderBook("BTCUSD")));
-
-                fileOutputStream.close();
-
+                
                 Thread.sleep(1000);
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-            // ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-            // Person p2 = (Person) objectInputStream.readObject();
-            // objectInputStream.close(); 
         }
+
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream("BTCUSD-Bybit.txt", true);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+
+            objectOutputStream.writeObject(frameSeries);
+
+            fileOutputStream.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static FrameSeries loadFrameSeries(String file) {
+        try {
+            FileInputStream  fileInputStream = new FileInputStream("BTCUSD-Bybit.txt");
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            
+            FrameSeries frameSeries = (FrameSeries) objectInputStream.readObject();
+            objectInputStream.close();
+
+            return frameSeries;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        return null;
     }
 }

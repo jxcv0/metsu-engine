@@ -1,9 +1,10 @@
 package com.metsuengine;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FrameSeries {
+public class FrameSeries implements Serializable {
 
     private String name = null;
     private List<Frame> series = new ArrayList<Frame>();

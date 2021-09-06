@@ -14,11 +14,13 @@ import org.json.JSONObject;
 
 public class BybitWebSocketClient {
 
-    static String api_key = "LN5vDnqpAR1trhVMcZ";
-    static String api_secret = "RLPU9UIhoRQfKe28as1oL9WTnRqIiDzd0n78";
+    static String api_key = "";
+    static String api_secret = "";
     static Session session;
 
-    public static String generate_signature(String expires){ return sha256_HMAC("GET/realtime"+ expires, api_secret); }
+    public static String generate_signature(String expires){
+        return sha256_HMAC("GET/realtime"+ expires, api_secret);
+    }
 
     private static String byteArrayToHexString(byte[] b) {
         StringBuilder hs = new StringBuilder();

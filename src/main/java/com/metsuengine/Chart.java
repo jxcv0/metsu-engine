@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.util.Date;
 import java.util.List;
 
+import org.jfree.chart.ChartColor;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -15,10 +16,6 @@ import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 
 public class Chart {
-
-    // TODO timeSeries builders could be a single method that takes a List<>?
-    // requires new method that takes lists from Barseries or Sapshot
-    // makes livecharts possible using Snapshot class
     
     private static TimeSeries buildTimeSeries(String name, FrameSeries frameSeries, List<Double> list) {
 
@@ -46,8 +43,8 @@ public class Chart {
 
     public static void buildTimeSeriesChart(FrameSeries frameSeries) {
         TimeSeriesCollection dataset = new TimeSeriesCollection();
-        dataset.addSeries(buildTimeSeries("Price", frameSeries, frameSeries.getSeriesBestBid()));
-        dataset.addSeries(buildTimeSeries("Price", frameSeries, frameSeries.getSeriesBestAsk()));
+        dataset.addSeries(buildTimeSeries("Bid", frameSeries, frameSeries.getSeriesBestBid()));
+        dataset.addSeries(buildTimeSeries("Ask", frameSeries, frameSeries.getSeriesBestAsk()));
 
         JFreeChart chart = ChartFactory.createTimeSeriesChart("BTCUSD", "Time", "Price", dataset);
         displayChart(chart);
@@ -69,6 +66,9 @@ public class Chart {
         JFreeChart chart = ChartFactory.createTimeSeriesChart("OrderBook Depth", "Time", "USD", dataset);
 
         XYDifferenceRenderer differenceRenderer = new XYDifferenceRenderer();
+        differenceRenderer.setSeriesPaint(0, new ChartColor(50, 50, 50));
+        differenceRenderer.setSeriesPaint(1, new ChartColor(50, 50, 50));
+
         XYPlot plot = (XYPlot) chart.getPlot();
         plot.setRenderer(differenceRenderer);
 
