@@ -18,25 +18,23 @@ public class Metsu {
         Chart.buildDifferenceChart(frameSeries);
 
         // FrameSeries frameSeries = new FrameSeries("BTCUSD-Bybit", new ArrayList<Frame>());
-        // createTestingData(frameSeries, 1000);
+        // createTestingData(frameSeries, 1000, 1000);
 
     }
 
-    public static void createTestingData(FrameSeries frameSeries, int duration) {
-        for (int i = 0; i < duration; i++) {
-            try {
-
+    public static void createTestingData(FrameSeries frameSeries, int duration, int interval) {
+        try {    
+            for (int i = 0; i < duration; i++) {
+                
                 frameSeries.addFrame(new Frame(ZonedDateTime.now(ZoneOffset.UTC),
                     BybitEndpoint.getLiquidations("BTCUSD", ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(1)),
                     BybitEndpoint.getOrderBook("BTCUSD")));
                 
-                Thread.sleep(1000);
-            } catch (Exception e) {
-                e.printStackTrace();
+                Thread.sleep(interval);
+                
             }
-        }
 
-        try {
+        
             FileOutputStream fileOutputStream = new FileOutputStream("BTCUSD-Bybit.txt", true);
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
 
