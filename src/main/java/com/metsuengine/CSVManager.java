@@ -51,7 +51,7 @@ public class CSVManager {
     }
 
     public static FrameSeries build(String name, List<String[]> csvLines) {
-        // TODO make frames serializeable?
+        // TODO trades?
         return null;
     }
 }
