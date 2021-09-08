@@ -13,9 +13,7 @@ public class Metsu {
 
 
         FrameSeries frameSeries = new FrameSeries("BTCUSD-Bybit", new ArrayList<Frame>());
-        frameSeries.setMaxSize(200);
-
-        Chart differenceChart = new Chart();
+        frameSeries.setMaxSize(10);
         
         while(true) {
             frameSeries.addFrame(new Frame(
@@ -24,7 +22,7 @@ public class Metsu {
                 BybitEndpoint.getOrderBook("BTCUSD")
             ));
 
-            differenceChart.buildDifferenceChart(frameSeries);
+            System.out.println(frameSeries.getSeries().size());
 
             try {
                 Thread.sleep(1000);

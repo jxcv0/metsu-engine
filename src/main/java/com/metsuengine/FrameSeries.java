@@ -38,11 +38,12 @@ public class FrameSeries implements Serializable {
     }
 
     public void addFrame(Frame frame) {
-        if (this.maxSize < this.series.size()) {
+        if (this.series.size() < this.maxSize) {
             this.series.add(frame);
         } else if (this.maxSize == this.series.size()) {
             Collections.sort(this.series);
             this.series.remove(Collections.min(this.series));
+            this.series.add(frame);
         } 
     }
 
