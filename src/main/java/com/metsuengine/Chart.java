@@ -16,10 +16,16 @@ import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 
 public class Chart {
-    
-    private static TimeSeries buildTimeSeries(String name, FrameSeries frameSeries, List<Double> list) {
 
-        TimeSeries timeSeries = new TimeSeries(name); 
+    private TimeSeries timeSeries;
+
+    public Chart() {
+
+    }
+    
+    private TimeSeries buildTimeSeries(String name, FrameSeries frameSeries, List<Double> list) {
+
+        this.timeSeries = new TimeSeries(name); 
 
         for (int i = 0; i < frameSeries.getFrameCount(); i++) {
             Frame frame = frameSeries.getFrame(i);
@@ -29,7 +35,7 @@ public class Chart {
         return timeSeries;
     }
 
-    private static void displayChart(JFreeChart chart) {
+    private void displayChart(JFreeChart chart) {
 
         ChartPanel panel = new ChartPanel(chart);
         panel.setFillZoomRectangle(true);
@@ -41,7 +47,7 @@ public class Chart {
         frame.setVisible(true);
     }
 
-    public static void buildTimeSeriesChart(FrameSeries frameSeries) {
+    public void buildTimeSeriesChart(FrameSeries frameSeries) {
         TimeSeriesCollection dataset = new TimeSeriesCollection();
         dataset.addSeries(buildTimeSeries("Bid", frameSeries, frameSeries.getSeriesBestBid()));
         dataset.addSeries(buildTimeSeries("Ask", frameSeries, frameSeries.getSeriesBestAsk()));
@@ -50,7 +56,7 @@ public class Chart {
         displayChart(chart);
     }
 
-    public static void buildRatioChart(FrameSeries frameSeries) {
+    public void buildRatioChart(FrameSeries frameSeries) {
         TimeSeriesCollection dataset = new TimeSeriesCollection();
         dataset.addSeries(buildTimeSeries("Ratio", frameSeries, frameSeries.getSeriesOrderBookRatio()));
 
@@ -58,7 +64,7 @@ public class Chart {
         displayChart(chart);
     }
 
-    public static void buildDifferenceChart(FrameSeries frameSeries) {
+    public void buildDifferenceChart(FrameSeries frameSeries) {
         TimeSeriesCollection dataset = new TimeSeriesCollection();
         dataset.addSeries(buildTimeSeries("Bid", frameSeries, frameSeries.getSeriesOrderBookDepth("Bid")));
         dataset.addSeries(buildTimeSeries("Ask", frameSeries, frameSeries.getSeriesOrderBookDepth("Ask")));

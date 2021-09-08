@@ -11,27 +11,41 @@ import java.util.ArrayList;
 public class Metsu {
     public static void main( String[] args ){
 
-        FrameSeries frameSeries = loadFrameSeries("BTCUSD-Bybit.txt");
+
+        FrameSeries frameSeries = new FrameSeries("BTCUSD-Bybit", new ArrayList<Frame>());
+        frameSeries.setMaxSize(200);
+
+        Chart differenceChart = new Chart();
         
-        Chart.buildTimeSeriesChart(frameSeries);
-        Chart.buildRatioChart(frameSeries);
-        Chart.buildDifferenceChart(frameSeries);
+        while(true) {
+            frameSeries.addFrame(new Frame(
+                ZonedDateTime.now(ZoneOffset.UTC),
+                BybitEndpoint.getLiquidations("BTCUSD", ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(1)),
+                BybitEndpoint.getOrderBook("BTCUSD")
+            ));
 
-        // FrameSeries frameSeries = new FrameSeries("BTCUSD-Bybit", new ArrayList<Frame>());
-        // createTestingData(frameSeries, 1000, 1000);
+            differenceChart.buildDifferenceChart(frameSeries);
 
+            try {
+                Thread.sleep(1000);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public static void createTestingData(FrameSeries frameSeries, int duration, int interval) {
         try {    
             for (int i = 0; i < duration; i++) {
                 
-                frameSeries.addFrame(new Frame(ZonedDateTime.now(ZoneOffset.UTC),
+                frameSeries.addFrame(new Frame(
+                    ZonedDateTime.now(ZoneOffset.UTC),
                     BybitEndpoint.getLiquidations("BTCUSD", ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(1)),
                     BybitEndpoint.getOrderBook("BTCUSD")));
                 
-                Thread.sleep(interval);
+                System.out.println("getting data " + i + "/" + duration);
                 
+                Thread.sleep(interval);
             }
 
         

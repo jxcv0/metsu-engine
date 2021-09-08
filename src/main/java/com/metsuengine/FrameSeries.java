@@ -2,10 +2,12 @@ package com.metsuengine;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class FrameSeries implements Serializable {
-
+    
+    private int maxSize = Integer.MAX_VALUE;
     private String name = null;
     private List<Frame> series = new ArrayList<Frame>();
 
@@ -36,7 +38,12 @@ public class FrameSeries implements Serializable {
     }
 
     public void addFrame(Frame frame) {
-        this.series.add(frame);
+        if (this.maxSize < this.series.size()) {
+            this.series.add(frame);
+        } else if (this.maxSize == this.series.size()) {
+            Collections.sort(this.series);
+            this.series.remove(Collections.min(this.series));
+        } 
     }
 
     public int getFrameCount() {
@@ -79,5 +86,7 @@ public class FrameSeries implements Serializable {
         return bestAsks;
     }
 
-    // TODO moving series for trading
+    public void setMaxSize(int maxSize) {
+        this.maxSize = maxSize;
+    } 
 }

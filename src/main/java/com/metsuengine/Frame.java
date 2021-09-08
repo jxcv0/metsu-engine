@@ -5,7 +5,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Frame implements Serializable {
+public class Frame implements Serializable, Comparable<Frame> {
 
     private ZonedDateTime time = null;
     private List<Liquidation> liquidations = new ArrayList<>();
@@ -39,5 +39,11 @@ public class Frame implements Serializable {
         }
 
         return total;
+    }
+
+    @Override
+    public int compareTo(Frame frame) {
+        return this.getTime().toEpochSecond() > frame.getTime().toEpochSecond() ? 1 : 
+            this.getTime().toEpochSecond() < frame.getTime().toEpochSecond() ? -1 : 0;
     }
 }
