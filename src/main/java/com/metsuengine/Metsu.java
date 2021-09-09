@@ -7,10 +7,12 @@ import java.io.ObjectOutputStream;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.awt.*;
 
 public class Metsu {
     public static void main( String[] args ){
 
+        // EventQueue.invokeLater(new DynamicChart()::create);
 
         FrameSeries frameSeries = new FrameSeries("BTCUSD-Bybit", new ArrayList<Frame>());
         frameSeries.setMaxSize(10);

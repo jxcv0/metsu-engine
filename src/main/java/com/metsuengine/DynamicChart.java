@@ -2,8 +2,6 @@ package com.metsuengine;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JPanel;
 
@@ -17,7 +15,7 @@ import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
 
-public class DynamicChart extends ApplicationFrame implements ActionListener {
+public class DynamicChart extends ApplicationFrame {
 
     private TimeSeries series;
 
@@ -57,9 +55,4 @@ public class DynamicChart extends ApplicationFrame implements ActionListener {
         return chart;
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        // add data here?
-        
-    }    
 }
