@@ -19,7 +19,7 @@ public class BybitWebSocket {
     public void onOpen(Session session) {
         System.out.println("Connected to endpoint: " + session.getBasicRemote());
         try {
-            BybitWebSocketClient.session=session;
+            BybitWebSocketClient.session = session;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -36,7 +36,6 @@ public class BybitWebSocket {
                 JsonNode data = response.findValue("data");
 
                 if (!data.isNull()) {
-
                     Trade trade = new Trade(
                         data.findValue("timestamp").asText(),
                         data.findValue("side").asText(),
@@ -45,7 +44,6 @@ public class BybitWebSocket {
 
                     System.out.println(trade.getTime() + " " + trade.getSide() + " " + trade.getPrice() + " " + trade.getSize());
 
-                    // TODO assign to trade class here
                 }
             }
   

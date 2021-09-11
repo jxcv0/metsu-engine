@@ -1,8 +1,9 @@
 package com.metsuengine;
 
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 
-public class Trade {
+public class Trade implements Serializable{
     
     private final ZonedDateTime time;
     private final String side;
