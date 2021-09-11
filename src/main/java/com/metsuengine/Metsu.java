@@ -3,7 +3,10 @@ package com.metsuengine;
 public class Metsu {
     public static void main( String[] args ){
 
-        BybitWebSocketClient.connect("trade.BTCUSD");
+        Thread websocketThread = new Thread( new BybitWebSocketClient("trade.BTCUSD"));
+        websocketThread.start();
+
+        System.out.println("here");
 
     }
 }

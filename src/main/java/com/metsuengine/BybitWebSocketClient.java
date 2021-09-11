@@ -12,11 +12,17 @@ import javax.websocket.WebSocketContainer;
 
 import org.json.JSONObject;
 
-public class BybitWebSocketClient {
+public class BybitWebSocketClient implements Runnable {
 
     static String api_key = "";
     static String api_secret = "";
     static Session session;
+    private String uri = "wss://stream.bytick.com/realtime";
+    private String topic = null;
+
+    public BybitWebSocketClient(String topic) {
+        this.topic = topic;        
+    }
 
     public static String generate_signature(String expires){
         return sha256_HMAC("GET/realtime"+ expires, api_secret);
@@ -69,13 +75,14 @@ public class BybitWebSocketClient {
         return req.toString();
     }
 
-    public static void connect(String topic) {
+    @Override
+    public void run() {
         try {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-            String uri = "wss://stream.bytick.com/realtime";
+            String uri = this.uri;
             container.connectToServer(BybitWebSocket.class, URI.create(uri));
             // session.getBasicRemote().sendText(getAuthMessage());
-            session.getBasicRemote().sendText(subscribe("subscribe", topic));
+            session.getBasicRemote().sendText(subscribe("subscribe", this.topic));
 
             while(true) {
                 session.getBasicRemote().sendText("ping");
