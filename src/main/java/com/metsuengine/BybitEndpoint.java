@@ -1,5 +1,6 @@
 package com.metsuengine;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -9,12 +10,60 @@ import java.util.List;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.ta4j.core.Bar;
+import org.ta4j.core.BaseBar;
+
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
 public class BybitEndpoint {
+
+    public static Bar createBarSeries(String symbol, String interval, ZonedDateTime from) {
+
+        String url =
+            "https://api.bybit.com/v2/public/kline/list?symbol=" + symbol + 
+            "&interval=" + interval + 
+            "&from=" + (from.toInstant().toEpochMilli()/1000) +
+            "&limit=1";
+
+        Bar bar = null;
+
+        try {
+            Request request = new Request.Builder()
+                .url(url)
+                .build();
+                        
+            OkHttpClient client = new OkHttpClient();
+            Call call = client.newCall(request);
+            Response response = call.execute();
+            String content = response.body().string();
+
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode jsonNode = mapper.readTree(content);
+
+            if (jsonNode.has("result")) {
+                JsonNode result = jsonNode.findValue("result");
+
+                for (JsonNode results : result) {
+                    bar = new BaseBar(
+                        Duration.ofMinutes(Integer.parseInt(interval)),
+                        secondsToZonedDateTime(results.findValue("open_time").asLong()),
+                        results.findValue("open").asDouble(),
+                        results.findValue("high").asDouble(),
+                        results.findValue("low").asDouble(),
+                        results.findValue("close").asDouble(),
+                        results.findValue("volume").asDouble());
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return bar;
+    }
     
     public static OrderBook getOrderBook(String symbol) {
 
@@ -98,4 +147,7 @@ public class BybitEndpoint {
         return ZonedDateTime.ofInstant(Instant.ofEpochMilli(milliseconds), ZoneOffset.UTC);
     }
 
+    public static ZonedDateTime secondsToZonedDateTime(long seconds) {
+        return ZonedDateTime.ofInstant(Instant.ofEpochMilli(seconds*1000), ZoneOffset.UTC);
+    }
 }

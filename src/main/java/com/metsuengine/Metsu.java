@@ -6,31 +6,13 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.awt.*;
 
 public class Metsu {
     public static void main( String[] args ){
 
-        // EventQueue.invokeLater(new DynamicChart()::create);
-
-        FrameSeries frameSeries = new FrameSeries("BTCUSD-Bybit", new ArrayList<Frame>());
-        frameSeries.setMaxSize(10);
-        
-        while(true) {
-            frameSeries.addFrame(new Frame(
-                ZonedDateTime.now(ZoneOffset.UTC),
-                BybitEndpoint.getLiquidations("BTCUSD", ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(1)),
-                BybitEndpoint.getOrderBook("BTCUSD")
-            ));
-
-            System.out.println(frameSeries.getSeries().size());
-
-            try {
-                Thread.sleep(1000);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        for (int i = 10000; i > 0; i--) {
+            CSVManager.writeToCSV(BybitEndpoint.createBarSeries("BTCUSD", "1", ZonedDateTime.now().minusMinutes(i)), "BTCUSD.csv");
+            CSVManager.writeToCSV(BybitEndpoint.createBarSeries("ETHUSD", "1", ZonedDateTime.now().minusMinutes(i)), "ETHUSD.csv");
         }
     }
 
