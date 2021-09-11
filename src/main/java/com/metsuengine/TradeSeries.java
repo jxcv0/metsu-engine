@@ -5,8 +5,12 @@ import java.util.LinkedList;
 
 public class TradeSeries implements Serializable {
 
-    private LinkedList<Trade> tradeSeries = new LinkedList<Trade>();
+    private LinkedList<Trade> tradeSeries;
     private int maxSize = Integer.MAX_VALUE;
+
+    public TradeSeries() {
+        tradeSeries = new LinkedList<Trade>();
+    }
 
     public TradeSeries(LinkedList<Trade> tradeSeries) {
         this.tradeSeries = tradeSeries;

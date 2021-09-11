@@ -15,6 +15,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @ClientEndpoint
 public class BybitWebSocket {
 
+    private TradeSeries tradeSeries = new TradeSeries();
+
     @OnOpen
     public void onOpen(Session session) {
         System.out.println("Connected to endpoint: " + session.getBasicRemote());
@@ -41,9 +43,9 @@ public class BybitWebSocket {
                         data.findValue("side").asText(),
                         data.findValue("price").asDouble(),
                         data.findValue("size").asDouble());
-
-                    System.out.println(trade.getTime() + " " + trade.getSide() + " " + trade.getPrice() + " " + trade.getSize());
-
+                    
+                    tradeSeries.addTrade(trade);
+                    System.out.println(trade.getSide() + " " + trade.getSize());
                 }
             }
   
