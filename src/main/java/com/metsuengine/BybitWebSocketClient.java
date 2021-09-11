@@ -49,7 +49,7 @@ public class BybitWebSocketClient {
     }
 
     public static String getAuthMessage(){
-        JSONObject req=new JSONObject();
+        JSONObject req = new JSONObject();
         req.put("op", "auth");
         List<String> args = new LinkedList<String>();
         String expires = String.valueOf(System.currentTimeMillis()+1000);
@@ -69,21 +69,19 @@ public class BybitWebSocketClient {
         return req.toString();
     }
 
-    public static void connect() {
+    public static void connect(String topic) {
         try {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             String uri = "wss://stream.bytick.com/realtime";
             container.connectToServer(BybitWebSocket.class, URI.create(uri));
-            session.getBasicRemote().sendText(getAuthMessage());
-            session.getBasicRemote().sendText(subscribe("subscribe", "orderBook_200.100ms.BTCUSD"));
-
-            OrderBook orderBook = BybitWebSocket.orderBook;
-            System.out.println(orderBook.getName());
+            // session.getBasicRemote().sendText(getAuthMessage());
+            session.getBasicRemote().sendText(subscribe("subscribe", topic));
 
             while(true) {
-                System.out.println(orderBook.getBestBid());
-                Thread.sleep(1000);
+                session.getBasicRemote().sendText("ping");
+                Thread.sleep(30000);
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }

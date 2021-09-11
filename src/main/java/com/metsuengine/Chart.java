@@ -14,6 +14,8 @@ import org.jfree.chart.ui.ApplicationFrame;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
+import org.ta4j.core.Bar;
+import org.ta4j.core.BarSeries;
 
 public class Chart {
 
@@ -30,6 +32,17 @@ public class Chart {
         for (int i = 0; i < frameSeries.getFrameCount(); i++) {
             Frame frame = frameSeries.getFrame(i);
             timeSeries.addOrUpdate(new Second(Date.from(frame.getTime().toInstant())), list.get(i));
+        }
+
+        return timeSeries;
+    }
+
+    private TimeSeries buildTimeSeries(String name, BarSeries barSeries) {
+
+        this.timeSeries = new TimeSeries(name); 
+
+        for (Bar bar : barSeries.getBarData()) {
+            timeSeries.add(new Second(Date.from(bar.getEndTime().toInstant())), bar.getClosePrice().doubleValue());
         }
 
         return timeSeries;
@@ -53,6 +66,14 @@ public class Chart {
         dataset.addSeries(buildTimeSeries("Ask", frameSeries, frameSeries.getSeriesBestAsk()));
 
         JFreeChart chart = ChartFactory.createTimeSeriesChart("BTCUSD", "Time", "Price", dataset);
+        displayChart(chart);
+    }
+
+    public void buildTimeSeriesChart(String name, BarSeries barSeries) {
+        TimeSeriesCollection dataset = new TimeSeriesCollection();
+        dataset.addSeries(buildTimeSeries(name, barSeries));
+
+        JFreeChart chart = ChartFactory.createTimeSeriesChart(name, "Time", "Price", dataset);
         displayChart(chart);
     }
 

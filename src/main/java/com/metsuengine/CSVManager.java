@@ -1,18 +1,33 @@
 package com.metsuengine;
 
 import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.ZonedDateTime;
 import java.util.List;
 
+import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 
 import org.ta4j.core.Bar;
 import org.ta4j.core.BarSeries;
+import org.ta4j.core.BaseBarSeries;
 
 public class CSVManager {
 
-    public static void writeLine(String fileName, String[] lines) {
+    private Path path = null;
+
+    public CSVManager(String file) {
+        this.path = Paths.get(file);
+    }
+
+    public void writeLine(String[] lines) {
         try {
-            CSVWriter writer = new CSVWriter(new FileWriter(fileName, true));
+            CSVWriter writer = new CSVWriter(new FileWriter(this.path.toString(), true));
             writer.writeNext(lines);
             writer.close();
         } catch (Exception e) {
@@ -21,35 +36,45 @@ public class CSVManager {
         
     }
 
-    // public static FrameSeries buildFromCSV(String name, String fileName) {
+    public BarSeries buildFromCSV() {
 
-    //     InputStream stream = CSVManager.class.getClassLoader().getResourceAsStream(fileName);
+        InputStream stream = CSVManager.class.getClassLoader().getResourceAsStream(this.path.toString());
 
-    //     CSVReader reader = null;
-    //     List<String[]> csvLines = null;
+        CSVReader reader = null;
+        List<String[]> csvLines = null;
 
-    //     try {
-    //         reader = new CSVReader(new InputStreamReader(stream, Charset.forName("UTF-8")));
-    //         csvLines = reader.readAll();
-    //     } catch (Exception e) {
-    //         e.printStackTrace();
-    //     } finally {
-    //         if (reader != null) {
-    //             try {
-    //                 reader.close();
-    //             } catch (IOException e) {
-    //                 e.printStackTrace();
-    //             }
-    //         }
-    //     }
-        
-    //     FrameSeries series = build(name, csvLines);
-    //     return series;
-    // }
-
-    public static void writeToCSV(BarSeries barSeries) {
         try {
-            CSVWriter writer = new CSVWriter(new FileWriter("kline.csv", true));
+            reader = new CSVReader(new InputStreamReader(stream, Charset.forName("UTF-8")));
+            csvLines = reader.readAll();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        
+        BarSeries barBeries = new BaseBarSeries();
+
+        for (String[] line : csvLines) {
+            barBeries.addBar(
+                ZonedDateTime.parse(line[0]),
+                Double.parseDouble(line[1]),
+                Double.parseDouble(line[2]),
+                Double.parseDouble(line[3]),
+                Double.parseDouble(line[4]),
+                Double.parseDouble(line[5]));
+        }
+        return barBeries;
+    }
+
+    public void writeToCSV(BarSeries barSeries) {
+        try {
+            CSVWriter writer = new CSVWriter(new FileWriter(this.path.toString(), true));
             List<Bar> bars = barSeries.getBarData();
             for (Bar bar : bars) {
                 String[] candleData = {
@@ -69,9 +94,9 @@ public class CSVManager {
         }
     }
 
-    public static void writeToCSV(Bar bar, String file) {
+    public void writeToCSV(Bar bar, String file) {
         try {
-            CSVWriter writer = new CSVWriter(new FileWriter(file, true));
+            CSVWriter writer = new CSVWriter(new FileWriter(this.path.toString(), true));
             String[] candleData = {
                 bar.getEndTime().toString(),
                 bar.getOpenPrice().toString(),
@@ -87,10 +112,5 @@ public class CSVManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public static BarSeries loadFromCSV(String file) {
-        // TODO
-        return null;
     }
 }

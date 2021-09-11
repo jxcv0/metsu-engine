@@ -1,7 +1,6 @@
 package com.metsuengine;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 import javax.websocket.ClientEndpoint;
 import javax.websocket.OnClose;
@@ -15,11 +14,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @ClientEndpoint
 public class BybitWebSocket {
-
-    public static OrderBook orderBook = new OrderBook("BybitBTCUSD");
-
-    public static HashMap<Double, Integer> orderBookBid = new HashMap<Double, Integer>();
-    public static HashMap<Double, Integer> orderBookAsk = new HashMap<Double, Integer>();
 
     @OnOpen
     public void onOpen(Session session) {
@@ -41,77 +35,15 @@ public class BybitWebSocket {
             if (response.has("data")) {
                 JsonNode data = response.findValue("data");
 
-                if (data.isArray()) {
-                    // First response is array of objectNodes
+                if (!data.isNull()) {
+                    String time = data.findValue("timestamp").asText();
+                    String side = data.findValue("side").asText();
+                    String price = data.findValue("price").asText();
+                    String size = data.findValue("size").asText();
 
-                    for (int i = 0; i < data.size(); i++) {
-                        JsonNode level = data.get(i);
-                        String side = level.findValue("side").asText();
+                    System.out.println(time + " " + side + " " + price + " " + size);
 
-                        if (side.equals("Buy")) {
-                            orderBook.insertBidLevel(level.findValue("price").asDouble(), level.findValue("size").asInt());
-                            
-                        } else if (side.equals("Sell")) {
-                            orderBook.insertAskLevel(level.findValue("price").asDouble(), level.findValue("size").asInt());
-
-                        }
-                    }
-
-                } else {
-                    // Following responses are Delete, Update, or Insert
-
-                    if (data.has("delete")) {
-                        JsonNode delete = data.findValue("delete");
-
-                        if (!delete.isEmpty()) {
-                            for (int i = 0; i < delete.size()-1; i++) {
-                                String side = delete.findValue("side").asText();
-    
-                                if (side.equals("Buy")) {
-                                    orderBook.deleteBidLevel(delete.findValue("price").asDouble());
-                                    
-                                } else if (side.equals("Sell")) {
-                                    orderBook.deleteAskLevel(delete.findValue("price").asDouble());
-
-                                }
-                            }
-                        }
-                    }
-                    
-                    if (data.has("update")) {
-                        JsonNode update = data.findValue("update");
-
-                        if (!update.isEmpty()) {
-                            for (int i = 0; i < update.size()-1; i++) {
-                                String side = update.findValue("side").asText();
-                                
-                                if (side.equals("Buy")) {
-                                    orderBook.updateBidLevel(update.findValue("price").asDouble(), update.findValue("size").asInt());
-    
-                                } else if (side.equals("Sell")) {
-                                    orderBook.updateAskLevel(update.findValue("price").asDouble(), update.findValue("size").asInt());
-
-                                }
-                            }
-                        }
-                    }
-                    
-                    if (data.has("insert")) {
-                        JsonNode insert = data.findValue("insert");
-
-                        if (!insert.isEmpty()) {
-                            for (int i = 0; i < insert.size()-1; i++) {
-                                String side = insert.findValue("side").asText();
-    
-                                if (side.equals("Buy")) {
-                                    orderBook.insertBidLevel(insert.findValue("price").asDouble(), insert.findValue("size").asInt());
-
-                                } else if (side.equals("Sell")) {
-                                    orderBook.insertAskLevel(insert.findValue("price").asDouble(), insert.findValue("size").asInt());
-                                }
-                            }
-                        }
-                    }
+                    // TODO assign to trade class here
                 }
             }
   
