@@ -36,12 +36,14 @@ public class BybitWebSocket {
                 JsonNode data = response.findValue("data");
 
                 if (!data.isNull()) {
-                    String time = data.findValue("timestamp").asText();
-                    String side = data.findValue("side").asText();
-                    String price = data.findValue("price").asText();
-                    String size = data.findValue("size").asText();
 
-                    System.out.println(time + " " + side + " " + price + " " + size);
+                    Trade trade = new Trade(
+                        data.findValue("timestamp").asText(),
+                        data.findValue("side").asText(),
+                        data.findValue("price").asDouble(),
+                        data.findValue("size").asDouble());
+
+                    System.out.println(trade.getTime() + " " + trade.getSide() + " " + trade.getPrice() + " " + trade.getSize());
 
                     // TODO assign to trade class here
                 }

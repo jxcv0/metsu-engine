@@ -4,41 +4,38 @@ import java.time.ZonedDateTime;
 
 public class Trade {
     
-    private double entryprice;
-    private double exitprice;
-    private ZonedDateTime entryTime;
-    private ZonedDateTime exitTime;
-
-    public Trade(ZonedDateTime entryTime, double entryprice) {
-        this.entryTime = entryTime;
-        this.entryprice = entryprice;
+    private final ZonedDateTime time;
+    private final String side;
+    private final double price;
+    private final double size;
+    
+    public Trade(ZonedDateTime time, String side, double price, double size) {
+        this.time = time;
+        this.side = side;
+        this.price = price;
+        this.size = size;
     }
 
-    public double getEntryprice() {
-        return this.entryprice;
-    }
-    public void setEntryprice(double entryprice) {
-        this.entryprice = entryprice;
-    }
-
-    public double getExitprice() {
-    	return this.exitprice;
-    }
-    public void setExitprice(double exitprice) {
-    	this.exitprice = exitprice;
+    public Trade(String time, String side, double price, double size) {
+        this.time = ZonedDateTime.parse(time);
+        this.side = side;
+        this.price = price;
+        this.size = size;
     }
 
-    public ZonedDateTime getEntryTime() {
-    	return this.entryTime;
-    }
-    public void setEntryTime(ZonedDateTime entryTime) {
-    	this.entryTime = entryTime;
+    public ZonedDateTime getTime() {
+        return this.time;
     }
 
-    public ZonedDateTime getExitTime() {
-    	return this.exitTime;
+    public String getSide() {
+    	return this.side;
     }
-    public void setExitTime(ZonedDateTime exitTime) {
-    	this.exitTime = exitTime;
+
+    public double getPrice() {
+    	return this.price;
+    }
+
+    public double getSize() {
+    	return this.size;
     }
 }

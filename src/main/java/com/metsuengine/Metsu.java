@@ -6,7 +6,7 @@ public class Metsu {
         Thread websocketThread = new Thread( new BybitWebSocketClient("trade.BTCUSD"));
         websocketThread.start();
 
-        System.out.println("here");
+        System.out.println("the other thread");
 
     }
 }
