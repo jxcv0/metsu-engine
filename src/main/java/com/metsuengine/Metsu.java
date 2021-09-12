@@ -11,7 +11,7 @@ public class Metsu {
         Thread websocketThread = new Thread(new BybitWebSocketClient(bybitWebSocket, "trade.BTCUSD"));
         websocketThread.start();
 
-        // TODO consumer for tradeSeries?
+        // TODO get orderbook with CD10?
 
         while (true) {
             System.out.println(tradeSeries.calculateDelta());

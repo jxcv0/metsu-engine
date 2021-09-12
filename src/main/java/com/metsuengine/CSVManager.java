@@ -58,10 +58,10 @@ public class CSVManager {
             }
         }
         
-        BarSeries barBeries = new BaseBarSeries();
+        BarSeries barSeries = new BaseBarSeries();
 
         for (String[] line : csvLines) {
-            barBeries.addBar(
+            barSeries.addBar(
                 ZonedDateTime.parse(line[0]),
                 Double.parseDouble(line[1]),
                 Double.parseDouble(line[2]),
@@ -69,7 +69,7 @@ public class CSVManager {
                 Double.parseDouble(line[4]),
                 Double.parseDouble(line[5]));
         }
-        return barBeries;
+        return barSeries;
     }
 
     public void writeToCSV(BarSeries barSeries) {
