@@ -1,7 +1,5 @@
 package com.metsuengine;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 import java.util.LinkedList;
 
@@ -53,5 +51,29 @@ public class TradeSeries implements Serializable {
         while (this.tradeSeries.size() > this.maxSize) {
             this.tradeSeries.removeFirst();
         }
+    }
+
+    public void writeTradeToCSV(Trade trade) {
+        String[] line = {
+            trade.getTime().toString(),
+            trade.getSide(),
+            String.valueOf(trade.getPrice()),
+            String.valueOf(trade.getSize())
+        };
+
+        CSVManager manager = new CSVManager("BTCUSD-trades.csv");
+        manager.writeLine(line);
+    }
+
+    public double calculateDelta() {
+        double delta = 0;
+        for (Trade trade : this.tradeSeries) {
+            if (trade.getSide().equals("Sell")) {
+                delta -= trade.getSize();
+            } else {
+                delta += trade.getSize();
+            }
+        }
+        return delta;
     }
 }

@@ -56,8 +56,8 @@ public class BybitWebSocket {
                         data.findValue("price").asDouble(),
                         data.findValue("size").asDouble());
                     
+                    // fires change
                     tradeSeries.addTrade(trade);
-                    System.out.println(trade.getSide() + " " + trade.getSize());
                 }
             }
   

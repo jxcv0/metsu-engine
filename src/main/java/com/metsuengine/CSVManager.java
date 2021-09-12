@@ -25,10 +25,10 @@ public class CSVManager {
         this.path = Paths.get(file);
     }
 
-    public void writeLine(String[] lines) {
+    public void writeLine(String[] line) {
         try {
             CSVWriter writer = new CSVWriter(new FileWriter(this.path.toString(), true));
-            writer.writeNext(lines);
+            writer.writeNext(line);
             writer.close();
         } catch (Exception e) {
             e.printStackTrace();

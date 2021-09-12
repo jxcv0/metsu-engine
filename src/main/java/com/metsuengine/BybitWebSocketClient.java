@@ -19,7 +19,7 @@ public class BybitWebSocketClient implements Runnable {
     static Session session;
     private String uri = "wss://stream.bytick.com/realtime";
     private String topic = null;
-    private BybitWebSocket bybitWebSocket= new BybitWebSocket();
+    private BybitWebSocket bybitWebSocket =  new BybitWebSocket();
 
     public BybitWebSocketClient(BybitWebSocket bybitWebSocket, String topic) {
         this.bybitWebSocket = bybitWebSocket;
