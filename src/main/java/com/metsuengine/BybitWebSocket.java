@@ -15,7 +15,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @ClientEndpoint
 public class BybitWebSocket {
 
-    private TradeSeries tradeSeries = new TradeSeries();
+    private TradeSeries tradeSeries;
+
+    public BybitWebSocket() {
+        this.tradeSeries = new TradeSeries();
+    }
+
+    public BybitWebSocket(TradeSeries tradeSeries) {
+        this.tradeSeries = tradeSeries;
+    }
+
+    public BybitWebSocket(int maxSize) {
+        this.tradeSeries.setMaxSize(maxSize);
+    }
 
     @OnOpen
     public void onOpen(Session session) {

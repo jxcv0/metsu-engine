@@ -1,5 +1,7 @@
 package com.metsuengine;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 import java.util.LinkedList;
 

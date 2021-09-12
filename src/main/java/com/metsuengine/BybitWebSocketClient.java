@@ -19,8 +19,10 @@ public class BybitWebSocketClient implements Runnable {
     static Session session;
     private String uri = "wss://stream.bytick.com/realtime";
     private String topic = null;
+    private BybitWebSocket bybitWebSocket= new BybitWebSocket();
 
-    public BybitWebSocketClient(String topic) {
+    public BybitWebSocketClient(BybitWebSocket bybitWebSocket, String topic) {
+        this.bybitWebSocket = bybitWebSocket;
         this.topic = topic;        
     }
 
@@ -80,7 +82,7 @@ public class BybitWebSocketClient implements Runnable {
         try {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             String uri = this.uri;
-            container.connectToServer(BybitWebSocket.class, URI.create(uri));
+            container.connectToServer(this.bybitWebSocket, URI.create(uri));
             // session.getBasicRemote().sendText(getAuthMessage());
             session.getBasicRemote().sendText(subscribe("subscribe", this.topic));
 
