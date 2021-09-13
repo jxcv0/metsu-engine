@@ -38,6 +38,18 @@ public class TradeSeries implements Serializable {
         return range;
     }
 
+    public Trade getTrade(int index){
+        return this.tradeSeries.get(index);
+    } 
+
+    public Trade getLastTrade() {
+        if (!this.tradeSeries.isEmpty()) {
+            return this.tradeSeries.getLast();
+        } else {
+            return null;
+        }
+    }
+
     public void addTrade(Trade trade) {
         this.tradeSeries.add(trade);
         manageSize();
@@ -75,5 +87,9 @@ public class TradeSeries implements Serializable {
             }
         }
         return delta;
+    }
+
+    public double getSize() {
+        return this.tradeSeries.size();
     }
 }

@@ -20,10 +20,16 @@ import okhttp3.Response;
 
 public class BybitEndpoint {
 
-    public static Bar createBarSeries(String symbol, String interval, ZonedDateTime from) {
+    private String symbol;
+
+    public BybitEndpoint(String symbol) {
+        this.symbol = symbol;
+    }
+
+    public Bar createBar(String interval, ZonedDateTime from) {
 
         String url =
-            "https://api.bybit.com/v2/public/kline/list?symbol=" + symbol + 
+            "https://api.bybit.com/v2/public/kline/list?symbol=" + this.symbol + 
             "&interval=" + interval + 
             "&from=" + (from.toInstant().toEpochMilli()/1000) +
             "&limit=1";
@@ -65,13 +71,13 @@ public class BybitEndpoint {
         return bar;
     }
     
-    public static OrderBook getOrderBook(String symbol) {
+    public OrderBook getOrderBook() {
 
-        OrderBook orderBook = new OrderBook(symbol);
+        OrderBook orderBook = new OrderBook(this.symbol);
 
         try {
             Request request = new Request.Builder()
-            .url("https://api.bybit.com/v2/public/orderBook/L2?symbol=" + symbol)
+            .url("https://api.bybit.com/v2/public/orderBook/L2?symbol=" + this.symbol)
             .build();
 
             OkHttpClient client = new OkHttpClient();
@@ -103,14 +109,14 @@ public class BybitEndpoint {
         return orderBook;
     }
 
-    public static List<Liquidation> getLiquidations(String symbol, ZonedDateTime startTime) {
+    public List<Liquidation> getLiquidations(ZonedDateTime startTime) {
 
         List<Liquidation> liquidations = new ArrayList<Liquidation>();
 
         Instant instant = startTime.toInstant();
 
         Request request = new Request.Builder()
-            .url("https://api.bybit.com/v2/public/liq-records?symbol=" + symbol + "&start_time=" + instant.toEpochMilli())
+            .url("https://api.bybit.com/v2/public/liq-records?symbol=" + this.symbol + "&start_time=" + instant.toEpochMilli())
             .build();
         
         try {
@@ -143,11 +149,11 @@ public class BybitEndpoint {
         return liquidations;
     }
     
-    public static ZonedDateTime epochtoZonedDateTime(long milliseconds) {
+    private ZonedDateTime epochtoZonedDateTime(long milliseconds) {
         return ZonedDateTime.ofInstant(Instant.ofEpochMilli(milliseconds), ZoneOffset.UTC);
     }
 
-    public static ZonedDateTime secondsToZonedDateTime(long seconds) {
+    private ZonedDateTime secondsToZonedDateTime(long seconds) {
         return ZonedDateTime.ofInstant(Instant.ofEpochMilli(seconds*1000), ZoneOffset.UTC);
     }
 }

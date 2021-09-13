@@ -97,14 +97,14 @@ public class FrameSeries implements Serializable {
         this.maxSize = maxSize;
     }
 
-    public static void createTestingData(FrameSeries frameSeries, int duration, int interval) {
+    public static void createTestingData(BybitEndpoint endpoint, FrameSeries frameSeries, int duration, int interval) {
         try {    
             for (int i = 0; i < duration; i++) {
                 
                 frameSeries.addFrame(new Frame(
                     ZonedDateTime.now(ZoneOffset.UTC),
-                    BybitEndpoint.getLiquidations("BTCUSD", ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(1)),
-                    BybitEndpoint.getOrderBook("BTCUSD")));
+                    endpoint.getLiquidations(ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(1)),
+                    endpoint.getOrderBook()));
                 
                 System.out.println("getting data " + i + "/" + duration);
                 
