@@ -33,7 +33,6 @@ public class CSVManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
     }
 
     public BarSeries buildFromCSV() {

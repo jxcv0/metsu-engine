@@ -1,6 +1,7 @@
 package com.metsuengine;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 public class TradeSeries implements Serializable {
@@ -91,5 +92,41 @@ public class TradeSeries implements Serializable {
 
     public double getSize() {
         return this.tradeSeries.size();
+    }
+
+    public int getMaxSize() {
+        return this.maxSize;
+    }
+
+    public double calculateVWAP() {
+        HashMap<Double, Double> map = createMap(this);
+        double sumOfVolumeAtPrice = 0;
+
+        for (double level : map.keySet()) {
+            sumOfVolumeAtPrice += (level * map.get(level));
+        }
+        return sumOfVolumeAtPrice / this.getSeriesVolume();
+    }
+
+    public HashMap<Double, Double> createMap(TradeSeries tradeSeries) {
+        HashMap<Double, Double> map = new HashMap<Double, Double>();
+
+        for (Trade trade : this.tradeSeries) {
+            if (!map.containsKey(trade.getPrice())) {
+                map.put(trade.getPrice(), trade.getSize());
+            } else {
+                double volume = map.get(trade.getPrice());
+                map.put(trade.getPrice(), volume + trade.getSize());
+            }
+        }
+        return map;
+    }
+
+    public double getSeriesVolume() {
+        double total = 0;
+        for(Trade trade : this.tradeSeries) {
+            total += trade.getSize();
+        }
+        return total;
     }
 }
