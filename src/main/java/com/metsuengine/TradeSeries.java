@@ -7,8 +7,6 @@ import java.util.LinkedList;
 public class TradeSeries implements Serializable {
 
     private LinkedList<Trade> tradeSeries;
-    private long maxSize = Long.MAX_VALUE;
-    // TODO startdate and enddate
 
     public TradeSeries() {
         tradeSeries = new LinkedList<Trade>();
@@ -18,26 +16,8 @@ public class TradeSeries implements Serializable {
         this.tradeSeries = tradeSeries;
     }
 
-    public TradeSeries(LinkedList<Trade> tradeSeries, int maxSize) {
-        this.tradeSeries = tradeSeries;
-        this.maxSize = maxSize;
-    }
-
     public LinkedList<Trade> getTrades() {
         return this.tradeSeries;
-    }
-
-    public LinkedList<Trade> getTrades(int from, int to) {
-
-        LinkedList<Trade> range = new LinkedList<Trade>();
-        if (from > to) {
-            for (int i = from; i < to; i++) {
-                range.add(this.tradeSeries.get(i));
-            }
-        } else {
-            throw new IllegalArgumentException("Start index must be greater than End index");
-        }
-        return range;
     }
 
     public Trade getTrade(int index){
@@ -52,19 +32,12 @@ public class TradeSeries implements Serializable {
         }
     }
 
-    public void addTrade(Trade trade) {
-        this.tradeSeries.add(trade);
-        manageSize();
-    }
-    
-    public void setMaxSize(int maxSize) {
-        this.maxSize = maxSize;
+    public double getSize() {
+        return this.tradeSeries.size();
     }
 
-    private void manageSize() {
-        while (this.tradeSeries.size() > this.maxSize) {
-            this.tradeSeries.removeFirst();
-        }
+    public void addTrade(Trade trade) {
+        this.tradeSeries.add(trade);
     }
 
     public void writeTradeToCSV(Trade trade) {
@@ -79,27 +52,9 @@ public class TradeSeries implements Serializable {
         manager.writeLine(line);
     }
 
-    public double calculateDelta() {
-        double delta = 0;
-        for (Trade trade : this.tradeSeries) {
-            if (trade.getSide().equals("Sell")) {
-                delta -= trade.getSize();
-            } else {
-                delta += trade.getSize();
-            }
-        }
-        return delta;
-    }
-
-    public double getSize() {
-        return this.tradeSeries.size();
-    }
-
-    public long getMaxSize() {
-        return this.maxSize;
-    }
-
     public HashMap<Double, Double> createMap(TradeSeries tradeSeries) {
+
+        // TODO is there a better way?
         HashMap<Double, Double> map = new HashMap<Double, Double>();
 
         for (Trade trade : this.tradeSeries) {
@@ -111,6 +66,14 @@ public class TradeSeries implements Serializable {
             }
         }
         return map;
+    }
+
+    public double calculateVWAP() {
+        double sumOfVolumeAtPice = 0;
+        for (Trade trade : tradeSeries) {
+            sumOfVolumeAtPice += (trade.getPrice() * trade.getSize());
+        }
+        return (sumOfVolumeAtPice / getSeriesVolume());
     }
 
     public double getSeriesVolume() {

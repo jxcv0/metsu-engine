@@ -10,45 +10,45 @@ import org.jfree.chart.ui.ApplicationFrame;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
-import org.ta4j.core.Bar;
-import org.ta4j.core.BarSeries;
 
 public class Chart {
 
-    private TimeSeries timeSeries;
+    // TODO do I need this?
 
-    public Chart() {
+    // private TimeSeries timeSeries;
 
-    }
+    // public Chart() {
 
-    private TimeSeries buildTimeSeries(String name, BarSeries barSeries) {
+    // }
 
-        this.timeSeries = new TimeSeries(name); 
+    // private TimeSeries buildTimeSeries(String name, BarSeries barSeries) {
 
-        for (Bar bar : barSeries.getBarData()) {
-            timeSeries.add(new Second(Date.from(bar.getEndTime().toInstant())), bar.getClosePrice().doubleValue());
-        }
+    //     this.timeSeries = new TimeSeries(name); 
 
-        return timeSeries;
-    }
+    //     for (Bar bar : barSeries.getBarData()) {
+    //         timeSeries.add(new Second(Date.from(bar.getEndTime().toInstant())), bar.getClosePrice().doubleValue());
+    //     }
 
-    private void displayChart(JFreeChart chart) {
+    //     return timeSeries;
+    // }
 
-        ChartPanel panel = new ChartPanel(chart);
-        panel.setFillZoomRectangle(true);
-        panel.setPreferredSize(new Dimension(1000, 600));
+    // private void displayChart(JFreeChart chart) {
 
-        ApplicationFrame frame = new ApplicationFrame("Chart");
-        frame.setContentPane(panel);
-        frame.pack();
-        frame.setVisible(true);
-    }
+    //     ChartPanel panel = new ChartPanel(chart);
+    //     panel.setFillZoomRectangle(true);
+    //     panel.setPreferredSize(new Dimension(1000, 600));
 
-    public void buildTimeSeriesChart(String name, BarSeries barSeries) {
-        TimeSeriesCollection dataset = new TimeSeriesCollection();
-        dataset.addSeries(buildTimeSeries(name, barSeries));
+    //     ApplicationFrame frame = new ApplicationFrame("Chart");
+    //     frame.setContentPane(panel);
+    //     frame.pack();
+    //     frame.setVisible(true);
+    // }
 
-        JFreeChart chart = ChartFactory.createTimeSeriesChart(name, "Time", "Price", dataset);
-        displayChart(chart);
-    }
+    // public void buildTimeSeriesChart(String name, BarSeries barSeries) {
+    //     TimeSeriesCollection dataset = new TimeSeriesCollection();
+    //     dataset.addSeries(buildTimeSeries(name, barSeries));
+
+    //     JFreeChart chart = ChartFactory.createTimeSeriesChart(name, "Time", "Price", dataset);
+    //     displayChart(chart);
+    // }
 }

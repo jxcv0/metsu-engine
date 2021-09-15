@@ -18,9 +18,9 @@ public class BybitEndpoint {
         this.symbol = symbol;
     }
 
-    public TradeSeries getTradingRecords() {
+    public TradeSeries getTradingRecords(int limit) {
 
-        String url = "https://api.bybit.com/v2/public/trading-records?symbol=" + this.symbol;
+        String url = "https://api.bybit.com/v2/public/trading-records?symbol=" + this.symbol + "&limit=" + limit;
 
         TradeSeries tradeSeries = new TradeSeries();
 
@@ -33,8 +33,6 @@ public class BybitEndpoint {
             Call call = client.newCall(request);
             Response response = call.execute();
             String content = response.body().string();
-
-            System.out.println(content);
 
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonNode = mapper.readTree(content);

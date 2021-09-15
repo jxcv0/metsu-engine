@@ -25,10 +25,6 @@ public class BybitWebSocket {
         this.tradeSeries = tradeSeries;
     }
 
-    public BybitWebSocket(int maxSize) {
-        this.tradeSeries.setMaxSize(maxSize);
-    }
-
     @OnOpen
     public void onOpen(Session session) {
         System.out.println("Connected to endpoint: " + session.getBasicRemote());
