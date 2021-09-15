@@ -8,33 +8,23 @@ import java.util.HashMap;
 public class Metsu {
     public static void main( String[] args ) {
 
-        CSVManager manager = new CSVManager("maptest.csv");
-
-        TradeSeries tradeSeries = new TradeSeries();
-        tradeSeries.setMaxSize(200);
-
-        BybitWebSocket bybitWebSocket = new BybitWebSocket(tradeSeries);
-
+        CSVManager csvManager = new CSVManager("BTCUSD-trades.csv");
         BybitEndpoint endpoint = new BybitEndpoint("BTCUSD");
-
-        Thread websocketThread = new Thread(new BybitWebSocketClient(bybitWebSocket, "trade.BTCUSD"));
-        websocketThread.start();
-
-        try {
-            Thread.sleep(2000);
-        } catch (Exception e) {
-            e.printStackTrace();
+        TradeSeries tradeSeries = endpoint.getTradingRecords();
+        
+        for (Trade trade : tradeSeries.getTrades()) {
+            String[] line = {
+                trade.getTime().toString(),
+                trade.getSide(),
+                Double.toString(trade.getPrice()),
+                Double.toString(trade.getSize()),
+            };
+            csvManager.writeLine(line);
         }
 
-        while (true) {
+        // BybitWebSocket bybitWebSocket = new BybitWebSocket(tradeSeries);
+        // Thread websocketThread = new Thread(new BybitWebSocketClient(bybitWebSocket, "trade.BTCUSD"));
+        // websocketThread.start();
 
-            System.out.println(tradeSeries.calculateVWAP());
-
-            try {
-                Thread.sleep(1000);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }  
-        }
     }
 }

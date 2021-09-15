@@ -1,17 +1,9 @@
 package com.metsuengine;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.ta4j.core.Bar;
-import org.ta4j.core.BaseBar;
 
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
@@ -26,15 +18,11 @@ public class BybitEndpoint {
         this.symbol = symbol;
     }
 
-    public Bar createBar(String interval, ZonedDateTime from) {
+    public TradeSeries getTradingRecords() {
 
-        String url =
-            "https://api.bybit.com/v2/public/kline/list?symbol=" + this.symbol + 
-            "&interval=" + interval + 
-            "&from=" + (from.toInstant().toEpochMilli()/1000) +
-            "&limit=1";
+        String url = "https://api.bybit.com/v2/public/trading-records?symbol=" + this.symbol;
 
-        Bar bar = null;
+        TradeSeries tradeSeries = new TradeSeries();
 
         try {
             Request request = new Request.Builder()
@@ -46,21 +34,20 @@ public class BybitEndpoint {
             Response response = call.execute();
             String content = response.body().string();
 
+            System.out.println(content);
+
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonNode = mapper.readTree(content);
 
             if (jsonNode.has("result")) {
-                JsonNode result = jsonNode.findValue("result");
+                JsonNode results = jsonNode.findValue("result");
 
-                for (JsonNode results : result) {
-                    bar = new BaseBar(
-                        Duration.ofMinutes(Integer.parseInt(interval)),
-                        secondsToZonedDateTime(results.findValue("open_time").asLong()),
-                        results.findValue("open").asDouble(),
-                        results.findValue("high").asDouble(),
-                        results.findValue("low").asDouble(),
-                        results.findValue("close").asDouble(),
-                        results.findValue("volume").asDouble());
+                for (JsonNode result : results) {
+                    tradeSeries.addTrade(new Trade(
+                        ZonedDateTime.parse(result.findValue("time").asText()),
+                        result.findValue("side").asText(),
+                        result.findValue("price").asDouble(),
+                        result.findValue("qty").asDouble()));
                 }
             }
 
@@ -68,92 +55,6 @@ public class BybitEndpoint {
             e.printStackTrace();
         }
 
-        return bar;
-    }
-    
-    public OrderBook getOrderBook() {
-
-        OrderBook orderBook = new OrderBook(this.symbol);
-
-        try {
-            Request request = new Request.Builder()
-            .url("https://api.bybit.com/v2/public/orderBook/L2?symbol=" + this.symbol)
-            .build();
-
-            OkHttpClient client = new OkHttpClient();
-            Call call = client.newCall(request);
-            Response response = call.execute();
-            String content = response.body().string();
-
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode jsonNode = mapper.readTree(content);
-
-            if (jsonNode.has("result")) {
-                JsonNode result = jsonNode.findValue("result");
-
-                for (int i = 0; i < result.size(); i++) {
-                    JsonNode level = result.get(i);
-                    String side = level.findValue("side").asText();
-
-                    if (side.equals("Buy")) {
-                        orderBook.insertBidLevel(level.findValue("price").asDouble(), level.findValue("size").asInt());
-                        
-                    } else if (side.equals("Sell")) {
-                        orderBook.insertAskLevel(level.findValue("price").asDouble(), level.findValue("size").asInt());
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return orderBook;
-    }
-
-    public List<Liquidation> getLiquidations(ZonedDateTime startTime) {
-
-        List<Liquidation> liquidations = new ArrayList<Liquidation>();
-
-        Instant instant = startTime.toInstant();
-
-        Request request = new Request.Builder()
-            .url("https://api.bybit.com/v2/public/liq-records?symbol=" + this.symbol + "&start_time=" + instant.toEpochMilli())
-            .build();
-        
-        try {
-            OkHttpClient client = new OkHttpClient();
-            Call call = client.newCall(request);
-            Response response = call.execute();
-            String content = response.body().string();
-
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode jsonNode = mapper.readTree(content);
-
-            if (jsonNode.has("result")) {
-                JsonNode result = jsonNode.findValue("result");
-
-                for (JsonNode results : result) {
-                    liquidations.add(new Liquidation(
-                        results.findValue("qty").asDouble(),
-                        results.findValue("side").asText(),
-                        epochtoZonedDateTime(results.findValue("time").asLong()),
-                        results.findValue("symbol").asText(),
-                        results.findValue("price").asDouble()));
-                        
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return liquidations;
-    }
-    
-    private ZonedDateTime epochtoZonedDateTime(long milliseconds) {
-        return ZonedDateTime.ofInstant(Instant.ofEpochMilli(milliseconds), ZoneOffset.UTC);
-    }
-
-    private ZonedDateTime secondsToZonedDateTime(long seconds) {
-        return ZonedDateTime.ofInstant(Instant.ofEpochMilli(seconds*1000), ZoneOffset.UTC);
+        return tradeSeries;
     }
 }

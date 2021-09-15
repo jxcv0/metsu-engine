@@ -7,7 +7,8 @@ import java.util.LinkedList;
 public class TradeSeries implements Serializable {
 
     private LinkedList<Trade> tradeSeries;
-    private int maxSize = Integer.MAX_VALUE;
+    private long maxSize = Long.MAX_VALUE;
+    // TODO startdate and enddate
 
     public TradeSeries() {
         tradeSeries = new LinkedList<Trade>();
@@ -94,18 +95,8 @@ public class TradeSeries implements Serializable {
         return this.tradeSeries.size();
     }
 
-    public int getMaxSize() {
+    public long getMaxSize() {
         return this.maxSize;
-    }
-
-    public double calculateVWAP() {
-        HashMap<Double, Double> map = createMap(this);
-        double sumOfVolumeAtPrice = 0;
-
-        for (double level : map.keySet()) {
-            sumOfVolumeAtPrice += (level * map.get(level));
-        }
-        return sumOfVolumeAtPrice / this.getSeriesVolume();
     }
 
     public HashMap<Double, Double> createMap(TradeSeries tradeSeries) {
