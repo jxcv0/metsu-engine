@@ -7,29 +7,36 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 public class Metsu {
     public static void main( String[] args ) {
-        TradeSeries tradeSeries = new TradeSeries();
 
+        final TradeSeries tradeSeries = new TradeSeries();
         ZonedDateTime tomorrow = ZonedDateTime.now(ZoneOffset.UTC).toLocalDate().atStartOfDay(ZoneOffset.UTC).plusDays(1);
-        
         BybitWebSocket bybitWebSocket = new BybitWebSocket(tradeSeries);
 
         Thread websocketThread = new Thread(new BybitWebSocketClient(bybitWebSocket, "trade.BTCUSD"));
         websocketThread.start();
 
+        tradeSeries.addChangeListener(new ChangeListener(){
+
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                System.out.println(
+                    tradeSeries.getLastTrade().getTime() + " " +
+                    tradeSeries.getLastTrade().getSide() + " " +
+                    tradeSeries.getLastTrade().getPrice() + " " +
+                    tradeSeries.getLastTrade().getSize() + " " +
+                    tradeSeries.calculateVWAP()); // manage trades here?
+            }
+            
+        });
+
         while (true) {
-            if(ZonedDateTime.now(ZoneOffset.UTC).isBefore(tomorrow)) {
-                System.out.println(tomorrow);
-                double vwap = tradeSeries.calculateVWAP();
-                // check for active position
-                // check if price is above or below
-                // if position is active
-                // if above, chase with long position
-                // if below chase with shot position              
-            } else {
-                // update tomorrow
-                tradeSeries = new TradeSeries();
+            if(ZonedDateTime.now(ZoneOffset.UTC).isEqual(tomorrow)) {
+                tradeSeries.purge();
                 tomorrow = ZonedDateTime.now(ZoneOffset.UTC).toLocalDate().atStartOfDay(ZoneOffset.UTC).plusDays(1);
             }
         }

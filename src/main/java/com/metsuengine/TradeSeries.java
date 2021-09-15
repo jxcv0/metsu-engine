@@ -4,9 +4,14 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.EventListenerList;
+
 public class TradeSeries implements Serializable {
 
     private LinkedList<Trade> tradeSeries;
+    private EventListenerList listenerList = new EventListenerList();
 
     public TradeSeries() {
         tradeSeries = new LinkedList<Trade>();
@@ -38,6 +43,7 @@ public class TradeSeries implements Serializable {
 
     public void addTrade(Trade trade) {
         this.tradeSeries.add(trade);
+        fireStateChanged();
     }
 
     public void writeTradeToCSV(Trade trade) {
@@ -82,5 +88,28 @@ public class TradeSeries implements Serializable {
             total += trade.getSize();
         }
         return total;
+    }
+
+    public void addChangeListener(ChangeListener listener) {
+        listenerList.add(ChangeListener.class, listener);
+    }
+
+    public void removeChangeListener(ChangeListener listener) {
+        listenerList.remove(ChangeListener.class, listener);
+    }
+
+    protected void fireStateChanged() {
+        ChangeListener[] listeners = listenerList.getListeners(ChangeListener.class);
+        if (listeners != null && listeners.length > 0) {
+            ChangeEvent event = new ChangeEvent(this);
+            for (ChangeListener listener : listeners) {
+                listener.stateChanged(event);
+            }
+        }
+    }
+
+    public void purge() {
+        // TODO save to csv?
+        this.tradeSeries = new LinkedList<Trade>();
     }
 }
