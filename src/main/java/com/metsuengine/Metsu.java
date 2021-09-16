@@ -25,16 +25,22 @@ public class Metsu {
                     tradeSeries.getLastTrade().getSide() + " " +
                     tradeSeries.getLastTrade().getPrice() + " " +
                     tradeSeries.getLastTrade().getSize() + " " +
-                    tradeSeries.calculateVWAP()); // manage trades here?
-            }
-            
+                    tradeSeries.getSize()); // manage trades here?
+            }            
         });
 
-        while (true) {
-            if(ZonedDateTime.now(ZoneOffset.UTC).isEqual(tomorrow)) {
-                tradeSeries.purge();
-                tomorrow = ZonedDateTime.now(ZoneOffset.UTC).toLocalDate().atStartOfDay(ZoneOffset.UTC).plusDays(1);
-            }
+        try {
+            Thread.sleep(60000);
+            tradeSeries.writeAndPurge(tomorrow.minusDays(1));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
+        // TODO volume profile as separate class or as part of tradeseries??
+
+        // if(ZonedDateTime.now(ZoneOffset.UTC).isEqual(tomorrow)) {
+        //     tradeSeries.writeAndPurge(tomorrow);
+        //     tomorrow = ZonedDateTime.now(ZoneOffset.UTC).toLocalDate().atStartOfDay(ZoneOffset.UTC).plusDays(1);
+        // }
     }
 }

@@ -1,6 +1,8 @@
 package com.metsuengine;
 
 import java.io.Serializable;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -108,8 +110,22 @@ public class TradeSeries implements Serializable {
         }
     }
 
-    public void purge() {
-        // TODO save to csv?
+    public void writeAndPurge(ZonedDateTime date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yy");
+        String formattedDate = formatter.format(date);
+
+        CSVManager manager = new CSVManager(formattedDate + "-trades.csv");
+
+        for (Trade trade : tradeSeries) {
+            String[] line = {
+                trade.getTime().toString(),
+                trade.getSide(),
+                String.valueOf(trade.getPrice()),
+                String.valueOf(trade.getSize())
+            };
+            manager.writeLine(line);
+        }
+        
         this.tradeSeries = new LinkedList<Trade>();
     }
 }
