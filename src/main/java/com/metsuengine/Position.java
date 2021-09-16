@@ -1,5 +1,5 @@
 package com.metsuengine;
 
 public class Position {
-    // TODO position
+    // TODO position, rename to order?
 }
