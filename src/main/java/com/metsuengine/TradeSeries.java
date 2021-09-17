@@ -14,13 +14,18 @@ public class TradeSeries implements Serializable {
 
     private LinkedList<Trade> tradeSeries;
     private EventListenerList listenerList = new EventListenerList();
+    private VolumeProfile volumeProfile;
 
     public TradeSeries() {
         tradeSeries = new LinkedList<Trade>();
+        volumeProfile = new VolumeProfile();
     }
 
     public TradeSeries(LinkedList<Trade> tradeSeries) {
         this.tradeSeries = tradeSeries;
+        for (Trade trade : tradeSeries) {
+            this.volumeProfile.add(trade);
+        }
     }
 
     public LinkedList<Trade> getTrades() {
@@ -45,6 +50,7 @@ public class TradeSeries implements Serializable {
 
     public void addTrade(Trade trade) {
         this.tradeSeries.add(trade);
+        this.volumeProfile.add(trade);
         fireStateChanged();
     }
 
@@ -111,6 +117,9 @@ public class TradeSeries implements Serializable {
     }
 
     public void writeAndPurge(ZonedDateTime date) {
+
+        this.volumeProfile.writeVolumeProfile(date); // this aint right
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yy");
         String formattedDate = formatter.format(date);
 
@@ -126,6 +135,11 @@ public class TradeSeries implements Serializable {
             manager.writeLine(line);
         }
         
+        this.purge();
+    }
+
+    public void purge() {
         this.tradeSeries = new LinkedList<Trade>();
+        this.volumeProfile = new VolumeProfile();
     }
 }

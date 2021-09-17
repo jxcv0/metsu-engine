@@ -10,6 +10,7 @@ public class Metsu {
     public static void main( String[] args ) {
 
         final TradeSeries tradeSeries = new TradeSeries();
+
         ZonedDateTime tomorrow = ZonedDateTime.now(ZoneOffset.UTC).toLocalDate().atStartOfDay(ZoneOffset.UTC).plusDays(1);
         BybitWebSocket bybitWebSocket = new BybitWebSocket(tradeSeries);
 
@@ -30,13 +31,11 @@ public class Metsu {
         });
 
         try {
-            Thread.sleep(60000);
+            Thread.sleep(120000);
             tradeSeries.writeAndPurge(tomorrow.minusDays(1));
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        // TODO volume profile as separate class or as part of tradeseries??
 
         // if(ZonedDateTime.now(ZoneOffset.UTC).isEqual(tomorrow)) {
         //     tradeSeries.writeAndPurge(tomorrow);
