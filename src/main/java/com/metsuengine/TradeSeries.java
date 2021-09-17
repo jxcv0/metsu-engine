@@ -3,7 +3,6 @@ package com.metsuengine;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 import java.util.LinkedList;
 
 import javax.swing.event.ChangeEvent;
@@ -12,20 +11,15 @@ import javax.swing.event.EventListenerList;
 
 public class TradeSeries implements Serializable {
 
-    private LinkedList<Trade> tradeSeries;
+    protected LinkedList<Trade> tradeSeries;
     private EventListenerList listenerList = new EventListenerList();
-    private VolumeProfile volumeProfile;
 
     public TradeSeries() {
         tradeSeries = new LinkedList<Trade>();
-        volumeProfile = new VolumeProfile();
     }
 
     public TradeSeries(LinkedList<Trade> tradeSeries) {
         this.tradeSeries = tradeSeries;
-        for (Trade trade : tradeSeries) {
-            this.volumeProfile.add(trade);
-        }
     }
 
     public LinkedList<Trade> getTrades() {
@@ -50,7 +44,6 @@ public class TradeSeries implements Serializable {
 
     public void addTrade(Trade trade) {
         this.tradeSeries.add(trade);
-        this.volumeProfile.add(trade);
         fireStateChanged();
     }
 
@@ -64,22 +57,6 @@ public class TradeSeries implements Serializable {
 
         CSVManager manager = new CSVManager("BTCUSD-trades.csv");
         manager.writeLine(line);
-    }
-
-    public HashMap<Double, Double> createMap(TradeSeries tradeSeries) {
-
-        // TODO is there a better way?
-        HashMap<Double, Double> map = new HashMap<Double, Double>();
-
-        for (Trade trade : this.tradeSeries) {
-            if (!map.containsKey(trade.getPrice())) {
-                map.put(trade.getPrice(), trade.getSize());
-            } else {
-                double volume = map.get(trade.getPrice());
-                map.put(trade.getPrice(), volume + trade.getSize());
-            }
-        }
-        return map;
     }
 
     public double calculateVWAP() {
@@ -118,8 +95,6 @@ public class TradeSeries implements Serializable {
 
     public void writeAndPurge(ZonedDateTime date) {
 
-        this.volumeProfile.writeVolumeProfile(date); // this aint right
-
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yy");
         String formattedDate = formatter.format(date);
 
@@ -140,6 +115,5 @@ public class TradeSeries implements Serializable {
 
     public void purge() {
         this.tradeSeries = new LinkedList<Trade>();
-        this.volumeProfile = new VolumeProfile();
     }
 }

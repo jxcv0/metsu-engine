@@ -1,54 +1,49 @@
 package com.metsuengine;
 
 import java.awt.Dimension;
-import java.util.Date;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.ui.ApplicationFrame;
-import org.jfree.data.time.Second;
-import org.jfree.data.time.TimeSeries;
-import org.jfree.data.time.TimeSeriesCollection;
+import org.jfree.data.xy.IntervalXYDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 
-public class Chart {
+public class Chart extends ApplicationFrame {
 
-    // TODO do I need this?
+    private JFreeChart chart;
 
-    // private TimeSeries timeSeries;
+    public Chart(String applicationTitle, String title, VolumeProfile volumeProfile) {
+        super(applicationTitle);
+        this.chart = ChartFactory.createXYBarChart(title, "Volume", false, "Price", createDataset(volumeProfile));
 
-    // public Chart() {
+        ChartPanel panel = new ChartPanel(chart);
+        panel.setPreferredSize(new java.awt.Dimension(800, 600));
+        setContentPane(panel);
+    }
 
-    // }
+    private IntervalXYDataset createDataset(VolumeProfile volumeProfile) {
 
-    // private TimeSeries buildTimeSeries(String name, BarSeries barSeries) {
+        final XYSeries dataset = new XYSeries("");
 
-    //     this.timeSeries = new TimeSeries(name); 
+        for (Double level : volumeProfile.getHashMap().keySet()) {
+            dataset.add(level, volumeProfile.getHashMap().get(level));
+        }
 
-    //     for (Bar bar : barSeries.getBarData()) {
-    //         timeSeries.add(new Second(Date.from(bar.getEndTime().toInstant())), bar.getClosePrice().doubleValue());
-    //     }
+        XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
+        return xySeriesCollection;
+    }
 
-    //     return timeSeries;
-    // }
+    public void displayChart() {
 
-    // private void displayChart(JFreeChart chart) {
+        ChartPanel panel = new ChartPanel(this.chart);
+        panel.setFillZoomRectangle(true);
+        panel.setPreferredSize(new Dimension(1000, 600));
 
-    //     ChartPanel panel = new ChartPanel(chart);
-    //     panel.setFillZoomRectangle(true);
-    //     panel.setPreferredSize(new Dimension(1000, 600));
-
-    //     ApplicationFrame frame = new ApplicationFrame("Chart");
-    //     frame.setContentPane(panel);
-    //     frame.pack();
-    //     frame.setVisible(true);
-    // }
-
-    // public void buildTimeSeriesChart(String name, BarSeries barSeries) {
-    //     TimeSeriesCollection dataset = new TimeSeriesCollection();
-    //     dataset.addSeries(buildTimeSeries(name, barSeries));
-
-    //     JFreeChart chart = ChartFactory.createTimeSeriesChart(name, "Time", "Price", dataset);
-    //     displayChart(chart);
-    // }
+        ApplicationFrame frame = new ApplicationFrame("Chart");
+        frame.setContentPane(panel);
+        frame.pack();
+        frame.setVisible(true);
+    }
 }

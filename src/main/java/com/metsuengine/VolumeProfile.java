@@ -2,9 +2,12 @@ package com.metsuengine;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
-public class VolumeProfile {
+public class VolumeProfile extends TradeSeries {
 
     private HashMap<Double, Double> profile;
 
@@ -12,7 +15,11 @@ public class VolumeProfile {
         this.profile = new HashMap<Double, Double>();
     }
 
-    public void add(Trade trade) { 
+    public HashMap<Double, Double> getHashMap() {
+        return this.profile;
+    }
+
+    private void addToProfile(Trade trade) { 
         double price = trade.getPrice();
         double size = trade.getSize();
 
@@ -24,13 +31,23 @@ public class VolumeProfile {
         }
     }
 
+    @Override // why u no work
+    public void addTrade(Trade trade) {
+        this.tradeSeries.add(trade);
+        addToProfile(trade);
+        fireStateChanged();
+    }
+
     public void writeVolumeProfile(ZonedDateTime date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yy");
         String formattedDate = formatter.format(date);
 
         CSVManager manager = new CSVManager(formattedDate + "-profile.csv");
 
-        for (Double price : this.profile.keySet()) {
+        List<Double> keys = new ArrayList<>(this.profile.keySet());
+        Collections.sort(keys);
+
+        for (Double price : keys) {
             String[] line = {String.valueOf(price), String.valueOf(this.profile.get(price))};
             manager.writeLine(line);
         }

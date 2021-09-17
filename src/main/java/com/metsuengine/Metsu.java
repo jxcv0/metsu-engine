@@ -9,30 +9,36 @@ import javax.swing.event.ChangeListener;
 public class Metsu {
     public static void main( String[] args ) {
 
-        final TradeSeries tradeSeries = new TradeSeries();
+        final VolumeProfile volumeProfile = new VolumeProfile();
 
         ZonedDateTime tomorrow = ZonedDateTime.now(ZoneOffset.UTC).toLocalDate().atStartOfDay(ZoneOffset.UTC).plusDays(1);
-        BybitWebSocket bybitWebSocket = new BybitWebSocket(tradeSeries);
 
+        BybitWebSocket bybitWebSocket = new BybitWebSocket(volumeProfile);
         Thread websocketThread = new Thread(new BybitWebSocketClient(bybitWebSocket, "trade.BTCUSD"));
         websocketThread.start();
 
-        tradeSeries.addChangeListener(new ChangeListener(){
+        volumeProfile.addChangeListener(new ChangeListener(){
 
             @Override
             public void stateChanged(ChangeEvent e) {
                 System.out.println(
-                    tradeSeries.getLastTrade().getTime() + " " +
-                    tradeSeries.getLastTrade().getSide() + " " +
-                    tradeSeries.getLastTrade().getPrice() + " " +
-                    tradeSeries.getLastTrade().getSize() + " " +
-                    tradeSeries.getSize()); // manage trades here?
+                    volumeProfile.getLastTrade().getTime() + " " +
+                    volumeProfile.getLastTrade().getSide() + " " +
+                    volumeProfile.getLastTrade().getPrice() + " " +
+                    volumeProfile.getLastTrade().getSize() + " " +
+                    volumeProfile.getSize()); // manage trades here?
             }            
         });
 
         try {
-            Thread.sleep(120000);
-            tradeSeries.writeAndPurge(tomorrow.minusDays(1));
+            Thread.sleep(20000);
+
+            Chart chart = new Chart("Chart", "Volume Profile", volumeProfile);
+            chart.displayChart();
+
+            volumeProfile.writeVolumeProfile(tomorrow.minusDays(1));
+            volumeProfile.writeAndPurge(tomorrow.minusDays(1));
+
         } catch (Exception e) {
             e.printStackTrace();
         }
