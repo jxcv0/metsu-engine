@@ -26,7 +26,7 @@ public class VolumeDistribution extends NormalDistribution {
         }
     }
 
-    public void update(Trade trade) { 
+    public void update(Trade trade) {
         double price = trade.getPrice();
         double size = trade.getSize();
 
@@ -36,5 +36,15 @@ public class VolumeDistribution extends NormalDistribution {
         } else {
             this.map.put(price, size);
         }
+    }
+
+    public HashMap<Double, Double> densityMap() {
+        HashMap<Double, Double> pdMap = new HashMap<Double, Double>();
+
+        for (double level : this.map.keySet()) {
+            pdMap.put(level, this.map.get(this.density(level)));
+            System.out.println(this.map.get(this.density(level)));
+        }
+        return pdMap;
     }
 }

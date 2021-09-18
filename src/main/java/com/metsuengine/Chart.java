@@ -3,7 +3,8 @@ package com.metsuengine;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.geom.*;
+import java.awt.geom.RectangularShape;
+import java.util.HashMap;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -22,21 +23,21 @@ public class Chart extends ApplicationFrame {
 
     private JFreeChart chart;
 
-    public Chart(String applicationTitle, String title, VolumeDistribution volumeDistribution) {
+    public Chart(String applicationTitle, String title, HashMap<Double, Double> map) {
         super(applicationTitle);
-        this.chart = ChartFactory.createXYBarChart(title, "Price", false, "Volume", createDataset(volumeDistribution));
+        this.chart = ChartFactory.createXYBarChart(title, "Price", false, "Volume", createDataset(map));
 
         ChartPanel panel = new ChartPanel(chart);
         panel.setPreferredSize(new java.awt.Dimension(800, 600));
         setContentPane(panel);
     }
 
-    private IntervalXYDataset createDataset(VolumeDistribution volumeDistribution) {
+    private IntervalXYDataset createDataset(HashMap<Double, Double> map) {
 
         final XYSeries series = new XYSeries("");
 
-        for (Double level : volumeDistribution.getHashMap().keySet()) {
-            series.add(level, volumeDistribution.getHashMap().get(level));
+        for (Double level : map.keySet()) {
+            series.add(level, map.get(level));
         }
 
         XYSeriesCollection xySeriesCollection = new XYSeriesCollection();

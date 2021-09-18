@@ -1,0 +1,24 @@
+digraph "com.metsuengine:metsu-engine:jar:1.0-SNAPSHOT" { 
+	"com.metsuengine:metsu-engine:jar:1.0-SNAPSHOT" -> "org.apache.commons:commons-math3:jar:3.6.1:compile" ; 
+	"com.metsuengine:metsu-engine:jar:1.0-SNAPSHOT" -> "org.jfree:jfreechart:jar:1.5.3:compile" ; 
+	"com.metsuengine:metsu-engine:jar:1.0-SNAPSHOT" -> "com.squareup.okhttp3:okhttp:jar:5.0.0-alpha.2:compile" ; 
+	"com.metsuengine:metsu-engine:jar:1.0-SNAPSHOT" -> "com.opencsv:opencsv:jar:5.5.1:compile" ; 
+	"com.metsuengine:metsu-engine:jar:1.0-SNAPSHOT" -> "com.fasterxml.jackson.core:jackson-databind:jar:2.12.4:compile" ; 
+	"com.metsuengine:metsu-engine:jar:1.0-SNAPSHOT" -> "org.glassfish.tyrus.bundles:tyrus-standalone-client:jar:1.9:compile" ; 
+	"com.metsuengine:metsu-engine:jar:1.0-SNAPSHOT" -> "org.json:json:jar:20210307:compile" ; 
+	"com.metsuengine:metsu-engine:jar:1.0-SNAPSHOT" -> "javax.websocket:javax.websocket-api:jar:1.1:provided" ; 
+	"com.metsuengine:metsu-engine:jar:1.0-SNAPSHOT" -> "junit:junit:jar:4.11:test" ; 
+	"com.squareup.okhttp3:okhttp:jar:5.0.0-alpha.2:compile" -> "com.squareup.okio:okio:jar:2.9.0:compile" ; 
+	"com.squareup.okhttp3:okhttp:jar:5.0.0-alpha.2:compile" -> "org.jetbrains.kotlin:kotlin-stdlib:jar:1.4.21:compile" ; 
+	"com.squareup.okio:okio:jar:2.9.0:compile" -> "org.jetbrains.kotlin:kotlin-stdlib-common:jar:1.4.21:compile" ; 
+	"org.jetbrains.kotlin:kotlin-stdlib:jar:1.4.21:compile" -> "org.jetbrains:annotations:jar:13.0:compile" ; 
+	"com.opencsv:opencsv:jar:5.5.1:compile" -> "org.apache.commons:commons-lang3:jar:3.12.0:compile" ; 
+	"com.opencsv:opencsv:jar:5.5.1:compile" -> "org.apache.commons:commons-text:jar:1.9:compile" ; 
+	"com.opencsv:opencsv:jar:5.5.1:compile" -> "commons-beanutils:commons-beanutils:jar:1.9.4:compile" ; 
+	"com.opencsv:opencsv:jar:5.5.1:compile" -> "org.apache.commons:commons-collections4:jar:4.4:compile" ; 
+	"commons-beanutils:commons-beanutils:jar:1.9.4:compile" -> "commons-logging:commons-logging:jar:1.2:compile" ; 
+	"commons-beanutils:commons-beanutils:jar:1.9.4:compile" -> "commons-collections:commons-collections:jar:3.2.2:compile" ; 
+	"com.fasterxml.jackson.core:jackson-databind:jar:2.12.4:compile" -> "com.fasterxml.jackson.core:jackson-annotations:jar:2.12.4:compile" ; 
+	"com.fasterxml.jackson.core:jackson-databind:jar:2.12.4:compile" -> "com.fasterxml.jackson.core:jackson-core:jar:2.12.4:compile" ; 
+	"junit:junit:jar:4.11:test" -> "org.hamcrest:hamcrest-core:jar:1.3:test" ; 
+ } 

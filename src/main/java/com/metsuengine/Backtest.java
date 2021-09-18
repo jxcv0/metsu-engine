@@ -7,6 +7,7 @@ public class Backtest {
     public static void main(String[] args) {
 
         VolumeDistribution volumeDistribution = new VolumeDistribution();
+
         TradeSeries tradeSeries = new TradeSeries(new ChangeListener() {
 
             @Override
@@ -17,11 +18,9 @@ public class Backtest {
         });
         
         CSVManager manager = new CSVManager("BTCUSD2021-09-14.csv", tradeSeries);
-
         tradeSeries = manager.createFromCSV();
 
-        Chart chart = new Chart("Chart", "Volume Distribution", volumeDistribution);
-        System.out.println("Complete");
+        Chart chart = new Chart("Volume Distribution Chart", "Volume Distribution", volumeDistribution.getHashMap());
         chart.displayChart();
 
     }
