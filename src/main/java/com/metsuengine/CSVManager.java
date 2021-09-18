@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.DecimalFormat;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -18,9 +17,15 @@ import com.opencsv.CSVWriter;
 public class CSVManager {
 
     private Path path = null;
+    TradeSeries tradeSeries = new TradeSeries();
 
     public CSVManager(String file) {
         this.path = Paths.get(file);
+    }
+
+    public CSVManager(String file, TradeSeries tradeSeries) {
+        this.path = Paths.get(file);
+        this.tradeSeries = tradeSeries;
     }
 
     public void writeLine(String[] line) {
@@ -48,9 +53,8 @@ public class CSVManager {
     }
 
     private TradeSeries build(List<String[]> lines) {
-        TradeSeries tradeSeries = new TradeSeries();
         for (String[] line : lines) {
-            tradeSeries.addTrade(new Trade(
+            this.tradeSeries.addTrade(new Trade(
                 epochtoZonedDateTime(Double.parseDouble(line[0])),
                 line[2],
                 Double.parseDouble(line[4]),

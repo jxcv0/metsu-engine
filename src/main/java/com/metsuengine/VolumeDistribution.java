@@ -26,7 +26,7 @@ public class VolumeDistribution extends NormalDistribution {
         }
     }
 
-    private void update(Trade trade) { 
+    public void update(Trade trade) { 
         double price = trade.getPrice();
         double size = trade.getSize();
 

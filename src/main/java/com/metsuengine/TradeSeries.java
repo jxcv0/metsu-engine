@@ -18,6 +18,11 @@ public class TradeSeries implements Serializable {
         tradeSeries = new LinkedList<Trade>();
     }
 
+    public TradeSeries(ChangeListener listener) {
+        tradeSeries = new LinkedList<Trade>();
+        this.addChangeListener(listener);
+    }
+
     public TradeSeries(LinkedList<Trade> tradeSeries) {
         this.tradeSeries = tradeSeries;
     }
