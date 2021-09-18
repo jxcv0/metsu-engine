@@ -26,5 +26,7 @@ public class Backtest {
         chart.displayChart();
         gauss.displayChart();
 
+        System.out.println(volumeDistribution.pointOfControl());
+
     }
 }

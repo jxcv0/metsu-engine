@@ -1,6 +1,8 @@
 package com.metsuengine;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import org.apache.commons.math3.analysis.function.Gaussian;
 
@@ -39,7 +41,8 @@ public class VolumeDistribution {
     }
 
     public HashMap<Double, Double> gaussian() {
-        Gaussian gaussian = new Gaussian(vwap(), standardDeviation());
+        //NormalDistribution normalDistribution = new NormalDistribution(this.pointOfControl(), this.standardDeviation());
+        Gaussian gaussian = new Gaussian(this.pointOfControl(), this.standardDeviation());
         HashMap<Double, Double> gaussianMap = new HashMap<Double, Double>();
 
         for (double level : this.map.keySet()) {
@@ -59,7 +62,7 @@ public class VolumeDistribution {
 
     public double standardDeviation() {
         double sumOfxMinusMean = 0;
-        double mean = vwap();
+        double mean = this.pointOfControl();
 
         for (double level : this.map.keySet()) {
             double levelMinusMean = (this.map.get(level) - mean);
@@ -76,4 +79,16 @@ public class VolumeDistribution {
         }
         return total;
     }
+
+    public double pointOfControl() { 
+        double poc = Collections.max(this.map.values());
+
+        for (Entry<Double, Double> entry : this.map.entrySet()) {
+            if (entry.getValue() == poc) {
+                return entry.getKey();
+            }
+        }
+        
+        return 0;
+    } 
 }
