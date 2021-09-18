@@ -2,6 +2,8 @@ package com.metsuengine;
 
 import java.util.HashMap;
 
+import org.apache.commons.math3.analysis.function.Gaussian;
+
 public class VolumeDistribution {
 
     private HashMap<Double, Double> map = new HashMap<>();
@@ -37,7 +39,7 @@ public class VolumeDistribution {
     }
 
     public HashMap<Double, Double> gaussian() {
-        Gaussian gaussian = new Gaussian(standardDeviation(), vwap());
+        Gaussian gaussian = new Gaussian(vwap(), standardDeviation());
         HashMap<Double, Double> gaussianMap = new HashMap<Double, Double>();
 
         for (double level : this.map.keySet()) {
