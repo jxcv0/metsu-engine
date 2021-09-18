@@ -64,7 +64,7 @@ public class TradeSeries implements Serializable {
         manager.writeLine(line);
     }
 
-    public double calculateVWAP() {
+    public double vwap() {
         double sumOfVolumeAtPice = 0;
         for (Trade trade : tradeSeries) {
             sumOfVolumeAtPice += (trade.getPrice() * trade.getSize());

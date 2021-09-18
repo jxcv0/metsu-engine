@@ -2,9 +2,7 @@ package com.metsuengine;
 
 import java.util.HashMap;
 
-import org.apache.commons.math3.distribution.NormalDistribution;
-
-public class VolumeDistribution extends NormalDistribution {
+public class VolumeDistribution {
 
     private HashMap<Double, Double> map = new HashMap<>();
 
@@ -38,13 +36,42 @@ public class VolumeDistribution extends NormalDistribution {
         }
     }
 
-    public HashMap<Double, Double> densityMap() {
-        HashMap<Double, Double> pdMap = new HashMap<Double, Double>();
+    public HashMap<Double, Double> gaussian() {
+        Gaussian gaussian = new Gaussian(standardDeviation(), vwap());
+        HashMap<Double, Double> gaussianMap = new HashMap<Double, Double>();
 
         for (double level : this.map.keySet()) {
-            pdMap.put(level, this.map.get(this.density(level)));
-            System.out.println(this.map.get(this.density(level)));
+            gaussianMap.put(level, gaussian.value(this.map.get(level)));
         }
-        return pdMap;
+
+        return gaussianMap;
+    }
+
+    public double vwap() {
+        double sumOfVolumeAtPice = 0;
+        for (Double level : this.map.keySet()) {
+            sumOfVolumeAtPice += (level * map.get(level));
+        }
+        return (sumOfVolumeAtPice / getTotalVolume());
+    }
+
+    public double standardDeviation() {
+        double sumOfxMinusMean = 0;
+        double mean = vwap();
+
+        for (double level : this.map.keySet()) {
+            double levelMinusMean = (this.map.get(level) - mean);
+            sumOfxMinusMean += (levelMinusMean * levelMinusMean);
+        }
+
+        return Math.sqrt(sumOfxMinusMean/getTotalVolume());
+    }
+
+    public double getTotalVolume() {
+        double total = 0;
+        for(double level : this.map.keySet()) {
+            total += this.map.get(level);
+        }
+        return total;
     }
 }

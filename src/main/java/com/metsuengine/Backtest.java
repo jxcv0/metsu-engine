@@ -21,7 +21,10 @@ public class Backtest {
         tradeSeries = manager.createFromCSV();
 
         Chart chart = new Chart("Volume Distribution Chart", "Volume Distribution", volumeDistribution.getHashMap());
+        Chart gauss = new Chart("Gaussian Distribution Chart", "Gaussian Distribution", volumeDistribution.gaussian());
+
         chart.displayChart();
+        gauss.displayChart();
 
     }
 }

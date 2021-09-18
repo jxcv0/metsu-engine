@@ -23,21 +23,25 @@ public class Chart extends ApplicationFrame {
 
     private JFreeChart chart;
 
-    public Chart(String applicationTitle, String title, HashMap<Double, Double> map) {
+    @SafeVarargs
+    public Chart(String applicationTitle, String title, HashMap<Double, Double>... hashMaps) {
         super(applicationTitle);
-        this.chart = ChartFactory.createXYBarChart(title, "Price", false, "Volume", createDataset(map));
+        this.chart = ChartFactory.createXYBarChart(title, "Price", false, "Volume", createDataset(hashMaps));
 
         ChartPanel panel = new ChartPanel(chart);
         panel.setPreferredSize(new java.awt.Dimension(800, 600));
         setContentPane(panel);
     }
 
-    private IntervalXYDataset createDataset(HashMap<Double, Double> map) {
+    @SafeVarargs
+    private IntervalXYDataset createDataset(HashMap<Double, Double>... hashMaps) {
 
         final XYSeries series = new XYSeries("");
 
-        for (Double level : map.keySet()) {
-            series.add(level, map.get(level));
+        for (HashMap<Double,Double> hashMap : hashMaps) {
+            for (Double level : hashMap.keySet()) {
+                series.add(level, hashMap.get(level));
+            }
         }
 
         XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
