@@ -34,7 +34,7 @@ public class Metsu {
         try {
             Thread.sleep(120000);
             VolumeDistribution volumeDistribution = new VolumeDistribution(tradeSeries);
-            Chart chart = new Chart("Chart", "Volume Distribution", volumeDistribution.getHashMap());
+            Chart chart = new Chart("Chart", "Volume Distribution", volumeDistribution.toHashMap());
             chart.displayChart();
         } catch (Exception e) {
             e.printStackTrace();

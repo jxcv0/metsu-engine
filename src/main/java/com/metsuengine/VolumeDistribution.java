@@ -4,8 +4,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import org.apache.commons.math3.analysis.function.Gaussian;
-
 public class VolumeDistribution {
 
     private HashMap<Double, Double> map = new HashMap<>();
@@ -18,7 +16,7 @@ public class VolumeDistribution {
         createVolumeProfile(tradeSeries);
     }
 
-    public HashMap<Double, Double> getHashMap() {
+    public HashMap<Double, Double> toHashMap() {
         return this.map;
     }
 
@@ -40,16 +38,10 @@ public class VolumeDistribution {
         }
     }
 
-    public HashMap<Double, Double> gaussian() {
-        //NormalDistribution normalDistribution = new NormalDistribution(this.pointOfControl(), this.standardDeviation());
-        Gaussian gaussian = new Gaussian(this.pointOfControl(), this.standardDeviation());
-        HashMap<Double, Double> gaussianMap = new HashMap<Double, Double>();
+    public HashMap<Double, Double> filter() {
+        HashMap<Double, Double> filteredMap = new HashMap<Double, Double>();
 
-        for (double level : this.map.keySet()) {
-            gaussianMap.put(level, gaussian.value(this.map.get(level)));
-        }
-
-        return gaussianMap;
+        return filteredMap;
     }
 
     public double vwap() {
@@ -90,5 +82,5 @@ public class VolumeDistribution {
         }
         
         return 0;
-    } 
+    }
 }

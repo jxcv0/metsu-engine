@@ -27,6 +27,7 @@ public class Chart extends ApplicationFrame {
     public Chart(String applicationTitle, String title, HashMap<Double, Double>... hashMaps) {
         super(applicationTitle);
         this.chart = ChartFactory.createXYBarChart(title, "Price", false, "Volume", createDataset(hashMaps));
+        chart.removeLegend();
 
         ChartPanel panel = new ChartPanel(chart);
         panel.setPreferredSize(new java.awt.Dimension(800, 600));

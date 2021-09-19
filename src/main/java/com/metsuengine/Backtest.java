@@ -20,13 +20,10 @@ public class Backtest {
         CSVManager manager = new CSVManager("BTCUSD2021-09-14.csv", tradeSeries);
         tradeSeries = manager.createFromCSV();
 
-        Chart chart = new Chart("Volume Distribution Chart", "Volume Distribution", volumeDistribution.getHashMap());
-        Chart gauss = new Chart("Gaussian Distribution Chart", "Gaussian Distribution", volumeDistribution.gaussian());
-
-        chart.displayChart();
-        gauss.displayChart();
-
-        System.out.println(volumeDistribution.pointOfControl());
+        Chart volumeProfile = new Chart("Volume Distribution Chart", "Volume Distribution", volumeDistribution.toHashMap());
+        Chart filteredVolumePofile = new Chart("Filtered Volume Distribution Chart", "Filtered Volume Distribution", volumeDistribution.filter());
+        volumeProfile.displayChart();
+        filteredVolumePofile.displayChart();
 
     }
 }
