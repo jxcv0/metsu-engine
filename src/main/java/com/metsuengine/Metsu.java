@@ -1,8 +1,5 @@
 package com.metsuengine;
 
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -34,7 +31,7 @@ public class Metsu {
         try {
             Thread.sleep(120000);
             VolumeDistribution volumeDistribution = new VolumeDistribution(tradeSeries);
-            Chart chart = new Chart("Chart", "Volume Distribution", volumeDistribution.toHashMap());
+            Chart chart = new Chart("Chart", "Volume Distribution", volumeDistribution);
             chart.displayChart();
         } catch (Exception e) {
             e.printStackTrace();

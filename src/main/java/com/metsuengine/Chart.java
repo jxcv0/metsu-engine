@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.geom.RectangularShape;
-import java.util.HashMap;
+import java.util.TreeMap;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -24,9 +24,9 @@ public class Chart extends ApplicationFrame {
     private JFreeChart chart;
 
     @SafeVarargs
-    public Chart(String applicationTitle, String title, HashMap<Double, Double>... hashMaps) {
+    public Chart(String applicationTitle, String title, TreeMap<Double, Double>... maps) {
         super(applicationTitle);
-        this.chart = ChartFactory.createXYBarChart(title, "Price", false, "Volume", createDataset(hashMaps));
+        this.chart = ChartFactory.createXYBarChart(title, "Price", false, "Volume", createDataset(maps));
         chart.removeLegend();
 
         ChartPanel panel = new ChartPanel(chart);
@@ -35,13 +35,13 @@ public class Chart extends ApplicationFrame {
     }
 
     @SafeVarargs
-    private IntervalXYDataset createDataset(HashMap<Double, Double>... hashMaps) {
+    private IntervalXYDataset createDataset(TreeMap<Double, Double>... maps) {
 
         final XYSeries series = new XYSeries("");
 
-        for (HashMap<Double,Double> hashMap : hashMaps) {
-            for (Double level : hashMap.keySet()) {
-                series.add(level, hashMap.get(level));
+        for (TreeMap<Double,Double> map : maps) {
+            for (Double level : map.keySet()) {
+                series.add(level, map.get(level));
             }
         }
 
