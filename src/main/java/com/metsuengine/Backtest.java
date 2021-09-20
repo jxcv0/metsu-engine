@@ -21,10 +21,12 @@ public class Backtest {
         tradeSeries = manager.createFromCSV();
         
         volumeDistribution.addMissingValues();
-        volumeDistribution.normalize();
-        // volumeDistribution.filter();
 
         Chart volumeProfileChart = new Chart("Volume Distribution Chart", "Volume Distribution", volumeDistribution);
+        volumeDistribution.filter(0.02, 3);
+        volumeDistribution.normalize();
+        Chart filteredProfile = new Chart("Filtered Volume Distribution", "Filtered Volume Distribution", volumeDistribution);
         volumeProfileChart.displayChart();
+        filteredProfile.displayChart();
     }
 }
