@@ -53,9 +53,8 @@ public class VolumeDistribution extends TreeMap<Double, Double> {
         return (x - min) / (max - min);
     }
 
-    public void filter(double bandWidth, int robustnessItrs) {
-        // TODO needs work
-        LoessInterpolator interpolator = new LoessInterpolator(bandWidth, robustnessItrs);
+    public void filter() {
+        LoessInterpolator interpolator = new LoessInterpolator(0.02, 2);
         double[] values = interpolator.smooth(this.keysToArray(), this.valuesToArray());
         double[] keys = this.keysToArray();
 
@@ -93,13 +92,15 @@ public class VolumeDistribution extends TreeMap<Double, Double> {
     }
 
     public void addMissingValues() {
-        double first = this.firstKey().doubleValue();
-        double last = this.lastKey().doubleValue();
-        Set<Double> keys = this.keySet();
-
-        for (double i = first; i < last; i+=0.5) {
-            if (!keys.contains(i)) {
-                this.put(i, 0.0);
+        if (this.size() > 1) {
+            double first = this.firstKey().doubleValue();
+            double last = this.lastKey().doubleValue();
+            Set<Double> keys = this.keySet();
+    
+            for (double i = first; i < last; i+=0.5) {
+                if (!keys.contains(i)) {
+                    this.put(i, 0.0);
+                }
             }
         }
     }

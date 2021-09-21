@@ -15,6 +15,7 @@ import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.chart.ui.ApplicationFrame;
 import org.jfree.chart.ui.RectangleEdge;
+import org.jfree.data.time.Millisecond;
 import org.jfree.data.xy.IntervalXYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -22,6 +23,8 @@ import org.jfree.data.xy.XYSeriesCollection;
 public class Chart extends ApplicationFrame {
 
     private JFreeChart chart;
+    private XYSeries series = new XYSeries("");
+    private double lastValue;
 
     @SafeVarargs
     public Chart(String applicationTitle, String title, TreeMap<Double, Double>... maps) {
@@ -73,5 +76,9 @@ public class Chart extends ApplicationFrame {
         XYPlot plot = (XYPlot) chart.getPlot();
         plot.setOrientation(PlotOrientation.HORIZONTAL);
         plot.setRenderer(renderer);
+    }
+
+    public void addData(double price, double value) {
+        this.series.add(price, value);
     }
 }

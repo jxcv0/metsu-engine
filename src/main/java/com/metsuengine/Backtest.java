@@ -17,14 +17,14 @@ public class Backtest {
             }            
         });
         
-        CSVManager manager = new CSVManager("BTCUSD2021-09-13.csv", tradeSeries);
+        CSVManager manager = new CSVManager("BTCUSD2021-09-14.csv", tradeSeries);
         tradeSeries = manager.createFromCSV();
         
         volumeDistribution.addMissingValues();
+        volumeDistribution.filter();
+        volumeDistribution.normalize();
 
         Chart volumeProfileChart = new Chart("Volume Distribution Chart", "Volume Distribution", volumeDistribution);
-        volumeDistribution.filter(0.02, 3);
-        volumeDistribution.normalize();
         Chart filteredProfile = new Chart("Filtered Volume Distribution", "Filtered Volume Distribution", volumeDistribution);
         volumeProfileChart.displayChart();
         filteredProfile.displayChart();
