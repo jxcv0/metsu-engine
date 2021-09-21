@@ -1,5 +1,7 @@
 package com.metsuengine;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -35,10 +37,12 @@ public class VolumeDistribution extends TreeMap<Double, Double> {
     }
 
     public void normalize() {
-        double min = this.minValue();
-        double max = this.maxValue();
-        for (double level : this.keySet()) {
-            this.put(level, norm(this.get(level), min, max));
+        if (this.size() > 2) {
+            double min = this.minValue();
+            double max = this.maxValue();
+            for (double level : this.keySet()) {
+                this.put(level, norm(this.get(level), min, max));
+            }
         }
     }
 
@@ -54,8 +58,11 @@ public class VolumeDistribution extends TreeMap<Double, Double> {
     }
 
     public void filter() {
+        double[] oldKeys = this.keysToArray();
+        double[] oldValues = this.valuesToArray();
+
         LoessInterpolator interpolator = new LoessInterpolator(0.02, 2);
-        double[] values = interpolator.smooth(this.keysToArray(), this.valuesToArray());
+        double[] values = interpolator.smooth(oldKeys, oldValues);
         double[] keys = this.keysToArray();
 
         for (int i = 0; i < values.length; i++) {
@@ -104,6 +111,22 @@ public class VolumeDistribution extends TreeMap<Double, Double> {
             }
         }
     }
+    
+    public List<Double> highVolumeNodes() {
+        List<Double> keys = new ArrayList<Double>();
+
+        double first = this.firstKey().doubleValue();
+        double last = this.lastKey().doubleValue();
+
+        for (double level : this.keySet()) {
+            if (level != first && level != last) {
+                if (this.get(level) > this.get(level-0.5) && this.get(level) > this.get(level+0.5)){
+                    keys.add(level);
+                }
+            }
+        }
+        return keys;
+    }
 
     public double maxValue() { 
         return this.values().stream().max(Double::compare).get();
@@ -111,6 +134,14 @@ public class VolumeDistribution extends TreeMap<Double, Double> {
 
     public double minValue() { 
         return this.values().stream().min(Double::compare).get();
+    }
+
+    public double maxKey() { 
+        return this.keySet().stream().max(Double::compare).get();
+    }
+
+    public double minKey() { 
+        return this.keySet().stream().min(Double::compare).get();
     }
 
     public double[] valuesToArray() {
