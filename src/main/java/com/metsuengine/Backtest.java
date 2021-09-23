@@ -1,42 +1,40 @@
 package com.metsuengine;
 
-import java.time.ZonedDateTime;
-
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public class Backtest {
+
     public static void main(String[] args) {
+        
+        // Create distribution of previous day 
+        TradeSeries previousDayTrades = new TradeSeries();
 
-        System.out.println(ZonedDateTime.now());
+        CSVManager oldManager = new CSVManager("BTCUSD2021-09-13.csv", previousDayTrades);
+        previousDayTrades = oldManager.createFromCSV();
+        
+        VolumeDistribution previousDayDistribution = new VolumeDistribution(previousDayTrades, true);
+        System.out.println("prev: " + previousDayTrades.vwap());
+        System.out.println("prev: " + previousDayDistribution.vwap());
+        
+        Chart volumeProfileChart = new Chart("13-09 Volume Distribution Chart", "Volume Distribution", previousDayDistribution);
+        volumeProfileChart.displayChart();
 
-        VolumeDistribution volumeDistribution = new VolumeDistribution();
-
-        TradeSeries tradeSeries = new TradeSeries(new ChangeListener() {
-
-            int count = 0;
+        // creating next day series
+        TradeSeries currentTrades = new TradeSeries(new ChangeListener(){
 
             @Override
-            public void stateChanged(ChangeEvent event) {
-                TradeSeries source = (TradeSeries) event.getSource();
-                volumeDistribution.update(source.getLastTrade());
-                volumeDistribution.addMissingValues();
-                volumeDistribution.normalize();
-                volumeDistribution.filter();
-                count++;
-                System.out.println(count);
-            }            
+            public void stateChanged(ChangeEvent e) {
+                TradeSeries source = (TradeSeries) e.getSource();
+                
+            }          
         });
-        
-        CSVManager manager = new CSVManager("BTCUSD2021-09-14.csv", tradeSeries);
-        tradeSeries = manager.createFromCSV();
-        
-        Chart volumeProfileChart = new Chart("Volume Distribution Chart", "Volume Distribution", volumeDistribution);
-        Chart filteredProfile = new Chart("Filtered Volume Distribution", "Filtered Volume Distribution", volumeDistribution);
-        volumeProfileChart.displayChart();
-        filteredProfile.displayChart();
 
-        System.out.println(ZonedDateTime.now());
+        CSVManager currentManager = new CSVManager("BTCUSD2021-09-14.csv", currentTrades);
+        currentTrades = currentManager.createFromCSV();
+
+        System.out.println("curr: " + currentTrades.vwap());
+        System.out.println("curr: " + currentTrades.vwap());
 
     }
 }
