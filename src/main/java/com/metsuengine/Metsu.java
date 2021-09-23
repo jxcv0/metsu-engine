@@ -20,10 +20,10 @@ public class Metsu {
             public void stateChanged(ChangeEvent e) {
                 System.out.println(
                     // TODO update VP + Strat here
-                    tradeSeries.getLastTrade().getTime() + " " +
-                    tradeSeries.getLastTrade().getSide() + " " +
-                    tradeSeries.getLastTrade().getPrice() + " " +
-                    tradeSeries.getLastTrade().getSize() + " " +
+                    tradeSeries.getLastTrade().time() + " " +
+                    tradeSeries.getLastTrade().side() + " " +
+                    tradeSeries.getLastTrade().price() + " " +
+                    tradeSeries.getLastTrade().size() + " " +
                     tradeSeries.getSize());
             }            
         });

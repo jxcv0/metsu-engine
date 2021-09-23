@@ -15,7 +15,10 @@ public class VolumeDistribution extends TreeMap<Double, Double> {
     }
 
     public VolumeDistribution(TradeSeries tradeSeries) {
+
         createVolumeProfile(tradeSeries);
+        this.addMissingValues();
+
     }
 
     public void createVolumeProfile(TradeSeries tradeSeries) {
@@ -25,8 +28,8 @@ public class VolumeDistribution extends TreeMap<Double, Double> {
     }
 
     public void update(Trade trade) {
-        double price = trade.getPrice();
-        double size = trade.getSize();
+        double price = trade.price();
+        double size = trade.size();
 
         if(this.containsKey(price)) {
             double oldSize = this.get(price);
@@ -36,14 +39,16 @@ public class VolumeDistribution extends TreeMap<Double, Double> {
         }
     }
 
-    public void normalize() {
+    public VolumeDistribution normalize() {
+        VolumeDistribution normalizeDistribution = new VolumeDistribution();
         if (this.size() > 2) {
             double min = this.minValue();
             double max = this.maxValue();
             for (double level : this.keySet()) {
-                this.put(level, norm(this.get(level), min, max));
+                normalizeDistribution.put(level, norm(this.get(level), min, max));
             }
         }
+        return normalizeDistribution;
     }
 
     public void pdf() {
@@ -57,19 +62,30 @@ public class VolumeDistribution extends TreeMap<Double, Double> {
         return (x - min) / (max - min);
     }
 
-    public void filter() {
+    // public double evaluate(double key) {
+    //     if (this.containsKey(key)) {
+            
+    //     } else {
+    //         throw new IllegalArgumentException("Volume profile does not contain key: " + key);
+    //     }
+    // }
+
+    public VolumeDistribution smooth() {
+        VolumeDistribution smoothedDistribution = new VolumeDistribution();
         double[] oldKeys = this.keysToArray();
         double[] oldValues = this.valuesToArray();
 
-        LoessInterpolator interpolator = new LoessInterpolator(0.02, 2);
+        LoessInterpolator interpolator = new LoessInterpolator(0.08, 2);
         double[] values = interpolator.smooth(oldKeys, oldValues);
         double[] keys = this.keysToArray();
 
         for (int i = 0; i < values.length; i++) {
-            this.put(keys[i], values[i]);
+            smoothedDistribution.put(keys[i], values[i]);
         }
+        return smoothedDistribution;
     }
 
+    @Deprecated
     public double vwap() {
         double sumOfVolumeAtPice = 0;
         for (double level : this.keySet()) {
@@ -113,14 +129,32 @@ public class VolumeDistribution extends TreeMap<Double, Double> {
     }
     
     public List<Double> highVolumeNodes() {
+        VolumeDistribution volumeDistribution = this.smooth().normalize();
         List<Double> keys = new ArrayList<Double>();
 
-        double first = this.firstKey().doubleValue();
-        double last = this.lastKey().doubleValue();
+        double first = volumeDistribution.firstKey();
+        double last = volumeDistribution.lastKey();
 
-        for (double level : this.keySet()) {
+        for (double level : volumeDistribution.keySet()) {
             if (level != first && level != last) {
-                if (this.get(level) > this.get(level-0.5) && this.get(level) > this.get(level+0.5)){
+                if (volumeDistribution.get(level) > volumeDistribution.get(level-0.5) && volumeDistribution.get(level) > volumeDistribution.get(level+0.5)){
+                    keys.add(level);
+                }
+            }
+        }
+        return keys;
+    }
+
+    public List<Double> lowVolumeNodes() {
+        VolumeDistribution volumeDistribution = this.smooth().normalize();
+        List<Double> keys = new ArrayList<Double>();
+
+        double first = volumeDistribution.firstKey();
+        double last = volumeDistribution.lastKey();
+
+        for (double level : volumeDistribution.keySet()) {
+            if (level != first && level != last) {
+                if (volumeDistribution.get(level) < volumeDistribution.get(level-0.5) && volumeDistribution.get(level) < volumeDistribution.get(level+0.5)){
                     keys.add(level);
                 }
             }

@@ -1,6 +1,7 @@
 package com.metsuengine;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
@@ -11,11 +12,12 @@ import javax.swing.event.EventListenerList;
 
 public class TradeSeries implements Serializable {
 
+    DecimalFormat decimalFormat = new DecimalFormat("#.##");
     protected LinkedList<Trade> tradeSeries;
     private EventListenerList listenerList = new EventListenerList();
 
     public TradeSeries() {
-        tradeSeries = new LinkedList<Trade>();
+        this.tradeSeries = new LinkedList<Trade>();
     }
 
     public TradeSeries(ChangeListener listener) {
@@ -23,7 +25,7 @@ public class TradeSeries implements Serializable {
         this.addChangeListener(listener);
     }
 
-    public TradeSeries(LinkedList<Trade> tradeSeries) {
+    public void setSeries(LinkedList<Trade> tradeSeries) {
         this.tradeSeries = tradeSeries;
     }
 
@@ -54,10 +56,10 @@ public class TradeSeries implements Serializable {
 
     public void writeTradeToCSV(Trade trade) {
         String[] line = {
-            trade.getTime().toString(),
-            trade.getSide(),
-            String.valueOf(trade.getPrice()),
-            String.valueOf(trade.getSize())
+            trade.time().toString(),
+            trade.side(),
+            String.valueOf(trade.price()),
+            String.valueOf(trade.size())
         };
 
         CSVManager manager = new CSVManager("BTCUSD-trades.csv");
@@ -67,15 +69,16 @@ public class TradeSeries implements Serializable {
     public double vwap() {
         double sumOfVolumeAtPice = 0;
         for (Trade trade : tradeSeries) {
-            sumOfVolumeAtPice += (trade.getPrice() * trade.getSize());
+            sumOfVolumeAtPice += (trade.price() * trade.size());
         }
-        return (sumOfVolumeAtPice / getSeriesVolume());
+
+        return Double.parseDouble(decimalFormat.format(sumOfVolumeAtPice / getSeriesVolume()));
     }
 
     public double getSeriesVolume() {
         double total = 0;
         for(Trade trade : this.tradeSeries) {
-            total += trade.getSize();
+            total += trade.size();
         }
         return total;
     }
@@ -107,10 +110,10 @@ public class TradeSeries implements Serializable {
 
         for (Trade trade : tradeSeries) {
             String[] line = {
-                trade.getTime().toString(),
-                trade.getSide(),
-                String.valueOf(trade.getPrice()),
-                String.valueOf(trade.getSize())
+                trade.time().toString(),
+                trade.side(),
+                String.valueOf(trade.price()),
+                String.valueOf(trade.size())
             };
             manager.writeLine(line);
         }

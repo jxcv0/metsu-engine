@@ -12,29 +12,33 @@ public class Backtest {
 
         CSVManager oldManager = new CSVManager("BTCUSD2021-09-13.csv", previousDayTrades);
         previousDayTrades = oldManager.createFromCSV();
+
+        System.out.println(previousDayTrades.vwap());
         
-        VolumeDistribution previousDayDistribution = new VolumeDistribution(previousDayTrades, true);
-        System.out.println("prev: " + previousDayTrades.vwap());
-        System.out.println("prev: " + previousDayDistribution.vwap());
+        VolumeDistribution previousDayDistribution = new VolumeDistribution(previousDayTrades);
         
-        Chart volumeProfileChart = new Chart("13-09 Volume Distribution Chart", "Volume Distribution", previousDayDistribution);
+        Chart volumeProfileChart = new Chart("13-09 Volume Distribution Chart", "Volume Distribution", previousDayDistribution.smooth().normalize());
         volumeProfileChart.displayChart();
 
+        // Instansiate strategy
+        Strategy strategy = new Strategy(previousDayDistribution.highVolumeNodes(), previousDayDistribution.lowVolumeNodes());
+
         // creating next day series
-        TradeSeries currentTrades = new TradeSeries(new ChangeListener(){
+        final TradeSeries currentTrades = new TradeSeries();
+
+        currentTrades.addChangeListener(new ChangeListener() {
 
             @Override
             public void stateChanged(ChangeEvent e) {
                 TradeSeries source = (TradeSeries) e.getSource();
-                
+                strategy.update(source.getLastTrade());
+                strategy.setVwap(currentTrades.vwap());
             }          
         });
 
         CSVManager currentManager = new CSVManager("BTCUSD2021-09-14.csv", currentTrades);
-        currentTrades = currentManager.createFromCSV();
+        currentTrades.setSeries(currentManager.createFromCSV().getTrades());
 
-        System.out.println("curr: " + currentTrades.vwap());
-        System.out.println("curr: " + currentTrades.vwap());
-
+        System.out.println(currentTrades.vwap());
     }
 }

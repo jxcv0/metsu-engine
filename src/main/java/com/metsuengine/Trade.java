@@ -24,19 +24,19 @@ public class Trade implements Serializable{
         this.size = size;
     }
 
-    public ZonedDateTime getTime() {
+    public ZonedDateTime time() {
         return this.time;
     }
 
-    public String getSide() {
+    public String side() {
     	return this.side;
     }
 
-    public double getPrice() {
+    public double price() {
     	return this.price;
     }
 
-    public double getSize() {
+    public double size() {
     	return this.size;
     }
 }
