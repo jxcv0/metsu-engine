@@ -24,6 +24,10 @@ public class Trade implements Serializable{
         this.size = size;
     }
 
+    public double volumeByPrice() {
+        return this.price * this.size;
+    }
+
     public ZonedDateTime time() {
         return this.time;
     }

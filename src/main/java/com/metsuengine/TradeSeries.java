@@ -15,14 +15,17 @@ public class TradeSeries implements Serializable {
     DecimalFormat decimalFormat = new DecimalFormat("#.##");
     protected LinkedList<Trade> tradeSeries;
     private EventListenerList listenerList = new EventListenerList();
+    private VWAP vwap;
 
     public TradeSeries() {
         this.tradeSeries = new LinkedList<Trade>();
+        this.vwap = new VWAP();
     }
 
     public TradeSeries(ChangeListener listener) {
         tradeSeries = new LinkedList<Trade>();
         this.addChangeListener(listener);
+        this.vwap = new VWAP();
     }
 
     public void setSeries(LinkedList<Trade> tradeSeries) {
@@ -51,6 +54,7 @@ public class TradeSeries implements Serializable {
 
     public void addTrade(Trade trade) {
         this.tradeSeries.add(trade);
+        vwap.increment(trade);
         fireStateChanged();
     }
 
@@ -64,15 +68,6 @@ public class TradeSeries implements Serializable {
 
         CSVManager manager = new CSVManager("BTCUSD-trades.csv");
         manager.writeLine(line);
-    }
-
-    public double vwap() {
-        double sumOfVolumeAtPice = 0;
-        for (Trade trade : tradeSeries) {
-            sumOfVolumeAtPice += (trade.price() * trade.size());
-        }
-
-        return Double.parseDouble(decimalFormat.format(sumOfVolumeAtPice / getSeriesVolume()));
     }
 
     public double getSeriesVolume() {
@@ -99,6 +94,10 @@ public class TradeSeries implements Serializable {
                 listener.stateChanged(event);
             }
         }
+    }
+
+    public double vwap() {
+        return this.vwap.value();
     }
 
     public void writeAndPurge(ZonedDateTime date) {

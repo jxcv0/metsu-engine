@@ -12,8 +12,6 @@ public class Backtest {
 
         CSVManager oldManager = new CSVManager("BTCUSD2021-09-13.csv", previousDayTrades);
         previousDayTrades = oldManager.createFromCSV();
-
-        System.out.println(previousDayTrades.vwap());
         
         VolumeDistribution previousDayDistribution = new VolumeDistribution(previousDayTrades);
         
@@ -28,11 +26,14 @@ public class Backtest {
 
         currentTrades.addChangeListener(new ChangeListener() {
 
+            int count = 0;
+
             @Override
             public void stateChanged(ChangeEvent e) {
                 TradeSeries source = (TradeSeries) e.getSource();
-                strategy.update(source.getLastTrade());
-                strategy.setVwap(currentTrades.vwap());
+                strategy.update(source.getLastTrade(), currentTrades.vwap());
+                System.out.println(count);
+                count++;
             }          
         });
 

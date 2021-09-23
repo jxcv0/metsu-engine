@@ -62,20 +62,12 @@ public class VolumeDistribution extends TreeMap<Double, Double> {
         return (x - min) / (max - min);
     }
 
-    // public double evaluate(double key) {
-    //     if (this.containsKey(key)) {
-            
-    //     } else {
-    //         throw new IllegalArgumentException("Volume profile does not contain key: " + key);
-    //     }
-    // }
-
     public VolumeDistribution smooth() {
         VolumeDistribution smoothedDistribution = new VolumeDistribution();
         double[] oldKeys = this.keysToArray();
         double[] oldValues = this.valuesToArray();
 
-        LoessInterpolator interpolator = new LoessInterpolator(0.08, 2);
+        LoessInterpolator interpolator = new LoessInterpolator(0.05, 2);
         double[] values = interpolator.smooth(oldKeys, oldValues);
         double[] keys = this.keysToArray();
 

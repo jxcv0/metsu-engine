@@ -10,11 +10,6 @@ public class Position {
     private double takeProfit;
     private boolean filled;
 
-    public enum Side {
-        LONG,
-        SHORT
-    }
-
     public Position(int id, Side side, double entry, double stopLoss, double takeProfit) {
         // TODO make httpRequest here
         this.id = id;
@@ -37,11 +32,62 @@ public class Position {
         }
     }
 
+    public int getId() {
+        return this.id;
+    }
+
     public boolean isFilled() {
         return this.filled;
     }
 
     public void fill() {
         this.filled = true;
+    }
+
+    public double getEntry() {
+    	return this.entry;
+    }
+    public void setEntry(double entry) {
+    	this.entry = entry;
+    }
+
+    public double getExit() {
+    	return this.exit;
+    }
+    public void setExit(double exit) {
+    	this.exit = exit;
+    }
+
+    public Side getSide() {
+    	return this.side;
+    }
+    public void setSide(Side side) {
+    	this.side = side;
+    }
+
+    public double getStopLoss() {
+    	return this.stopLoss;
+    }
+    public void setStopLoss(double stopLoss) {
+    	this.stopLoss = stopLoss;
+    }
+
+    public double getTakeProfit() {
+    	return this.takeProfit;
+    }
+    public void setTakeProfit(double takeProfit) {
+    	this.takeProfit = takeProfit;
+    }
+
+    public boolean getFilled() {
+    	return this.filled;
+    }
+    public void setFilled(boolean filled) {
+    	this.filled = filled;
+    }
+
+    public enum Side {
+        LONG,
+        SHORT
     }
 }
