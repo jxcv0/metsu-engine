@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.lang.model.util.ElementScanner14;
+
 import com.metsuengine.Position.Side;
 
 public class Strategy {
@@ -37,7 +39,8 @@ public class Strategy {
     public void initializePositions() {
         for (double hvn : highVolumeNodes) {
             if (lastTrade.price() > hvn) {
-                positions.add(new Position(count.incrementAndGet(),
+                positions.add(new Position(
+                    count.incrementAndGet(),
                     Side.SHORT, 
                     hvn, 
                     findlvnAbove(hvn),
@@ -67,6 +70,11 @@ public class Strategy {
     }
 
     private double checkTakeProfit(double takeProfit, Side side) {
-        
+        // TODO finsh this
+        if (side == Side.LONG) {
+            return Math.min(takeProfit, this.vwap);
+        } else {
+            return Math.max(takeProfit, this.vwap);
+        }
     }
 }
