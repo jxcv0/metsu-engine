@@ -19,27 +19,24 @@ public class Backtest {
         volumeProfileChart.displayChart();
 
         // Instansiate strategy
-        Strategy strategy = new Strategy(previousDayDistribution.highVolumeNodes(), previousDayDistribution.lowVolumeNodes());
+        Strategy strategy = new Strategy(
+                previousDayDistribution.highVolumeNodes(), 
+                previousDayDistribution.lowVolumeNodes());
 
         // creating next day series
         final TradeSeries currentTrades = new TradeSeries();
 
         currentTrades.addChangeListener(new ChangeListener() {
 
-            int count = 0;
-
             @Override
             public void stateChanged(ChangeEvent e) {
                 TradeSeries source = (TradeSeries) e.getSource();
                 strategy.update(source.getLastTrade(), currentTrades.vwap());
-                System.out.println(count);
-                count++;
             }          
         });
 
         CSVManager currentManager = new CSVManager("BTCUSD2021-09-14.csv", currentTrades);
         currentTrades.setSeries(currentManager.createFromCSV().getTrades());
 
-        System.out.println(currentTrades.vwap());
     }
 }

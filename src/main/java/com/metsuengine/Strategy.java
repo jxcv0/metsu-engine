@@ -5,8 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.lang.model.util.ElementScanner14;
-
 import com.metsuengine.Position.Side;
 
 public class Strategy {
@@ -25,10 +23,12 @@ public class Strategy {
 
     public void update(Trade trade, double vwap) {
         this.lastTrade = trade;
-        // check if position is fillable
-        // if filled check if closable
-        // if closeable calculate returns and add to list, check if reversable
+        //initialize positions (if lastTrade is not null)
+        // check if a position is fillable
+        // if fillable, fill check if closable
+        // if closeable calculate returns and save pnl, check if reversable
         // if reversable make new position
+        System.out.println(lastTrade.price());
 
     }
 
@@ -36,7 +36,7 @@ public class Strategy {
         this.vwap = vwap;
     }
 
-    public void initializePositions() {
+    public void initializePositions() { 
         for (double hvn : highVolumeNodes) {
             if (lastTrade.price() > hvn) {
                 positions.add(new Position(
@@ -44,9 +44,17 @@ public class Strategy {
                     Side.SHORT, 
                     hvn, 
                     findlvnAbove(hvn),
-                    findlvnBelow(hvn)));
+                    checkTakeProfit(findlvnBelow(hvn), Side.SHORT)));
+            } else {
+                positions.add(new Position(
+                    count.incrementAndGet(),
+                    Side.LONG, 
+                    hvn, 
+                    findlvnAbove(hvn),
+                    checkTakeProfit(findlvnBelow(hvn), Side.LONG)));
             }
         }
+        printPositions();
     }
 
     private double findlvnAbove(double hvn){
@@ -69,12 +77,17 @@ public class Strategy {
         return Collections.min(lowVolumeNodesBelow);
     }
 
-    private double checkTakeProfit(double takeProfit, Side side) {
-        // TODO finsh this
+    private double checkTakeProfit(double num, Side side) {
         if (side == Side.LONG) {
-            return Math.min(takeProfit, this.vwap);
+            return Math.min(num, this.vwap);
         } else {
-            return Math.max(takeProfit, this.vwap);
+            return Math.max(num, this.vwap);
+        }
+    }
+
+    public void printPositions() {
+        for (Position position : positions) {
+            System.out.println(position.getEntry());
         }
     }
 }
