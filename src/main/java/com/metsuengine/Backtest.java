@@ -8,7 +8,7 @@ public class Backtest {
     public static void main(String[] args) {
         
         // Create distribution of previous day 
-        TradeSeries previousDayTrades = new TradeSeries();
+        final TradeSeries previousDayTrades = new TradeSeries();
 
         CSVManager oldManager = new CSVManager("BTCUSD2021-09-11.csv", previousDayTrades);
         oldManager.createFromCSV();
