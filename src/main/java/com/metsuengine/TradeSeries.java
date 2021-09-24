@@ -5,6 +5,7 @@ import java.text.DecimalFormat;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -31,6 +32,12 @@ public class TradeSeries implements Serializable {
 
     public void setSeries(LinkedList<Trade> tradeSeries) {
         this.tradeSeries = tradeSeries;
+    }
+
+    public void addByIteration(List<Trade> trades) {
+        for (Trade trade : trades) {
+           this.addTrade(trade);
+        }
     }
 
     public LinkedList<Trade> getTrades() {

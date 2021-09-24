@@ -58,20 +58,19 @@ public class CSVManager {
     private TradeSeries buildAndSort(List<String[]> lines) {
         LinkedList<Trade> trades = new LinkedList<Trade>();
 
-        if (tradeSeries != null) {
-            for (String[] line : lines) {
-                this.tradeSeries.addTrade(new Trade(
-                    epochtoZonedDateTime(Double.parseDouble(line[0])),
-                    line[2],
-                    Double.parseDouble(line[4]),
-                    Double.parseDouble(line[3])));
-            }
-
-            TradeSeries tradeSeries = new TradeSeries();
-            tradeSeries.setSeries(trades);
+        for (String[] line : lines) {
+            trades.add(new Trade(
+                epochtoZonedDateTime(Double.parseDouble(line[0])),
+                line[2],
+                Double.parseDouble(line[4]),
+                Double.parseDouble(line[3])));
         }
 
         Collections.reverse(trades);
+
+        for (Trade trade : trades) {
+            this.tradeSeries.addTrade(trade);
+        }
 
         return tradeSeries;
     }

@@ -39,7 +39,7 @@ public class Backtest {
         });
 
         CSVManager currentManager = new CSVManager("BTCUSD2021-09-12.csv", currentTrades);
-        currentTrades.setSeries(currentManager.createFromCSV().getTrades());
+        currentTrades.addByIteration(currentManager.createFromCSV().getTrades());
         System.out.println("2: " + currentTrades.getLastTrade().time());
     }
 }
