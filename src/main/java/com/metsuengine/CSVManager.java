@@ -9,6 +9,8 @@ import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.opencsv.CSVReader;
@@ -53,15 +55,23 @@ public class CSVManager {
         return null;
     }
 
-    // TODO first
     private TradeSeries buildAndSort(List<String[]> lines) {
-        for (String[] line : lines) {
-            this.tradeSeries.addTrade(new Trade(
-                epochtoZonedDateTime(Double.parseDouble(line[0])),
-                line[2],
-                Double.parseDouble(line[4]),
-                Double.parseDouble(line[3])));
+        LinkedList<Trade> trades = new LinkedList<Trade>();
+
+        if (tradeSeries != null) {
+            for (String[] line : lines) {
+                this.tradeSeries.addTrade(new Trade(
+                    epochtoZonedDateTime(Double.parseDouble(line[0])),
+                    line[2],
+                    Double.parseDouble(line[4]),
+                    Double.parseDouble(line[3])));
+            }
+
+            TradeSeries tradeSeries = new TradeSeries();
+            tradeSeries.setSeries(trades);
         }
+
+        Collections.reverse(trades);
 
         return tradeSeries;
     }
