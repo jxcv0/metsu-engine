@@ -45,14 +45,16 @@ public class CSVManager {
             List<String[]> lines = reader.readAll();
             reader.close();
 
-            return build(lines);
+            return buildAndSort(lines);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    private TradeSeries build(List<String[]> lines) {
+    // TODO first
+    private TradeSeries buildAndSort(List<String[]> lines) {
         for (String[] line : lines) {
             this.tradeSeries.addTrade(new Trade(
                 epochtoZonedDateTime(Double.parseDouble(line[0])),
