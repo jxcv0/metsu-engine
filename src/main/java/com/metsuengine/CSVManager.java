@@ -19,7 +19,7 @@ import com.opencsv.CSVWriter;
 public class CSVManager {
 
     private Path path = null;
-    TradeSeries tradeSeries = new TradeSeries();
+    private TradeSeries tradeSeries = new TradeSeries();
 
     public CSVManager(String file) {
         this.path = Paths.get(file);
@@ -40,22 +40,21 @@ public class CSVManager {
         }
     }
 
-    public TradeSeries createFromCSV() {
+    public void createFromCSV() {
         try {
             InputStream stream = this.getClass().getClassLoader().getResourceAsStream(this.path.toString());
             CSVReader reader = new CSVReader(new InputStreamReader(stream, Charset.forName("UTF-8")));
             List<String[]> lines = reader.readAll();
             reader.close();
 
-            return buildAndSort(lines);
+            buildAndSort(lines);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
     }
 
-    private TradeSeries buildAndSort(List<String[]> lines) {
+    private void buildAndSort(List<String[]> lines) {
         LinkedList<Trade> trades = new LinkedList<Trade>();
 
         for (String[] line : lines) {
@@ -68,11 +67,10 @@ public class CSVManager {
 
         Collections.reverse(trades);
 
+        // concurrency mod here!
         for (Trade trade : trades) {
             this.tradeSeries.addTrade(trade);
         }
-
-        return tradeSeries;
     }
 
     private ZonedDateTime epochtoZonedDateTime(Double epochSeconds) {

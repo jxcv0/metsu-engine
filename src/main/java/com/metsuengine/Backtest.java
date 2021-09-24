@@ -11,35 +11,34 @@ public class Backtest {
         TradeSeries previousDayTrades = new TradeSeries();
 
         CSVManager oldManager = new CSVManager("BTCUSD2021-09-11.csv", previousDayTrades);
-        previousDayTrades = oldManager.createFromCSV();
-        System.out.println("1: " + previousDayTrades.getLastTrade().time());
+        oldManager.createFromCSV();
+        System.out.println(previousDayTrades.getLastTrade().time());
 
         
         VolumeDistribution previousDayDistribution = new VolumeDistribution(previousDayTrades);
         
-        Chart volumeProfileChart = new Chart("13-09 Volume Distribution Chart", "Volume Distribution", previousDayDistribution.smooth().normalize());
-        volumeProfileChart.displayChart();
+        // Chart volumeProfileChart = new Chart("13-09 Volume Distribution Chart", "Volume Distribution", previousDayDistribution.smooth().normalize());
+        // volumeProfileChart.displayChart();
+
+        // creating next day series
+        final TradeSeries currentTrades = new TradeSeries();
 
         // Instansiate strategy
         Strategy strategy = new Strategy(
                 previousDayDistribution.highVolumeNodes(), 
-                previousDayDistribution.lowVolumeNodes());
-
-        // creating next day series
-        final TradeSeries currentTrades = new TradeSeries();
+                previousDayDistribution.lowVolumeNodes(),
+                currentTrades.vwap());
 
         currentTrades.addChangeListener(new ChangeListener() {
 
             @Override
             public void stateChanged(ChangeEvent e) {
                 TradeSeries source = (TradeSeries) e.getSource();
-                strategy.update(source.getLastTrade(), currentTrades.vwap());
-                System.out.println(source.getLastTrade().time());
+                strategy.update(source.getLastTrade());
             }          
         });
 
         CSVManager currentManager = new CSVManager("BTCUSD2021-09-12.csv", currentTrades);
-        currentTrades.addByIteration(currentManager.createFromCSV().getTrades());
-        System.out.println("2: " + currentTrades.getLastTrade().time());
+        currentManager.createFromCSV();
     }
 }

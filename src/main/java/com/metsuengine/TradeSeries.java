@@ -17,7 +17,7 @@ public class TradeSeries implements Serializable {
     private LinkedList<Trade> tradeSeries;
     private Trade lastTrade;
     private EventListenerList listenerList = new EventListenerList();
-    private VWAP vwap;
+    private final VWAP vwap;
 
     public TradeSeries() {
         this.tradeSeries = new LinkedList<Trade>();
@@ -101,8 +101,8 @@ public class TradeSeries implements Serializable {
         }
     }
 
-    public double vwap() {
-        return this.vwap.value();
+    public VWAP vwap() {
+        return this.vwap;
     }
 
     public void writeAndPurge(ZonedDateTime date) {

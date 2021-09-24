@@ -14,17 +14,18 @@ public class Strategy {
     private List<Double> highVolumeNodes;
     private List<Double> lowVolumeNodes;
     private Trade lastTrade;
-    private double vwap;
+    private VWAP vwap;
     private boolean initialized;
 
-    public Strategy(List<Double> highVolumeNodes, List<Double> lowVolumeNodes) {
+    public Strategy(List<Double> highVolumeNodes, List<Double> lowVolumeNodes, VWAP vwap) {
         this.highVolumeNodes = highVolumeNodes;
         this.lowVolumeNodes = lowVolumeNodes;
         this.positions = new ArrayList<Position>();
+        this.vwap = vwap;
         this.initialized = false;
     }
 
-    public void update(Trade lastTrade, double vwap) {
+    public void update(Trade lastTrade) {
         this.lastTrade = lastTrade;
         if (this.lastTrade != null) {
             initializePositions();
@@ -35,10 +36,6 @@ public class Strategy {
         // if fillable, fill check if closable
         // if closeable calculate returns and save pnl, check if reversable
         // if reversable make new position
-    }
-
-    public void setVWAP(double vwap) {
-        this.vwap = vwap;
     }
 
     public void initializePositions() { 
@@ -101,9 +98,9 @@ public class Strategy {
 
     private double checkTakeProfit(double num, Side side) {
         if (side == Side.LONG) {
-            return Math.min(num, this.vwap);
+            return Math.min(num, vwap.value());
         } else {
-            return Math.max(num, this.vwap);
+            return Math.max(num, vwap.value());
         }
     }
 
