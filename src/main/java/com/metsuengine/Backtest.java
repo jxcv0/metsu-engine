@@ -12,13 +12,11 @@ public class Backtest {
 
         CSVManager oldManager = new CSVManager("BTCUSD2021-09-11.csv", previousDayTrades);
         oldManager.createFromCSV();
-        System.out.println(previousDayTrades.getLastTrade().time());
-
         
         VolumeDistribution previousDayDistribution = new VolumeDistribution(previousDayTrades);
         
-        // Chart volumeProfileChart = new Chart("13-09 Volume Distribution Chart", "Volume Distribution", previousDayDistribution.smooth().normalize());
-        // volumeProfileChart.displayChart();
+        Chart volumeProfileChart = new Chart("13-09 Volume Distribution Chart", "Volume Distribution", previousDayDistribution.smooth().normalize());
+        volumeProfileChart.displayChart();
 
         // creating next day series
         final TradeSeries currentTrades = new TradeSeries();

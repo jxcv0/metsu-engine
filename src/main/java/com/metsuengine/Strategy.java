@@ -45,15 +45,15 @@ public class Strategy {
                     count.incrementAndGet(),
                     Side.LONG, 
                     hvn, 
-                    findlvnAbove(hvn),
-                    checkTakeProfit(findlvnBelow(hvn), Side.SHORT)));
+                    findlvnBelow(hvn),
+                    checkTakeProfit(hvn, findlvnAbove(hvn), Side.SHORT)));
             } else {
                 positions.add(new Position(
                     count.incrementAndGet(),
                     Side.SHORT, 
                     hvn, 
                     findlvnAbove(hvn),
-                    checkTakeProfit(findlvnBelow(hvn), Side.LONG)));
+                    checkTakeProfit(hvn, findlvnBelow(hvn), Side.LONG)));
             }
         }
         if (this.initialized == false) {
@@ -70,7 +70,7 @@ public class Strategy {
         }
 
         if (lowVolumeNodesAbove.size() < 1) {
-            return round(hvn * 1.05);
+            return round(hvn * 1.02);
         } else {
             return Collections.min(lowVolumeNodesAbove);
         }
@@ -85,7 +85,7 @@ public class Strategy {
         }
 
         if (lowVolumeNodesBelow.size() < 1) {
-            return round(hvn * 0.95);
+            return round(hvn * 0.98);
         } else {
             return Collections.max(lowVolumeNodesBelow);
 
@@ -96,16 +96,18 @@ public class Strategy {
         return Math.round(num * 2) / 2.0;
     }
 
-    private double checkTakeProfit(double num, Side side) {
-        if (side == Side.LONG) {
-            return Math.min(num, vwap.value());
+    private double checkTakeProfit(double hvn, double lvn, Side side) {
+        if (side == Side.LONG && vwap.value() > hvn) {
+            return Math.min(lvn, vwap.value());
+        } else if (side == Side.SHORT && vwap.value() < hvn) {
+            return Math.max(lvn, vwap.value());
         } else {
-            return Math.max(num, vwap.value());
+            return hvn;
         }
     }
 
     public void printPositions() {
-        System.out.println("Time: " + this.lastTrade.time() + "\tLTP: " + this.lastTrade.price() + "\tVWAP: " + this.vwap);
+        System.out.println("Time: " + this.lastTrade.time() + "\tLTP: " + this.lastTrade.price() + "\tVWAP: " + this.vwap.value());
         for (Position position : positions) {
             System.out.println(
                 "Side: " + position.getSide() +
