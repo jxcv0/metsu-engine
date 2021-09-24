@@ -64,8 +64,8 @@ public class CSVManager {
         return tradeSeries;
     }
 
-    private ZonedDateTime epochtoZonedDateTime(Double epochMilliDouble) {
-        long epochMilli = Double.valueOf(epochMilliDouble).longValue();
+    private ZonedDateTime epochtoZonedDateTime(Double epochSeconds) {
+        long epochMilli = Double.valueOf(epochSeconds * 1000).longValue();
         Instant instant = Instant.ofEpochMilli(epochMilli);
         return ZonedDateTime.ofInstant(instant, ZoneOffset.UTC);
     }

@@ -13,7 +13,8 @@ import javax.swing.event.EventListenerList;
 public class TradeSeries implements Serializable {
 
     DecimalFormat decimalFormat = new DecimalFormat("#.##");
-    protected LinkedList<Trade> tradeSeries;
+    private LinkedList<Trade> tradeSeries;
+    private Trade lastTrade;
     private EventListenerList listenerList = new EventListenerList();
     private VWAP vwap;
 
@@ -41,11 +42,7 @@ public class TradeSeries implements Serializable {
     } 
 
     public Trade getLastTrade() {
-        if (!this.tradeSeries.isEmpty()) {
-            return this.tradeSeries.getLast();
-        } else {
-            return null;
-        }
+        return this.lastTrade;
     }
 
     public double getSize() {
@@ -53,6 +50,7 @@ public class TradeSeries implements Serializable {
     }
 
     public void addTrade(Trade trade) {
+        this.lastTrade = trade;
         this.tradeSeries.add(trade);
         vwap.increment(trade);
         fireStateChanged();

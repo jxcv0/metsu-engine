@@ -4,12 +4,15 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.geom.RectangularShape;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeMap;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
@@ -23,6 +26,7 @@ public class Chart extends ApplicationFrame {
 
     private JFreeChart chart;
     private XYSeries series = new XYSeries("");
+    private List<Position> positions = new ArrayList<Position>();
 
     @SafeVarargs
     public Chart(String applicationTitle, String title, TreeMap<Double, Double>... maps) {
@@ -49,6 +53,16 @@ public class Chart extends ApplicationFrame {
         XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
         xySeriesCollection.addSeries(series);
         return xySeriesCollection;
+    }
+
+    public void setPositions(List<Position> positions) {
+        this.positions = positions;
+    }
+
+    public ValueMarker plotPosition(Position position) {
+        ValueMarker marker = new ValueMarker(position.getEntry());
+        marker.setPaint(Color.black);
+        return marker;
     }
 
     public void displayChart() {

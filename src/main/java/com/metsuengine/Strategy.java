@@ -15,21 +15,26 @@ public class Strategy {
     private List<Double> lowVolumeNodes;
     private Trade lastTrade;
     private double vwap;
+    private boolean initialized;
 
     public Strategy(List<Double> highVolumeNodes, List<Double> lowVolumeNodes) {
         this.highVolumeNodes = highVolumeNodes;
         this.lowVolumeNodes = lowVolumeNodes;
+        this.positions = new ArrayList<Position>();
+        this.initialized = false;
     }
 
-    public void update(Trade trade, double vwap) {
-        this.lastTrade = trade;
-        //initialize positions (if lastTrade is not null)
+    public void update(Trade lastTrade, double vwap) {
+        this.lastTrade = lastTrade;
+        if (this.lastTrade != null) {
+            initializePositions();
+            this.initialized = true; 
+        }
+        // check TPs
         // check if a position is fillable
         // if fillable, fill check if closable
         // if closeable calculate returns and save pnl, check if reversable
         // if reversable make new position
-        System.out.println(lastTrade.price());
-
     }
 
     public void setVWAP(double vwap) {
@@ -41,20 +46,22 @@ public class Strategy {
             if (lastTrade.price() > hvn) {
                 positions.add(new Position(
                     count.incrementAndGet(),
-                    Side.SHORT, 
+                    Side.LONG, 
                     hvn, 
                     findlvnAbove(hvn),
                     checkTakeProfit(findlvnBelow(hvn), Side.SHORT)));
             } else {
                 positions.add(new Position(
                     count.incrementAndGet(),
-                    Side.LONG, 
+                    Side.SHORT, 
                     hvn, 
                     findlvnAbove(hvn),
                     checkTakeProfit(findlvnBelow(hvn), Side.LONG)));
             }
         }
-        printPositions();
+        if (this.initialized == false) {
+            printPositions();
+        }
     }
 
     private double findlvnAbove(double hvn){
@@ -64,7 +71,12 @@ public class Strategy {
                 lowVolumeNodesAbove.add(lvn);
             }
         }
-        return Collections.min(lowVolumeNodesAbove);
+
+        if (lowVolumeNodesAbove.size() < 1) {
+            return round(hvn * 1.05);
+        } else {
+            return Collections.min(lowVolumeNodesAbove);
+        }
     }
 
     private double findlvnBelow(double hvn){
@@ -74,7 +86,17 @@ public class Strategy {
                 lowVolumeNodesBelow.add(lvn);
             }
         }
-        return Collections.min(lowVolumeNodesBelow);
+
+        if (lowVolumeNodesBelow.size() < 1) {
+            return round(hvn * 0.95);
+        } else {
+            return Collections.max(lowVolumeNodesBelow);
+
+        }
+    }
+
+    private double round(double num) {
+        return Math.round(num * 2) / 2.0;
     }
 
     private double checkTakeProfit(double num, Side side) {
@@ -86,8 +108,17 @@ public class Strategy {
     }
 
     public void printPositions() {
+        System.out.println("Time: " + this.lastTrade.time() + "\tLTP: " + this.lastTrade.price() + "\tVWAP: " + this.vwap);
         for (Position position : positions) {
-            System.out.println(position.getEntry());
+            System.out.println(
+                "Side: " + position.getSide() +
+                "  Entry: " + position.getEntry() +
+                "  SL: " + position.getStopLoss() +
+                "  TP: " + position.getTakeProfit());
         }
+    }
+
+    public List<Position> getPositions() {
+        return this.positions;
     }
 }
