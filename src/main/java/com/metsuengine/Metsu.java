@@ -19,7 +19,6 @@ public class Metsu {
             @Override
             public void stateChanged(ChangeEvent e) {
                 System.out.println(
-                    // TODO update VP + Strat here
                     tradeSeries.getLastTrade().time() + " " +
                     tradeSeries.getLastTrade().side() + " " +
                     tradeSeries.getLastTrade().price() + " " +

@@ -9,19 +9,23 @@ public class Position {
     private double stopLoss;
     private double takeProfit;
     private boolean filled;
+    private boolean closed;
 
     public Position(int id, Side side, double entry, double stopLoss, double takeProfit) {
-        // TODO make httpRequest here
+        // TODO make httpRequest here?
         this.id = id;
         this.side = side;
         this.entry = entry;
         this.exit = entry;
         this.stopLoss = stopLoss;
         this.takeProfit = takeProfit;
+        this.filled = false;
+        this.closed = false;
     }
 
-    public void close(double exitPrice) {
-        this.exit = exitPrice;
+    public void close(double exit) {
+        this.exit = exit;
+        this.closed = true;
     }
 
     public double pnl() {
@@ -34,10 +38,6 @@ public class Position {
 
     public int getId() {
         return this.id;
-    }
-
-    public boolean isFilled() {
-        return this.filled;
     }
 
     public void fill() {
@@ -53,9 +53,6 @@ public class Position {
 
     public double getExit() {
     	return this.exit;
-    }
-    public void setExit(double exit) {
-    	this.exit = exit;
     }
 
     public Side getSide() {
@@ -79,11 +76,12 @@ public class Position {
     	this.takeProfit = takeProfit;
     }
 
-    public boolean getFilled() {
-    	return this.filled;
+    public boolean isFilled() {
+        return this.filled;
     }
-    public void setFilled(boolean filled) {
-    	this.filled = filled;
+
+    public boolean isClosed() {
+        return this.closed;
     }
 
     public enum Side {

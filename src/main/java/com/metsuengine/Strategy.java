@@ -31,10 +31,11 @@ public class Strategy {
             initializePositions();
             this.initialized = true; 
         }
-        // check TPs
-        // check if a position is fillable
-        // if fillable, fill check if closable
-        // if closeable calculate returns and save pnl, check if reversable
+
+        if (this.initialized == true) {
+            managePositions();
+        }
+        // check if reversable
         // if reversable make new position
     }
 
@@ -58,6 +59,28 @@ public class Strategy {
         }
         if (this.initialized == false) {
             printPositions();
+        }
+    }
+
+    public void managePositions() {
+        for (Position position : positions) {
+            if (!position.isClosed() && position.isFilled()) {
+                checkCloseable(position);
+                checkTakeProfit(position.getEntry(), position.getTakeProfit(), position.getSide());
+            } else {
+                // TODO ltp needs to be >=1 tick past entry price for fill
+                if (lastTrade.price() == position.getEntry()) {
+                    position.fill();
+                }
+            }
+        }
+    }
+
+    public void checkCloseable(Position position) {
+        if (lastTrade.price() == position.getStopLoss() || lastTrade.price() == position.getTakeProfit()) {
+            position.close(lastTrade.price());
+            System.out.println("Position closed at " + lastTrade.price());
+            System.out.println("PnL: " + position.pnl());
         }
     }
 
@@ -96,13 +119,13 @@ public class Strategy {
         return Math.round(num * 2) / 2.0;
     }
 
-    private double checkTakeProfit(double hvn, double lvn, Side side) {
-        if (side == Side.LONG && vwap.value() > hvn) {
-            return Math.min(lvn, vwap.value());
-        } else if (side == Side.SHORT && vwap.value() < hvn) {
-            return Math.max(lvn, vwap.value());
+    private double checkTakeProfit(double entry, double exit, Side side) {
+        if (side == Side.LONG && vwap.value() > entry) {
+            return Math.min(exit, vwap.value());
+        } else if (side == Side.SHORT && vwap.value() < entry) {
+            return Math.max(exit, vwap.value());
         } else {
-            return hvn;
+            return exit;
         }
     }
 
@@ -115,6 +138,14 @@ public class Strategy {
                 "  SL: " + position.getStopLoss() +
                 "  TP: " + position.getTakeProfit());
         }
+    }
+
+    public void returns() {
+        double totalPnL = 0;
+        for (Position position : positions) {
+            totalPnL += position.pnl();
+        }
+        System.out.println(totalPnL);
     }
 
     public List<Position> getPositions() {
