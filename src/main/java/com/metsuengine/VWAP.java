@@ -19,8 +19,16 @@ public class VWAP {
         return numerator/denominator;
     }
 
+    public double rounded() {
+        return round(this.value());
+    }
+
     public void reset() {
         this.numerator = 0;
         this.denominator = 0;
+    }
+
+    private double round(double num) {
+        return Math.round(num * 2) / 2.0;
     }
 }

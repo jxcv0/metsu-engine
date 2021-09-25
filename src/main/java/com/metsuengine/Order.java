@@ -5,6 +5,7 @@ public class Order {
     private Side side;
     private double price;
     private int qty;
+    private boolean filled;
     
     public enum Side {
         LONG,
@@ -15,6 +16,7 @@ public class Order {
         this.side = side;
         this.price = price;
         this.qty = qty;
+        this.filled = false;
     }
 
     public Side side() {
@@ -25,7 +27,17 @@ public class Order {
         return this.price;
     }
 
+    public void amendPrice(double price) {
+        if (!this.isFilled()) {
+            this.price = price;
+        }
+    }
+
     public int qty() {
         return this.qty;
+    }
+
+    public boolean isFilled() {
+        return this.filled;
     }
 }

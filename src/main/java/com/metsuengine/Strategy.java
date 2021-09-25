@@ -5,7 +5,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Strategy {
 
-    private static final AtomicInteger count = new AtomicInteger(0); 
     private List<Double> highVolumeNodes;
     private List<Double> lowVolumeNodes;
     private Trade lastTrade;
@@ -19,9 +18,5 @@ public class Strategy {
 
     public void update(Trade lastTrade) {
         this.lastTrade = lastTrade;
-    }
-
-    private double round(double num) {
-        return Math.round(num * 2) / 2.0;
     }
 }
