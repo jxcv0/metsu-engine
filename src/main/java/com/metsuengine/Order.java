@@ -16,4 +16,16 @@ public class Order {
         this.price = price;
         this.qty = qty;
     }
+
+    public Side side() {
+        return this.side;
+    }
+
+    public double price() {
+        return this.price;
+    }
+
+    public int qty() {
+        return this.qty;
+    }
 }
