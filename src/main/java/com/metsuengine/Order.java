@@ -6,17 +6,30 @@ public class Order {
     private double price;
     private int qty;
     private boolean filled;
+    private String id;
+    private OrderType type;
     
     public enum Side {
-        LONG,
-        SHORT
+        Buy,
+        Sell
     }
 
-    public Order(Side side, double price, int qty) {
+    // /v2/private/stop-order/create
+    // /v2/private/order/create
+    public enum OrderType {
+        Market,
+        Limit,
+        Conditional
+    }
+
+    public Order(OrderType type, Side side, double price, int qty) {
+        // TODO create http request here
+        this.type = type;
         this.side = side;
         this.price = price;
         this.qty = qty;
         this.filled = false;
+        this.id = null; // TODO id generation
     }
 
     public Side side() {
@@ -37,7 +50,15 @@ public class Order {
         return this.qty;
     }
 
+    public String id() {
+        return this.id;
+    }
+
     public boolean isFilled() {
         return this.filled;
+    }
+    
+    public OrderType type() {
+        return this.type;
     }
 }
