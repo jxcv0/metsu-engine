@@ -4,7 +4,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public class Backtest {
-
     public static void main(String[] args) {
         
         // Create distribution of previous day 
