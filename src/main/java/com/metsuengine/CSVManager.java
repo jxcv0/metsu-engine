@@ -67,7 +67,6 @@ public class CSVManager {
 
         Collections.reverse(trades);
 
-        // concurrency mod here!
         for (Trade trade : trades) {
             this.tradeSeries.addTrade(trade);
         }
