@@ -23,7 +23,7 @@ public class Order {
     }
 
     public Order(OrderType type, Side side, double price, int qty) {
-        // TODO create http request here
+        // TODO create initial http request here
         this.type = type;
         this.side = side;
         this.price = price;
@@ -40,12 +40,6 @@ public class Order {
         return this.price;
     }
 
-    public void amendPrice(double price) {
-        if (!this.isFilled()) {
-            this.price = price;
-        }
-    }
-
     public int qty() {
         return this.qty;
     }
@@ -60,5 +54,12 @@ public class Order {
     
     public OrderType type() {
         return this.type;
+    }
+
+    public void amendPrice(double price) {
+        if (!this.isFilled()) {
+            this.price = price;
+        }
+        // make replace request here /v2/private/order/replace
     }
 }
