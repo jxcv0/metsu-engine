@@ -38,5 +38,6 @@ public class Backtest {
 
         CSVManager currentManager = new CSVManager("BTCUSD2021-09-12.csv", currentTrades);
         currentManager.createFromCSV();
+        
     }
 }
