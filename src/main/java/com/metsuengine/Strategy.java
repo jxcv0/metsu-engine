@@ -45,11 +45,11 @@ public class Strategy {
                     lowVolumeNodeBelow(highVolumeNode)));
             } else {
                 orders.add(new Order(
-                Side.Sell,
-                1,
-                highVolumeNode,
-                lowVolumeNodeAbove(highVolumeNode),
-                lowVolumeNodeBelow(highVolumeNode)));
+                    Side.Sell,
+                    1,
+                    highVolumeNode,
+                    lowVolumeNodeBelow(highVolumeNode),
+                    lowVolumeNodeAbove(highVolumeNode)));
             }
         }
         this.listPositions();
@@ -65,9 +65,8 @@ public class Strategy {
         }
 
         if (above.size() < 1) {
-            return round(highVolumeNode * 1.01);
+            return round(highVolumeNode + 100);
         } else {
-            System.out.println(Collections.min(above));
             return Collections.min(above);
         }
     }
@@ -81,9 +80,8 @@ public class Strategy {
         }
 
         if (below.size() < 1) {
-            return round(highVolumeNode * 0.99);
+            return round(highVolumeNode - 100);
         } else {
-            System.out.println(Collections.max(below));
             return Collections.max(below);
         }
     }

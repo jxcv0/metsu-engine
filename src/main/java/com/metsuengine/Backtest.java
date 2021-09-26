@@ -9,7 +9,7 @@ public class Backtest {
         // Create distribution of previous day 
         final TradeSeries previousDayTrades = new TradeSeries();
 
-        CSVManager oldManager = new CSVManager("BTCUSD2021-09-11.csv", previousDayTrades);
+        CSVManager oldManager = new CSVManager("BTCUSD2021-09-13.csv", previousDayTrades);
         oldManager.createFromCSV();
         
         VolumeDistribution previousDayDistribution = new VolumeDistribution(previousDayTrades);
@@ -34,7 +34,7 @@ public class Backtest {
             }          
         });
 
-        CSVManager currentManager = new CSVManager("BTCUSD2021-09-12.csv", currentTrades);
+        CSVManager currentManager = new CSVManager("BTCUSD2021-09-14.csv", currentTrades);
         currentManager.createFromCSV();
     }
 }

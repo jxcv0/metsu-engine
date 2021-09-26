@@ -33,29 +33,51 @@ public class Order {
     }
 
     public void evaluate(double price) {
-        // TODO chnage this to check for greater than less than fills instead
-        // will need another if loop to duplicate this switch
-        switch (this.state) {
-            case Passive:
-                if (price == this.entryPrice) {
-                    this.state = State.Filled;
-                    System.out.println("Filled at " + price);
-                }
-                break;
+        if (this.side.equals(Side.Buy)) {
+            switch (this.state) {
+                case Passive:
+                    if (price > this.entryPrice) {
+                        this.state = State.Filled;
+                        System.out.println("Filled " + this.side + " at " + this.entryPrice);
+                    }
+                    break;
+                
+                case Filled:
+                    if (price <= this.stopLoss) {
+                        this.exitPrice = price;
+                        this.state = State.Closed;
+                        System.out.println("Closed at SL: " + price);
+                    } else if (price <= this.takeProfit) {
+                        this.exitPrice = price;
+                        this.state = State.Closed;
+                        System.out.println("Closed at TP: " + price);
+                    }
+                default:
+                    break;
+            }
+        } else {
+            switch (this.state) {
+                case Passive:
+                    if (price > this.entryPrice) {
+                        this.state = State.Filled;
+                        System.out.println("Filled " + this.side + " at " + this.entryPrice);
+                    }
+                    break;
+                
+                case Filled:
+                    if (price >= this.stopLoss) {
+                        this.exitPrice = price;
+                        this.state = State.Closed;
+                        System.out.println("Closed at SL: " + price);
+                    } else if (price <= this.takeProfit) {
+                        this.exitPrice = price;
+                        this.state = State.Closed;
+                        System.out.println("Closed at TP: " + price);
+                    }
             
-            case Filled:
-                if (price == this.stopLoss) {
-                    this.exitPrice = price;
-                    this.state = State.Closed;
-                    System.out.println("Closed at SL: " + price);
-                } else if (price == this.takeProfit) {
-                    this.exitPrice = price;
-                    this.state = State.Closed;
-                    System.out.println("Closed at TP: " + price);
-                }
-        
-            default:
-                break;
+                default:
+                    break;
+            }
         }
     }
 
