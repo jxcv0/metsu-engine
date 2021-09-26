@@ -14,8 +14,8 @@ public class Backtest {
         
         VolumeDistribution previousDayDistribution = new VolumeDistribution(previousDayTrades);
         
-        // Chart volumeProfileChart = new Chart("13-09 Volume Distribution Chart", "Volume Distribution", previousDayDistribution.smooth().normalize());
-        // volumeProfileChart.displayChart();
+        Chart volumeProfileChart = new Chart("13-09 Volume Distribution Chart", "Volume Distribution", previousDayDistribution.smooth().normalize());
+        volumeProfileChart.displayChart();
 
         // creating next day series
         final TradeSeries currentTrades = new TradeSeries();
