@@ -31,25 +31,24 @@ public class Order {
     }
 
     public void evaluate(double price) {
-        switch (this.state) {
-            case Passive:
-                if (price == this.entryPrice) {
-                    this.state = State.Filled;
-                }
-                break;
-            
-            case Filled:
-                if (price == this.stopLoss) {
-                    this.exitPrice = price;
-                    this.state = State.Closed;
-                } else if (price == this.takeProfit) {
-                    this.exitPrice = price;
-                    this.state = State.Closed;
-                }
-        
-            default:
-                break;
-        }
+        if (this.state.equals(State.Passive) && price == this.entryPrice) {
+
+            this.state = State.Filled;
+            System.out.println("Filled at " + price);
+
+        } else if (this.state.equals(State.Filled)) {
+            if (price == this.stopLoss) {
+                this.exitPrice = price;
+                this.state = State.Closed;
+                System.out.println("Closed at SL: " + price);
+
+            } else if (price == this.takeProfit) {
+                this.exitPrice = price;
+                this.state = State.Closed;
+                System.out.println("Closed at TP: " + price);
+                
+            }
+        }    
     }
 
     public Side side() {

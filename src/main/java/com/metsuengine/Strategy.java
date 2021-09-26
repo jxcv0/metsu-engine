@@ -28,7 +28,10 @@ public class Strategy {
             this.init();
             this.initialized = true;
         }
-        orders.forEach(order -> order.evaluate(lastTrade.price()));        
+            
+        for (Order order : orders) {
+            order.evaluate(this.lastTrade.price());
+        }
     }
 
     public void init() {
@@ -88,7 +91,7 @@ public class Strategy {
 
     public void listPositions() {
         for (Order order : orders) {
-            
+            System.out.println(order.state() + " " + order.side() + " " + order.entryPrice());            
         }
     }
 
