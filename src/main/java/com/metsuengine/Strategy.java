@@ -10,50 +10,46 @@ public class Strategy {
 
     private List<Double> highVolumeNodes;
     private List<Double> lowVolumeNodes;
-    private List<OrderSet> orders;
+    private List<Order> orders;
     private Trade lastTrade;
-    private VWAP vwap;
     private boolean initialized;
 
-    public Strategy(List<Double> highVolumeNodes, List<Double> lowVolumeNodes, VWAP vwap) {
+    public Strategy(List<Double> highVolumeNodes, List<Double> lowVolumeNodes) {
         this.highVolumeNodes = highVolumeNodes;
         this.lowVolumeNodes = lowVolumeNodes;
-        this.orders = new ArrayList<OrderSet>();
-        this.vwap = vwap;
+        this.orders = new ArrayList<Order>();
         this.initialized = false;
     }
 
     public void update(Trade lastTrade) {
         this.lastTrade = lastTrade;
+
         if (!this.initialized) {
             this.init();
             this.initialized = true;
         }
+        orders.forEach(order -> order.evaluate(lastTrade.price()));        
     }
 
     public void init() {
         for (double highVolumeNode : highVolumeNodes) {
             if (lastTrade.price() > highVolumeNode) {
-                orders.add(new OrderSet(
+                orders.add(new Order(
                     Side.Buy,
                     1,
                     highVolumeNode,
                     lowVolumeNodeAbove(highVolumeNode),
                     lowVolumeNodeBelow(highVolumeNode)));
             } else {
-                orders.add(new OrderSet(
-                    Side.Sell,
-                    1,
-                    highVolumeNode,
-                    lowVolumeNodeBelow(highVolumeNode),
-                    lowVolumeNodeAbove(highVolumeNode)));
+                orders.add(new Order(
+                Side.Sell,
+                1,
+                highVolumeNode,
+                    lowVolumeNodeAbove(highVolumeNode),
+                    lowVolumeNodeBelow(highVolumeNode)));
             }
         }
         this.listPositions();
-    }
-
-    private void compare(double num) {
-        // compare to vwap
     }
 
     private double lowVolumeNodeAbove(double highVolumeNode) {
@@ -65,7 +61,7 @@ public class Strategy {
         }
 
         if (above.size() > 1) {
-            return highVolumeNode * 1.01;
+            return round(highVolumeNode * 1.01);
         } else {
             return Collections.min(above);
         }
@@ -80,7 +76,7 @@ public class Strategy {
         }
 
         if (below.size() < 1) {
-            return highVolumeNode * 0.99;
+            return round(highVolumeNode * 0.99);
         } else {
             return Collections.max(below);
         }
@@ -91,8 +87,12 @@ public class Strategy {
     }
 
     public void listPositions() {
-        for (OrderSet orderSet : orders) {
-            System.out.println(orderSet.entry().side().toString() + " " + orderSet.entry().price());           
+        for (Order order : orders) {
+            
         }
+    }
+
+    private double round(double num) {
+        return Math.round(num * 2) / 2.0;
     }
 }

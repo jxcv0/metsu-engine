@@ -3,63 +3,80 @@ package com.metsuengine;
 public class Order {
 
     private Side side;
-    private double price;
+    private double entryPrice;
+    private double exitPrice;
+    private double takeProfit;
+    private double stopLoss;
     private int qty;
-    private boolean filled;
+    private State state;
     private String id;
-    private OrderType type;
     
     public enum Side {
         Buy,
         Sell
     }
 
-    // /v2/private/stop-order/create
-    // /v2/private/order/create
-    public enum OrderType {
-        Market,
-        Limit,
-        Conditional
+    public enum State {
+        Passive,
+        Filled,
+        Closed
     }
 
-    public Order(OrderType type, Side side, double price, int qty) {
-        // TODO create initial http request here
-        this.type = type;
+    public Order(Side side, int qty, double price, double takeProfit, double stopLoss) {
+        // TODO create http request here
         this.side = side;
-        this.price = price;
+        this.entryPrice = price;
         this.qty = qty;
-        this.filled = false;
-        this.id = null; // TODO id generation
+        this.state = State.Passive;
+    }
+
+    public void evaluate(double price) {
+        switch (this.state) {
+            case Passive:
+                if (price == this.entryPrice) {
+                    this.state = State.Filled;
+                }
+                break;
+            
+            case Filled:
+                if (price == this.stopLoss) {
+                    this.exitPrice = price;
+                    this.state = State.Closed;
+                } else if (price == this.takeProfit) {
+                    this.exitPrice = price;
+                    this.state = State.Closed;
+                }
+        
+            default:
+                break;
+        }
     }
 
     public Side side() {
         return this.side;
     }
 
-    public double price() {
-        return this.price;
-    }
-
     public int qty() {
         return this.qty;
+    }
+
+    public double entryPrice() {
+        return this.entryPrice;
+    }
+
+    public double takeProfit() {
+        return this.takeProfit;
+    }
+
+    public double stopLoss() {
+        return this.stopLoss;
     }
 
     public String id() {
         return this.id;
     }
 
-    public boolean isFilled() {
-        return this.filled;
-    }
-    
-    public OrderType type() {
-        return this.type;
-    }
-
-    public void amendPrice(double price) {
-        if (!this.isFilled()) {
-            this.price = price;
-        }
-        // make replace request here /v2/private/order/replace
+    public State state() {
+        return this.state;
     }
 }

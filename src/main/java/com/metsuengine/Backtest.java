@@ -23,8 +23,7 @@ public class Backtest {
         // initializing strategy
         Strategy strategy = new Strategy(
                 previousDayDistribution.highVolumeNodes(), 
-                previousDayDistribution.lowVolumeNodes(),
-                currentTrades.vwap());
+                previousDayDistribution.lowVolumeNodes());
 
         currentTrades.addChangeListener(new ChangeListener() {
 
