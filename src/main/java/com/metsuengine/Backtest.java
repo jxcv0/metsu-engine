@@ -6,10 +6,15 @@ import javax.swing.event.ChangeListener;
 public class Backtest {
     public static void main(String[] args) {
         
-        // Create distribution of previous day 
+        int start = 11;
+        int end = 14;
+        final EquityModel equityModel = new EquityModel(100.0);
+        
+        for (int i = start; i <= end; i++) {
+            // Create distribution of previous day 
         final TradeSeries previousDayTrades = new TradeSeries();
 
-        CSVManager oldManager = new CSVManager("BTCUSD2021-09-13.csv", previousDayTrades);
+        CSVManager oldManager = new CSVManager("BTCUSD2021-09-" + i + ".csv", previousDayTrades);
         oldManager.createFromCSV();
         
         VolumeDistribution previousDayDistribution = new VolumeDistribution(previousDayTrades);
@@ -23,7 +28,8 @@ public class Backtest {
         // initializing strategy
         Strategy strategy = new Strategy(
                 previousDayDistribution.highVolumeNodes(), 
-                previousDayDistribution.lowVolumeNodes());
+                previousDayDistribution.lowVolumeNodes(),
+                equityModel);
 
         currentTrades.addChangeListener(new ChangeListener() {
 
@@ -34,7 +40,11 @@ public class Backtest {
             }          
         });
 
-        CSVManager currentManager = new CSVManager("BTCUSD2021-09-14.csv", currentTrades);
+        CSVManager currentManager = new CSVManager("BTCUSD2021-09-" + i + ".csv", currentTrades);
         currentManager.createFromCSV();
+        strategy.updateEquity();            
+        }
+
+        equityModel.printValue();
     }
 }

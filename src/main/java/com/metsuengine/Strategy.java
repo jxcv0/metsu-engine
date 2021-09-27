@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.metsuengine.Order.Side;
+import com.metsuengine.Order.State;
 
 public class Strategy {
 
@@ -13,12 +14,14 @@ public class Strategy {
     private List<Order> orders;
     private Trade lastTrade;
     private boolean initialized;
+    private EquityModel equityModel;
 
-    public Strategy(List<Double> highVolumeNodes, List<Double> lowVolumeNodes) {
+    public Strategy(List<Double> highVolumeNodes, List<Double> lowVolumeNodes, EquityModel equityModel) {
         this.highVolumeNodes = highVolumeNodes;
         this.lowVolumeNodes = lowVolumeNodes;
         this.orders = new ArrayList<Order>();
         this.initialized = false;
+        this.equityModel = equityModel;
     }
 
     public void update(Trade lastTrade) {
@@ -99,5 +102,13 @@ public class Strategy {
 
     private double round(double num) {
         return Math.round(num * 2) / 2.0;
+    }
+
+    public void updateEquity() {
+        for (Order order : orders) {
+            if (order.state().equals(State.Closed)) {
+                equityModel.mult(order.pnlMultiplier());
+            }
+        }
     }
 }
