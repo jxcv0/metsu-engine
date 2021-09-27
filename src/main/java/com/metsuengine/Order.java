@@ -46,11 +46,11 @@ public class Order {
                     if (price <= this.stopLoss) {
                         this.exitPrice = price;
                         this.state = State.Closed;
-                        System.out.println("Closed at SL: " + price);
-                    } else if (price <= this.takeProfit) {
+                        System.out.println("Closed at SL: " + price + " " + this.pnlMultiplier());
+                    } else if (price == this.takeProfit) {
                         this.exitPrice = price;
                         this.state = State.Closed;
-                        System.out.println("Closed at TP: " + price);
+                        System.out.println("Closed at TP: " + price + " " + this.pnlMultiplier());
                     }
                 default:
                     break;
@@ -68,11 +68,11 @@ public class Order {
                     if (price >= this.stopLoss) {
                         this.exitPrice = price;
                         this.state = State.Closed;
-                        System.out.println("Closed at SL: " + price);
+                        System.out.println("Closed at SL: " + price + " " + this.pnlMultiplier());
                     } else if (price <= this.takeProfit) {
                         this.exitPrice = price;
                         this.state = State.Closed;
-                        System.out.println("Closed at TP: " + price);
+                        System.out.println("Closed at TP: " + price + " " + this.pnlMultiplier());
                     }
             
                 default:
@@ -111,9 +111,9 @@ public class Order {
 
     public double pnlMultiplier() {
         if (this.side == Side.Buy) {
-            return 1-(exitPrice/entryPrice);
+            return (exitPrice/entryPrice);
         } else {
-            return 1-(entryPrice/exitPrice);
+            return (entryPrice/exitPrice);
         }
     }
 }
