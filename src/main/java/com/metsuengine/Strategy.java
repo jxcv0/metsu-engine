@@ -31,7 +31,7 @@ public class Strategy {
             this.init();
             this.initialized = true;
         }
-            
+
         for (Order order : orders) {
             order.evaluate(this.lastTrade.price());
         }
@@ -55,7 +55,6 @@ public class Strategy {
                     lowVolumeNodeAbove(highVolumeNode)));
             }
         }
-        this.listPositions();
     }
 
     private double lowVolumeNodeAbove(double highVolumeNode) {
@@ -96,7 +95,7 @@ public class Strategy {
                 order.side() + " " + 
                 order.entryPrice() + " " + 
                 order.stopLoss() + " " +
-                order.takeProfit());            
+                order.takeProfit());
         }
     }
 

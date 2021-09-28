@@ -38,7 +38,7 @@ public class Order {
                 case Passive:
                     if (price > this.entryPrice) {
                         this.state = State.Filled;
-                        System.out.println("Filled " + this.side + " at " + this.entryPrice);
+                        // System.out.println("Filled " + this.side + " at " + this.entryPrice);
                     }
                     break;
                 
@@ -46,11 +46,11 @@ public class Order {
                     if (price <= this.stopLoss) {
                         this.exitPrice = price;
                         this.state = State.Closed;
-                        System.out.println("Closed at SL: " + price + " " + this.pnlMultiplier());
+                        // System.out.println("Closed at SL: " + price + " " + this.pnlMultiplier());
                     } else if (price == this.takeProfit) {
                         this.exitPrice = price;
                         this.state = State.Closed;
-                        System.out.println("Closed at TP: " + price + " " + this.pnlMultiplier());
+                        // System.out.println("Closed at TP: " + price + " " + this.pnlMultiplier());
                     }
                 default:
                     break;
@@ -60,7 +60,7 @@ public class Order {
                 case Passive:
                     if (price > this.entryPrice) {
                         this.state = State.Filled;
-                        System.out.println("Filled " + this.side + " at " + this.entryPrice);
+                        // System.out.println("Filled " + this.side + " at " + this.entryPrice);
                     }
                     break;
                 
@@ -68,11 +68,11 @@ public class Order {
                     if (price >= this.stopLoss) {
                         this.exitPrice = price;
                         this.state = State.Closed;
-                        System.out.println("Closed at SL: " + price + " " + this.pnlMultiplier());
+                        // System.out.println("Closed at SL: " + price + " " + this.pnlMultiplier());
                     } else if (price <= this.takeProfit) {
                         this.exitPrice = price;
                         this.state = State.Closed;
-                        System.out.println("Closed at TP: " + price + " " + this.pnlMultiplier());
+                        // System.out.println("Closed at TP: " + price + " " + this.pnlMultiplier());
                     }
             
                 default:
@@ -111,9 +111,9 @@ public class Order {
 
     public double pnlMultiplier() {
         if (this.side == Side.Buy) {
-            return (exitPrice/entryPrice);
+            return (exitPrice/entryPrice) * .995;
         } else {
-            return (entryPrice/exitPrice);
+            return (entryPrice/exitPrice) * .995;
         }
     }
 }

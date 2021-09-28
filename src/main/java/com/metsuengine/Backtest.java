@@ -5,27 +5,48 @@ import javax.swing.event.ChangeListener;
 
 public class Backtest {
     public static void main(String[] args) {
+
+        double runningCurve = 1;
+
+        runningCurve *= run("BTCUSD2021-8-22.csv", "BTCUSD2021-8-23.csv");
+        runningCurve *= run("BTCUSD2021-8-23.csv", "BTCUSD2021-8-24.csv");
+        runningCurve *= run("BTCUSD2021-8-24.csv", "BTCUSD2021-8-25.csv");
+        runningCurve *= run("BTCUSD2021-8-25.csv", "BTCUSD2021-8-26.csv");
+        runningCurve *= run("BTCUSD2021-8-26.csv", "BTCUSD2021-8-27.csv");
+        runningCurve *= run("BTCUSD2021-8-27.csv", "BTCUSD2021-8-28.csv");
+        runningCurve *= run("BTCUSD2021-8-28.csv", "BTCUSD2021-8-29.csv");
+        runningCurve *= run("BTCUSD2021-8-29.csv", "BTCUSD2021-8-30.csv");
+        runningCurve *= run("BTCUSD2021-8-30.csv", "BTCUSD2021-8-31.csv");
+        runningCurve *= run("BTCUSD2021-8-31.csv", "BTCUSD2021-9-1.csv");
+        runningCurve *= run("BTCUSD2021-9-1.csv", "BTCUSD2021-9-2.csv");
         
-        int start = 11;
-        int end = 14;
-        final EquityModel equityModel = new EquityModel(100.0);
+        runningCurve *= run("BTCUSD2021-9-4.csv", "BTCUSD2021-9-5.csv");
+        runningCurve *= run("BTCUSD2021-9-5.csv", "BTCUSD2021-9-6.csv");
+        runningCurve *= run("BTCUSD2021-9-6.csv", "BTCUSD2021-9-7.csv");
+        runningCurve *= run("BTCUSD2021-9-7.csv", "BTCUSD2021-9-8.csv");
+        runningCurve *= run("BTCUSD2021-9-8.csv", "BTCUSD2021-9-9.csv");
+        runningCurve *= run("BTCUSD2021-9-9.csv", "BTCUSD2021-9-10.csv");
+        runningCurve *= run("BTCUSD2021-9-10.csv", "BTCUSD2021-9-11.csv");
+        runningCurve *= run("BTCUSD2021-9-11.csv", "BTCUSD2021-9-12.csv");
+        runningCurve *= run("BTCUSD2021-9-12.csv", "BTCUSD2021-9-13.csv");
+        runningCurve *= run("BTCUSD2021-9-13.csv", "BTCUSD2021-9-14.csv");
         
-        for (int i = start; i <= end; i++) {
-            // Create distribution of previous day 
+        System.out.println(runningCurve);
+    }
+
+    public static double run(String previousDay, String currentDay) {
+        
+        final EquityModel equityModel = new EquityModel(1.0);
+               
         final TradeSeries previousDayTrades = new TradeSeries();
 
-        CSVManager oldManager = new CSVManager("BTCUSD2021-09-" + i + ".csv", previousDayTrades);
+        CSVManager oldManager = new CSVManager(previousDay, previousDayTrades);
         oldManager.createFromCSV();
         
         VolumeDistribution previousDayDistribution = new VolumeDistribution(previousDayTrades);
         
-        // Chart volumeProfileChart = new Chart("13-09 Volume Distribution Chart", "Volume Distribution", previousDayDistribution.smooth().normalize());
-        // volumeProfileChart.displayChart();
-
-        // creating next day series
         final TradeSeries currentTrades = new TradeSeries();
 
-        // initializing strategy
         Strategy strategy = new Strategy(
                 previousDayDistribution.highVolumeNodes(), 
                 previousDayDistribution.lowVolumeNodes(),
@@ -40,11 +61,10 @@ public class Backtest {
             }          
         });
 
-        CSVManager currentManager = new CSVManager("BTCUSD2021-09-" + i + ".csv", currentTrades);
+        CSVManager currentManager = new CSVManager(currentDay, currentTrades);
         currentManager.createFromCSV();
-        strategy.updateEquity();            
-        }
+        strategy.updateEquity();
 
-        equityModel.printValue();
+        return equityModel.equity();
     }
 }
