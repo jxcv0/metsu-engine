@@ -3,6 +3,8 @@ package com.metsuengine;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+// TODO needs to be far more robust
+// redo :()
 public class Backtest {
     public static void main(String[] args) {
 
