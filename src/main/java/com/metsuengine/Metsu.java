@@ -30,7 +30,7 @@ public class Metsu {
         try {
             Thread.sleep(120000);
             VolumeDistribution volumeDistribution = new VolumeDistribution(tradeSeries);
-            Chart chart = new Chart("Chart", "Volume Distribution", volumeDistribution);
+            DistributionChart chart = new DistributionChart("Chart", "Volume Distribution", volumeDistribution);
             chart.displayChart();
         } catch (Exception e) {
             e.printStackTrace();
