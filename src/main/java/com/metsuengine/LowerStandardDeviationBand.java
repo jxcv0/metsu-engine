@@ -2,14 +2,18 @@ package com.metsuengine;
 
 public class LowerStandardDeviationBand extends MovingAverage {
 
-    public LowerStandardDeviationBand(int window) {
+    private double multiple;
+
+    public LowerStandardDeviationBand(int window, double multiple) {
         super(window);
+        this.multiple = multiple;
     }
     
     @Override
     public void addTrade(Trade trade) {
         descriptiveStatistics.addValue(trade.price());
-        double value = descriptiveStatistics.getMean() - descriptiveStatistics.getStandardDeviation();
+        double value = descriptiveStatistics.getMean()
+            - (descriptiveStatistics.getStandardDeviation() * multiple);
         timeseries.put(trade.time(), value);
     }
 }

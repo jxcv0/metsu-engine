@@ -20,9 +20,9 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.github.haifengl</groupId>
-      <artifactId>smile-core</artifactId>
-      <version>2.6.0</version>
+      <groupId>io.deephaven</groupId>
+      <artifactId>SuanShu</artifactId>
+      <version>0.1.0</version>
     </dependency>
     <dependency>
         <groupId>org.apache.commons</groupId>
