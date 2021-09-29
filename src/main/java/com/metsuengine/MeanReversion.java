@@ -5,11 +5,12 @@ import javax.swing.event.ChangeListener;
 
 public class MeanReversion {
     public static void main(String[] args) {
+
+        // TODO position class that tracks 
         
-        final VWAP vwap = new VWAP();
-        final MovingAverage movingAverage = new MovingAverage(20000);
-        final UpperStandardDeviationBand lowerBand = new UpperStandardDeviationBand(20000, 2);
-        final LowerStandardDeviationBand upperBand = new LowerStandardDeviationBand(20000, 2);
+        final MovingAverage movingAverage = new MovingAverage(10000);
+        final StandardDeviationBandsPair oneStdDev = new StandardDeviationBandsPair(10000, 1);
+        final StandardDeviationBandsPair twoStdDev = new StandardDeviationBandsPair(10000, 2);
 
         final TradeSeries tradeSeries = new TradeSeries(new ChangeListener() {
 
@@ -19,10 +20,9 @@ public class MeanReversion {
                 Trade trade = source.getLastTrade();
                 System.out.println(trade.time());
 
-                vwap.incrementAndStore(trade);
                 movingAverage.addTrade(trade);
-                lowerBand.addTrade(trade);
-                upperBand.addTrade(trade);
+                oneStdDev.addTrade(trade);
+                twoStdDev.addTrade(trade);
             }
             
         });
@@ -31,11 +31,13 @@ public class MeanReversion {
         csvManager.createFromCSV();
 
         TimeSeriesChart chart = new TimeSeriesChart("BTCUSD2021-9-14");
-        chart.buildDataset(vwap.getTimeSeries());
-        chart.buildDataset(movingAverage.getTimeSeries());
-        chart.buildDataset(upperBand.getTimeSeries());
-        chart.buildDataset(lowerBand.getTimeSeries());
-        chart.buildDataset(tradeSeries);
+
+        chart.buildDataset("Moving Average", movingAverage.getTimeSeries());
+        chart.buildDataset("One Standard Deviation", oneStdDev.getUpperBandTimeSeries());
+        chart.buildDataset("One Standard Deviation", oneStdDev.getLowerBandTimeSeries());
+        chart.buildDataset("Two Standard Deviations", twoStdDev.getUpperBandTimeSeries());
+        chart.buildDataset("Two Standard Deviations", twoStdDev.getLowerBandTimeSeries());
+        chart.buildDataset("Trade Series", tradeSeries);
         chart.displayChart();
     }
 }

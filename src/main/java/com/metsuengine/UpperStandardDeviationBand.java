@@ -13,7 +13,7 @@ public class UpperStandardDeviationBand extends MovingAverage {
     public void addTrade(Trade trade) {
         descriptiveStatistics.addValue(trade.price());
         double value = descriptiveStatistics.getMean()
-            + (descriptiveStatistics.getStandardDeviation() + multiple);
+            + (descriptiveStatistics.getStandardDeviation() * multiple);
         timeseries.put(trade.time(), value);
     }
 }

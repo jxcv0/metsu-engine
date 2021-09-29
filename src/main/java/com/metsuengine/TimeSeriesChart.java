@@ -30,16 +30,16 @@ public class TimeSeriesChart extends ApplicationFrame {
         setContentPane(panel);
     }
 
-    public void buildDataset(TradeSeries tradeSeries) {
-        TimeSeries timeSeries = new TimeSeries(this.getTitle());
+    public void buildDataset(String title, TradeSeries tradeSeries) {
+        TimeSeries timeSeries = new TimeSeries(title);
         for (Trade trade : tradeSeries) {
             timeSeries.addOrUpdate(new Millisecond(Date.from(trade.time().toInstant())), trade.price());
         }
         dataset.addSeries(timeSeries);
     }
 
-    public void buildDataset(HashMap<ZonedDateTime, Double> indicator) {
-        TimeSeries timeSeries = new TimeSeries(this.getTitle());
+    public void buildDataset(String title, HashMap<ZonedDateTime, Double> indicator) {
+        TimeSeries timeSeries = new TimeSeries(title);
         for (ZonedDateTime time : indicator.keySet()) {
             timeSeries.addOrUpdate(new Millisecond(Date.from(time.toInstant())), indicator.get(time));
         }
