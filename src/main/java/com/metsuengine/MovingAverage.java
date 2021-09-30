@@ -7,6 +7,7 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 public class MovingAverage {
     
+    protected double value;
     protected HashMap<ZonedDateTime, Double> timeseries;
     protected DescriptiveStatistics descriptiveStatistics;
 
@@ -17,10 +18,20 @@ public class MovingAverage {
 
     public void addTrade(Trade trade) {
         descriptiveStatistics.addValue(trade.price());
-        timeseries.put(trade.time(), descriptiveStatistics.getMean());
+        value = descriptiveStatistics.getMean();
+    }
+
+    public void addTradeToTimeSeries(Trade trade) {
+        descriptiveStatistics.addValue(trade.price());
+        value = descriptiveStatistics.getMean();
+        timeseries.put(trade.time(), value);
     }
 
     public HashMap<ZonedDateTime, Double> getTimeSeries() {
         return timeseries;
+    }
+
+    public double value() {
+        return value;
     }
 }

@@ -5,8 +5,6 @@ import javax.swing.event.ChangeListener;
 
 public class MeanReversion {
     public static void main(String[] args) {
-
-        // TODO position class that tracks 
         
         final MovingAverage movingAverage = new MovingAverage(10000);
         final StandardDeviationBandsPair oneStdDev = new StandardDeviationBandsPair(10000, 1);
@@ -20,9 +18,9 @@ public class MeanReversion {
                 Trade trade = source.getLastTrade();
                 System.out.println(trade.time());
 
-                movingAverage.addTrade(trade);
-                oneStdDev.addTrade(trade);
-                twoStdDev.addTrade(trade);
+                movingAverage.addTradeToTimeSeries(trade);
+                oneStdDev.addTradeToTimeSeries(trade);
+                twoStdDev.addTradeToTimeSeries(trade);
             }
             
         });

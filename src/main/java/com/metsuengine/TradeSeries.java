@@ -12,7 +12,6 @@ import javax.swing.event.EventListenerList;
 public class TradeSeries extends LinkedList<Trade> {
 
     DecimalFormat decimalFormat = new DecimalFormat("#.##");
-    private Trade lastTrade;
     private EventListenerList listenerList = new EventListenerList();
     private final VWAP vwap;
 
@@ -31,10 +30,14 @@ public class TradeSeries extends LinkedList<Trade> {
 
     public Trade getTrade(int index){
         return this.get(index);
-    } 
+    }
+
+    public double lastTradedPrice() {
+        return this.getLast().price();
+    }
 
     public Trade getLastTrade() {
-        return this.lastTrade;
+        return this.getLast();
     }
 
     public double getSize() {
@@ -42,7 +45,6 @@ public class TradeSeries extends LinkedList<Trade> {
     }
 
     public void addTrade(Trade trade) {
-        this.lastTrade = trade;
         this.add(trade);
         vwap.increment(trade);
         fireStateChanged();

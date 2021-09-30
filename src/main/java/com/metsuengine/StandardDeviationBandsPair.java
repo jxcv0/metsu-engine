@@ -18,6 +18,11 @@ public class StandardDeviationBandsPair {
         lowerband.addTrade(trade);
     }
 
+    public void addTradeToTimeSeries(Trade trade) {
+        upperBand.addTradeToTimeSeries(trade);
+        lowerband.addTradeToTimeSeries(trade);
+    }
+
     public HashMap<ZonedDateTime, Double> getUpperBandTimeSeries() {
         return upperBand.getTimeSeries();
     }

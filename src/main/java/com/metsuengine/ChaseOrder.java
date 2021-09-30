@@ -3,13 +3,17 @@ package com.metsuengine;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChaseOrder extends Order implements Runnable {
+public class ChaseOrder extends Order implements Runnable{
 
-    private double target;
+    private double lastTradedPrice;
+    private double currentEntry;
+    private double targetEntry;
+    private double targetExit;
     private List<Order> orders;
     
-    public ChaseOrder(double target, int qty) {
+    public ChaseOrder(double lastTradedPrice, double target, int qty) {
         super(target,  qty);
+        this.lastTradedPrice = lastTradedPrice;
         this.orders = new ArrayList<Order>();
     }
 
@@ -19,11 +23,16 @@ public class ChaseOrder extends Order implements Runnable {
 
     @Override
     public void run() {
-        while(!filled) {
-            if(price != target) {
-                updatePrice(target);
-                // TODO break if filled
+        while (true) {
+            if (lastTradedPrice < targetEntry) {
+                if (currentEntry != targetEntry) {
+
+                    // https
+                    this.currentEntry = targetEntry;
+                }
+            } else if (lastTradedPrice > targetEntry) {
+                // uuuuugh
             }
-        } 
+        }
     }
 }
