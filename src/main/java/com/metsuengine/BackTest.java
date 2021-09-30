@@ -4,7 +4,7 @@ import java.time.ZonedDateTime;
 import java.util.HashMap;
 
 public class BackTest {
-
+    
     private double previousTradedPrice;
     private double previousValue;
     private MovingAverage movingAverage;
