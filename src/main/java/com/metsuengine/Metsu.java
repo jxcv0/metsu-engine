@@ -1,8 +1,5 @@
 package com.metsuengine;
 
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 public class Metsu {
     public static void main( String[] args ) {
 
@@ -14,18 +11,7 @@ public class Metsu {
         Thread websocketThread = new Thread(new BybitWebSocketClient(bybitWebSocket, "trade.BTCUSD"));
         websocketThread.start();
 
-        tradeSeries.addChangeListener(new ChangeListener(){
-
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                System.out.println(
-                    tradeSeries.getLastTrade().time() + " " +
-                    tradeSeries.getLastTrade().side() + " " +
-                    tradeSeries.getLastTrade().price() + " " +
-                    tradeSeries.getLastTrade().size() + " " +
-                    tradeSeries.getSize());
-            }            
-        });
+        // Something missing here
 
         try {
             Thread.sleep(120000);

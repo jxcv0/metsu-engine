@@ -13,10 +13,7 @@ public class MeanReversion {
         LOGGER.info("Creating Indicators");
 
         final MovingAverage movingAverage = new MovingAverage(10000);
-        final StandardDeviationBandsPair oneStdDev = new StandardDeviationBandsPair(10000, 1);
-        final StandardDeviationBandsPair twoStdDev = new StandardDeviationBandsPair(10000, 2);
-
-        BackTest backTest = new BackTest(movingAverage);
+        final StandardDeviationBandsPair stdDev = new StandardDeviationBandsPair(10000, 2);
 
         LOGGER.info("Creating TradeSeries");
 
@@ -28,9 +25,7 @@ public class MeanReversion {
                 Trade trade = source.getLastTrade();
 
                 movingAverage.addTradeToTimeSeries(trade);
-                oneStdDev.addTradeToTimeSeries(trade);
-                twoStdDev.addTradeToTimeSeries(trade);
-                backTest.checkCrossedDown(trade);
+                stdDev.addTradeToTimeSeries(trade);
             }
             
         });
@@ -44,12 +39,9 @@ public class MeanReversion {
         LOGGER.info("Building Datasets");
 
         chart.buildDataset("Moving Average", movingAverage.getTimeSeries());
-        chart.buildDataset("One Standard Deviation", oneStdDev.getUpperBandTimeSeries());
-        chart.buildDataset("One Standard Deviation", oneStdDev.getLowerBandTimeSeries());
-        chart.buildDataset("Two Standard Deviations", twoStdDev.getUpperBandTimeSeries());
-        chart.buildDataset("Two Standard Deviations", twoStdDev.getLowerBandTimeSeries());
+        chart.buildDataset("One Standard Deviation", stdDev.getUpperBandTimeSeries());
+        chart.buildDataset("One Standard Deviation", stdDev.getLowerBandTimeSeries());
         chart.buildDataset("Trade Series", tradeSeries);
-        chart.setMarkers(backTest.crossUp());
 
         LOGGER.info("Displaying Chart");
 
