@@ -25,7 +25,7 @@ public class Strategies {
         return new BaseStrategy(entryRule, exitRule);
     }
     
-    public static Strategy vwapDeviationLong(BarSeries barSeries, int window) {
+    public static Strategy standardDeviationLong(BarSeries barSeries, int window) {
 
         ClosePriceIndicator close = new ClosePriceIndicator(barSeries);
         SMAIndicator sma = new SMAIndicator(close, window);
@@ -39,7 +39,7 @@ public class Strategies {
         return new BaseStrategy(entryRule, exitRule);
     }
 
-    public static Strategy vwapDeviationShort(BarSeries barSeries, int window) {
+    public static Strategy standardDeviationShort(BarSeries barSeries, int window) {
 
         ClosePriceIndicator close = new ClosePriceIndicator(barSeries);
         SMAIndicator sma = new SMAIndicator(close, window);

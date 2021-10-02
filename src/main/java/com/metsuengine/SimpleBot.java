@@ -9,7 +9,7 @@ import org.ta4j.core.Strategy;
 import org.ta4j.core.Trade;
 import org.ta4j.core.TradingRecord;
 import org.ta4j.core.analysis.criteria.MaximumDrawdownCriterion;
-import org.ta4j.core.analysis.criteria.pnl.ProfitLossPercentageCriterion;
+import org.ta4j.core.analysis.criteria.pnl.GrossReturnCriterion;
 import org.ta4j.core.indicators.bollinger.BollingerBandsLowerIndicator;
 import org.ta4j.core.indicators.bollinger.BollingerBandsMiddleIndicator;
 import org.ta4j.core.indicators.bollinger.BollingerBandsUpperIndicator;
@@ -33,10 +33,10 @@ public class SimpleBot {
 
         int window = 200;
 
-        Strategy longStrategy = Strategies.vwapDeviationLong(barSeries, window);
+        Strategy longStrategy = Strategies.standardDeviationLong(barSeries, window);
         TradingRecord longTradingRecord = barSeriesManager.run(longStrategy, Trade.TradeType.BUY);
 
-        Strategy shortStrategy = Strategies.vwapDeviationShort(barSeries, window);
+        Strategy shortStrategy = Strategies.standardDeviationShort(barSeries, window);
         TradingRecord shortTradingRecord = barSeriesManager.run(shortStrategy, Trade.TradeType.SELL);
         
         LOGGER.info("Creating chart indicators");
@@ -58,17 +58,17 @@ public class SimpleBot {
         chart.displayChart();
 
         AnalysisCriterion drawdownCriterion = new MaximumDrawdownCriterion();
-        AnalysisCriterion pnl = new ProfitLossPercentageCriterion();
+        AnalysisCriterion returnCriterion = new GrossReturnCriterion();
 
         double longDrawdown = drawdownCriterion.calculate(barSeries, longTradingRecord).doubleValue();
-        double longPnl = pnl.calculate(barSeries, longTradingRecord).doubleValue();
+        double longReturn = returnCriterion.calculate(barSeries, longTradingRecord).doubleValue();
         double shortDrawdown = drawdownCriterion.calculate(barSeries, shortTradingRecord).doubleValue();
-        double shortPnl = pnl.calculate(barSeries, shortTradingRecord).doubleValue();
+        double shortReturn = returnCriterion.calculate(barSeries, shortTradingRecord).doubleValue();
         
         System.out.println("Long Drawdown: " + longDrawdown * 100);
-        System.out.println("Long Return: " + longPnl * 100);
+        System.out.println("Long Return: " + longReturn * 100);
         System.out.println("Short Drawdown: " + shortDrawdown * 100);
-        System.out.println("Short Return: " + shortPnl * 100);
+        System.out.println("Short Return: " + shortReturn * 100);
     }
 
     public static void createKlineCSV(int from, int to) {
