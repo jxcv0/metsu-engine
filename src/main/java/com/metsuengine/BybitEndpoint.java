@@ -20,11 +20,11 @@ public class BybitEndpoint {
         this.symbol = symbol;
     }
 
-    public TradeSeries getTradingRecords(int limit) {
+    public TickSeries getTradingRecords(int limit) {
 
         String url = "https://api.bybit.com/v2/public/trading-records?symbol=" + this.symbol + "&limit=" + limit;
 
-        TradeSeries tradeSeries = new TradeSeries();
+        TickSeries tradeSeries = new TickSeries();
 
         try {
             Request request = new Request.Builder()
@@ -43,7 +43,7 @@ public class BybitEndpoint {
                 JsonNode results = jsonNode.findValue("result");
 
                 for (JsonNode result : results) {
-                    tradeSeries.addTrade(new Trade(
+                    tradeSeries.addTrade(new Tick(
                         ZonedDateTime.parse(result.findValue("time").asText()),
                         result.findValue("side").asText(),
                         result.findValue("price").asDouble(),

@@ -5,9 +5,9 @@ import java.util.HashMap;
 
 public interface Indicator {
 
-    void addTrade(Trade trade);
+    void addTick(Tick tick);
 
-    public void addTradeToTimeSeries(Trade trade);
+    public void addTickToTimeSeries(Tick tick);
 
     HashMap<ZonedDateTime, Double> getTimeSeries();
 

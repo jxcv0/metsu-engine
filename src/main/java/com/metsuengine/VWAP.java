@@ -15,14 +15,14 @@ public class VWAP {
         this.timeSeries = new HashMap<ZonedDateTime, Double>();
     }
 
-    public void increment(Trade trade) {
-        this.numerator += trade.volumeByPrice();
-        this.denominator += trade.size();
+    public void increment(Tick tick) {
+        this.numerator += tick.volumeByPrice();
+        this.denominator += tick.size();
     }
 
-    public void incrementAndStore(Trade trade) {
-        increment(trade);
-        timeSeries.put(trade.time(), this.value());
+    public void incrementAndStore(Tick tick) {
+        increment(tick);
+        timeSeries.put(tick.time(), this.value());
     }
 
     public double value() {

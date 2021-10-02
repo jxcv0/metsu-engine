@@ -11,18 +11,18 @@ public class UpperStandardDeviationBand extends MovingAverage {
     }
     
     @Override
-    public void addTrade(Trade trade) {
-        descriptiveStatistics.addValue(trade.price());
+    public void addTick(Tick tick) {
+        descriptiveStatistics.addValue(tick.price());
         value = descriptiveStatistics.getMean()
             + (descriptiveStatistics.getStandardDeviation() * multiple);
-        timeseries.put(trade.time(), value);
+        timeseries.put(tick.time(), value);
     }
 
     @Override
-    public void addTradeToTimeSeries(Trade trade) {
-        descriptiveStatistics.addValue(trade.price());
+    public void addTickToTimeSeries(Tick tick) {
+        descriptiveStatistics.addValue(tick.price());
         double value = descriptiveStatistics.getMean()
             + (descriptiveStatistics.getStandardDeviation() * multiple);
-        timeseries.put(trade.time(), value);
+        timeseries.put(tick.time(), value);
     }
 }

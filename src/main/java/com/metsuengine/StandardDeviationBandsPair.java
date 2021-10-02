@@ -13,14 +13,14 @@ public class StandardDeviationBandsPair {
         this.lowerband = new LowerStandardDeviationBand(window, multiple);
     }
 
-    public void addTrade(Trade trade) {
-        upperBand.addTrade(trade);
-        lowerband.addTrade(trade);
+    public void addTick(Tick tick) {
+        upperBand.addTick(tick);
+        lowerband.addTick(tick);
     }
 
-    public void addTradeToTimeSeries(Trade trade) {
-        upperBand.addTradeToTimeSeries(trade);
-        lowerband.addTradeToTimeSeries(trade);
+    public void addTickToTimeSeries(Tick tick) {
+        upperBand.addTickToTimeSeries(tick);
+        lowerband.addTickToTimeSeries(tick);
     }
 
     public HashMap<ZonedDateTime, Double> getUpperBandTimeSeries() {

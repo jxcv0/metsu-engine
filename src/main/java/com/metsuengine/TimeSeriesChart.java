@@ -1,34 +1,42 @@
 package com.metsuengine;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.Marker;
+import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.ui.ApplicationFrame;
+import org.jfree.chart.ui.RectangleAnchor;
 import org.jfree.data.time.Millisecond;
 import org.jfree.data.time.Minute;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.ta4j.core.Bar;
 import org.ta4j.core.BarSeries;
+import org.ta4j.core.BarSeriesManager;
 import org.ta4j.core.Indicator;
+import org.ta4j.core.Strategy;
 import org.ta4j.core.num.Num;
 
 public class TimeSeriesChart extends ApplicationFrame {
 
     private final JFreeChart chart;
     private final TimeSeriesCollection dataset;
-    private final HashMap<ZonedDateTime, Double> signals;
+    private final List<Marker> markers;
 
     public TimeSeriesChart(String title) {
         super(title);
         this.dataset = new TimeSeriesCollection();
-        this.signals = new HashMap<ZonedDateTime, Double>();
+        this.markers = new ArrayList<Marker>();
         this.chart = ChartFactory.createTimeSeriesChart(title, "Time", "Price", dataset);
         chart.removeLegend();
 
@@ -37,10 +45,10 @@ public class TimeSeriesChart extends ApplicationFrame {
         setContentPane(panel);
     }
 
-    public void buildDataset(String title, TradeSeries tradeSeries) {
+    public void buildDataset(String title, TickSeries tickSeries) {
         TimeSeries timeSeries = new TimeSeries(title);
-        for (Trade trade : tradeSeries) {
-            timeSeries.addOrUpdate(new Millisecond(Date.from(trade.time().toInstant())), trade.price());
+        for (Tick tick : tickSeries) {
+            timeSeries.addOrUpdate(new Millisecond(Date.from(tick.time().toInstant())), tick.price());
         }
         dataset.addSeries(timeSeries);
     }
@@ -71,12 +79,28 @@ public class TimeSeriesChart extends ApplicationFrame {
         dataset.addSeries(timeSeries);
     }
 
-    public void setMarkers(HashMap<ZonedDateTime, Double> signals) {
-        for (ZonedDateTime time : signals.keySet()) {
-            this.signals.put(time, signals.get(time));
-        }
-    }
+    public void addMarkers(BarSeries barSeries, Strategy strategy) {
+        BarSeriesManager barSeriesManager = new BarSeriesManager(barSeries);
+        List<org.ta4j.core.Position> positions = barSeriesManager.run(strategy).getPositions();
+        for (org.ta4j.core.Position position : positions) {
 
+            double buySignalTime = new Minute(Date.from(barSeries.getBar(position.getEntry().getIndex()).getEndTime().toInstant())).getFirstMillisecond();
+            Marker entryMarker = new ValueMarker(buySignalTime);
+            entryMarker.setPaint(Color.GREEN);
+            entryMarker.setLabel("Entry");
+            entryMarker.setLabelAnchor(RectangleAnchor.CENTER);
+            markers.add(entryMarker);
+
+            double sellSignalTime = new Minute(Date.from(barSeries.getBar(position.getExit().getIndex()).getEndTime().toInstant())).getFirstMillisecond();
+            Marker exitMarker = new ValueMarker(sellSignalTime);
+            exitMarker.setPaint(Color.RED);
+            exitMarker.setLabel("Exit");
+            exitMarker.setLabelAnchor(RectangleAnchor.CENTER);
+            markers.add(exitMarker);
+        }
+        
+    }
+ 
     public void displayChart() {
 
         ChartPanel panel = new ChartPanel(this.chart);
@@ -92,5 +116,8 @@ public class TimeSeriesChart extends ApplicationFrame {
         XYPlot plot = (XYPlot) chart.getPlot();
         plot.setDomainPannable(true);
         plot.setRangePannable(true);
+        for (Marker marker : markers) {
+            plot.addDomainMarker(marker);
+        }
     }
 }

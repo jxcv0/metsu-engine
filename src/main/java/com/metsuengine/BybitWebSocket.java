@@ -15,14 +15,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @ClientEndpoint
 public class BybitWebSocket {
 
-    private TradeSeries tradeSeries;
+    private TickSeries tickSeries;
 
     public BybitWebSocket() {
-        this.tradeSeries = new TradeSeries();
+        this.tickSeries = new TickSeries();
     }
 
-    public BybitWebSocket(TradeSeries tradeSeries) {
-        this.tradeSeries = tradeSeries;
+    public BybitWebSocket(TickSeries tickSeries) {
+        this.tickSeries = tickSeries;
     }
 
     @OnOpen
@@ -46,14 +46,14 @@ public class BybitWebSocket {
                 JsonNode data = response.findValue("data");
 
                 if (!data.isNull()) {
-                    Trade trade = new Trade(
+                    Tick tick = new Tick(
                         data.findValue("timestamp").asText(),
                         data.findValue("side").asText(),
                         data.findValue("price").asDouble(),
                         data.findValue("size").asDouble());
                     
                     // fires change
-                    tradeSeries.addTrade(trade);
+                    tickSeries.addTrade(tick);
                 }
             }
   

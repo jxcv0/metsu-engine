@@ -22,15 +22,15 @@ import org.ta4j.core.BaseBarSeries;
 public class CSVManager {
 
     private Path path = null;
-    private TradeSeries tradeSeries = new TradeSeries();
+    private TickSeries tickSeries = new TickSeries();
 
     public CSVManager(String file) {
         this.path = Paths.get(file);
     }
 
-    public CSVManager(String file, TradeSeries tradeSeries) {
+    public CSVManager(String file, TickSeries tickSeries) {
         this.path = Paths.get(file);
-        this.tradeSeries = tradeSeries;
+        this.tickSeries = tickSeries;
     }
 
     public void writeLine(String[] line) {
@@ -58,20 +58,20 @@ public class CSVManager {
     }
 
     private void buildAndSort(List<String[]> lines) {
-        LinkedList<Trade> trades = new LinkedList<Trade>();
+        LinkedList<Tick> ticks = new LinkedList<Tick>();
 
         for (String[] line : lines) {
-            trades.add(new Trade(
+            ticks.add(new Tick(
                 epochtoZonedDateTime(Double.parseDouble(line[0])),
                 line[2],
                 Double.parseDouble(line[4]),
                 Double.parseDouble(line[3])));
         }
 
-        Collections.reverse(trades);
+        Collections.reverse(ticks);
 
-        for (Trade trade : trades) {
-            this.tradeSeries.addTrade(trade);
+        for (Tick tick : ticks) {
+            this.tickSeries.addTrade(tick);
         }
     }
 

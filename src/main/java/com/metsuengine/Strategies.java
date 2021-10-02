@@ -10,7 +10,6 @@ import org.ta4j.core.indicators.bollinger.BollingerBandsMiddleIndicator;
 import org.ta4j.core.indicators.bollinger.BollingerBandsUpperIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import org.ta4j.core.indicators.statistics.StandardDeviationIndicator;
-import org.ta4j.core.indicators.volume.VWAPIndicator;
 import org.ta4j.core.rules.CrossedDownIndicatorRule;
 import org.ta4j.core.rules.CrossedUpIndicatorRule;
 
@@ -27,15 +26,33 @@ public class Strategies {
     }
     
     public static Strategy bollingerBandsStrategyLong(BarSeries barSeries) {
+        
+        int window = 1000;
 
-        ClosePriceIndicator closePriceIndicator = new ClosePriceIndicator(barSeries);
-        VWAPIndicator vwap = new VWAPIndicator(barSeries, 100);
-        StandardDeviationIndicator stdDev = new StandardDeviationIndicator(vwap, 100);
-        BollingerBandsMiddleIndicator middleIndicator = new BollingerBandsMiddleIndicator(vwap);
-        BollingerBandsLowerIndicator lowerIndicator = new BollingerBandsLowerIndicator(middleIndicator, stdDev);
+        ClosePriceIndicator close = new ClosePriceIndicator(barSeries);
+        SMAIndicator sma = new SMAIndicator(close, window);
+        StandardDeviationIndicator stdDev = new StandardDeviationIndicator(close, window);
+        BollingerBandsMiddleIndicator middle = new BollingerBandsMiddleIndicator(sma);
+        BollingerBandsLowerIndicator lower = new BollingerBandsLowerIndicator(middle, stdDev);
 
-        Rule entryRule = new CrossedDownIndicatorRule(closePriceIndicator, lowerIndicator);
-        Rule exitRule = new CrossedUpIndicatorRule(closePriceIndicator, middleIndicator);
+        Rule entryRule = new CrossedDownIndicatorRule(close, lower);
+        Rule exitRule = new CrossedUpIndicatorRule(close, middle);
+
+        return new BaseStrategy(entryRule, exitRule);
+    }
+
+    public static Strategy bollingerBandsStrategyShort(BarSeries barSeries) {
+        
+        int window = 1000;
+
+        ClosePriceIndicator close = new ClosePriceIndicator(barSeries);
+        SMAIndicator sma = new SMAIndicator(close, window);
+        StandardDeviationIndicator stdDev = new StandardDeviationIndicator(close, window);
+        BollingerBandsMiddleIndicator middle = new BollingerBandsMiddleIndicator(sma);
+        BollingerBandsUpperIndicator upper = new BollingerBandsUpperIndicator(middle, stdDev);
+
+        Rule entryRule = new CrossedUpIndicatorRule(close, upper);
+        Rule exitRule = new CrossedDownIndicatorRule(close, middle);
 
         return new BaseStrategy(entryRule, exitRule);
     }

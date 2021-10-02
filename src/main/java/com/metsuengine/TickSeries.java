@@ -8,23 +8,23 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
 
-public class TradeSeries extends LinkedList<Trade> {
+public class TickSeries extends LinkedList<Tick> {
 
     private EventListenerList listenerList;
 
-    public TradeSeries() {
+    public TickSeries() {
         this.listenerList = new EventListenerList();
     }
 
-    public TradeSeries(ChangeListener listener) {
+    public TickSeries(ChangeListener listener) {
         this.addChangeListener(listener);
     }
 
-    public LinkedList<Trade> getTrades() {
+    public LinkedList<Tick> getTrades() {
         return this;
     }
 
-    public Trade getTrade(int index){
+    public Tick getTrade(int index){
         return this.get(index);
     }
 
@@ -32,7 +32,7 @@ public class TradeSeries extends LinkedList<Trade> {
         return this.getLast().price();
     }
 
-    public Trade getLastTrade() {
+    public Tick getLastTrade() {
         return this.getLast();
     }
 
@@ -40,17 +40,17 @@ public class TradeSeries extends LinkedList<Trade> {
         return this.size();
     }
 
-    public void addTrade(Trade trade) {
-        this.add(trade);
+    public void addTrade(Tick tick) {
+        this.add(tick);
         fireStateChanged();
     }
 
-    public void writeTradeToCSV(Trade trade) {
+    public void writeTradeToCSV(Tick tick) {
         String[] line = {
-            trade.time().toString(),
-            trade.side(),
-            String.valueOf(trade.price()),
-            String.valueOf(trade.size())
+            tick.time().toString(),
+            tick.side(),
+            String.valueOf(tick.price()),
+            String.valueOf(tick.size())
         };
 
         CSVManager manager = new CSVManager("BTCUSD-trades.csv");
@@ -59,8 +59,8 @@ public class TradeSeries extends LinkedList<Trade> {
 
     public double getSeriesVolume() {
         double total = 0;
-        for(Trade trade : this) {
-            total += trade.size();
+        for(Tick tick : this) {
+            total += tick.size();
         }
         return total;
     }
@@ -90,12 +90,12 @@ public class TradeSeries extends LinkedList<Trade> {
 
         CSVManager manager = new CSVManager(formattedDate + "-trades.csv");
 
-        for (Trade trade : this) {
+        for (Tick tick : this) {
             String[] line = {
-                trade.time().toString(),
-                trade.side(),
-                String.valueOf(trade.price()),
-                String.valueOf(trade.size())
+                tick.time().toString(),
+                tick.side(),
+                String.valueOf(tick.price()),
+                String.valueOf(tick.size())
             };
             manager.writeLine(line);
         }

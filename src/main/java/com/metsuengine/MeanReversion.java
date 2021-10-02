@@ -17,21 +17,21 @@ public class MeanReversion {
 
         LOGGER.info("Creating TradeSeries");
 
-        final TradeSeries tradeSeries = new TradeSeries(new ChangeListener() {
+        final TickSeries tickSeries = new TickSeries(new ChangeListener() {
 
             @Override
             public void stateChanged(ChangeEvent event) {
-                TradeSeries source = (TradeSeries) event.getSource();
-                Trade trade = source.getLastTrade();
+                TickSeries source = (TickSeries) event.getSource();
+                Tick tick = source.getLastTrade();
 
-                movingAverage.addTradeToTimeSeries(trade);
-                stdDev.addTradeToTimeSeries(trade);
+                movingAverage.addTickToTimeSeries(tick);
+                stdDev.addTickToTimeSeries(tick);
             }
             
         });
         
         LOGGER.info("Loading trades from CSV");
-        CSVManager csvManager = new CSVManager("BTCUSD2021-9-14.csv", tradeSeries);
+        CSVManager csvManager = new CSVManager("BTCUSD2021-9-14.csv", tickSeries);
         csvManager.createFromCSV();
 
         TimeSeriesChart chart = new TimeSeriesChart("BTCUSD2021-9-14");
@@ -41,7 +41,7 @@ public class MeanReversion {
         chart.buildDataset("Moving Average", movingAverage.getTimeSeries());
         chart.buildDataset("One Standard Deviation", stdDev.getUpperBandTimeSeries());
         chart.buildDataset("One Standard Deviation", stdDev.getLowerBandTimeSeries());
-        chart.buildDataset("Trade Series", tradeSeries);
+        chart.buildDataset("Trade Series", tickSeries);
 
         LOGGER.info("Displaying Chart");
 

@@ -14,22 +14,22 @@ public class VolumeDistribution extends TreeMap<Double, Double> {
         super();
     }
 
-    public VolumeDistribution(TradeSeries tradeSeries) {
+    public VolumeDistribution(TickSeries tickSeries) {
 
-        createVolumeProfile(tradeSeries);
+        createVolumeProfile(tickSeries);
         this.addMissingValues();
 
     }
 
-    public void createVolumeProfile(TradeSeries tradeSeries) {
-        for (Trade trade : tradeSeries.getTrades()) {
-            update(trade);
+    public void createVolumeProfile(TickSeries tickSeries) {
+        for (Tick tick : tickSeries.getTrades()) {
+            update(tick);
         }
     }
 
-    public void update(Trade trade) {
-        double price = trade.price();
-        double size = trade.size();
+    public void update(Tick tick) {
+        double price = tick.price();
+        double size = tick.size();
 
         if(this.containsKey(price)) {
             double oldSize = this.get(price);
