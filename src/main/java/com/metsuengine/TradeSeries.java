@@ -1,6 +1,5 @@
 package com.metsuengine;
 
-import java.text.DecimalFormat;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
@@ -11,17 +10,14 @@ import javax.swing.event.EventListenerList;
 
 public class TradeSeries extends LinkedList<Trade> {
 
-    DecimalFormat decimalFormat = new DecimalFormat("#.##");
-    private EventListenerList listenerList = new EventListenerList();
-    private final VWAP vwap;
+    private EventListenerList listenerList;
 
     public TradeSeries() {
-        this.vwap = new VWAP();
+        this.listenerList = new EventListenerList();
     }
 
     public TradeSeries(ChangeListener listener) {
         this.addChangeListener(listener);
-        this.vwap = new VWAP();
     }
 
     public LinkedList<Trade> getTrades() {
@@ -46,7 +42,6 @@ public class TradeSeries extends LinkedList<Trade> {
 
     public void addTrade(Trade trade) {
         this.add(trade);
-        vwap.increment(trade);
         fireStateChanged();
     }
 
@@ -86,10 +81,6 @@ public class TradeSeries extends LinkedList<Trade> {
                 listener.stateChanged(event);
             }
         }
-    }
-
-    public VWAP vwap() {
-        return this.vwap;
     }
 
     public void writeAndPurge(ZonedDateTime date) {

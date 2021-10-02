@@ -20,9 +20,14 @@
 
   <dependencies>
     <dependency>
-      <groupId>io.deephaven</groupId>
-      <artifactId>SuanShu</artifactId>
-      <version>0.1.0</version>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-nop</artifactId>
+      <version>2.0.0-alpha5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.ta4j</groupId>
+      <artifactId>ta4j-core</artifactId>
+      <version>0.14</version>
     </dependency>
     <dependency>
         <groupId>org.apache.commons</groupId>

@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
-public class MovingAverage {
+public class MovingAverage implements Indicator {
     
     protected double value;
     protected HashMap<ZonedDateTime, Double> timeseries;

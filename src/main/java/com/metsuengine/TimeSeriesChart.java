@@ -8,13 +8,16 @@ import java.util.HashMap;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.Marker;
-import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.ui.ApplicationFrame;
 import org.jfree.data.time.Millisecond;
+import org.jfree.data.time.Minute;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
+import org.ta4j.core.Bar;
+import org.ta4j.core.BarSeries;
+import org.ta4j.core.Indicator;
+import org.ta4j.core.num.Num;
 
 public class TimeSeriesChart extends ApplicationFrame {
 
@@ -50,18 +53,27 @@ public class TimeSeriesChart extends ApplicationFrame {
         dataset.addSeries(timeSeries);
     }
 
+    public void buildDataset(String title, BarSeries barSeries) {
+        TimeSeries timeSeries = new TimeSeries(title);
+        
+        for (Bar bar : barSeries.getBarData()) {
+            timeSeries.add(new Minute(Date.from(bar.getEndTime().toInstant())), bar.getClosePrice().doubleValue());
+        }
+        dataset.addSeries(timeSeries);
+    }
+
+    public void buildDataset(String title, BarSeries barSeries, Indicator<Num> indicator) {
+        TimeSeries timeSeries = new TimeSeries(title);
+        for (int i = 0; i < barSeries.getBarCount(); i++) {
+            Bar bar = barSeries.getBar(i);
+            timeSeries.add(new Minute(Date.from(bar.getEndTime().toInstant())), indicator.getValue(i).doubleValue());
+        }
+        dataset.addSeries(timeSeries);
+    }
+
     public void setMarkers(HashMap<ZonedDateTime, Double> signals) {
         for (ZonedDateTime time : signals.keySet()) {
             this.signals.put(time, signals.get(time));
-        }
-    }
-
-    public void buildMarkers(XYPlot plot) {
-        if (!this.signals.isEmpty()) {
-            for (ZonedDateTime time : signals.keySet()) {
-                Marker marker = new ValueMarker(new Millisecond(Date.from(time.toInstant())).getFirstMillisecond());
-                plot.addDomainMarker(marker);
-            }
         }
     }
 
@@ -80,6 +92,5 @@ public class TimeSeriesChart extends ApplicationFrame {
         XYPlot plot = (XYPlot) chart.getPlot();
         plot.setDomainPannable(true);
         plot.setRangePannable(true);
-        buildMarkers(plot);
     }
 }
