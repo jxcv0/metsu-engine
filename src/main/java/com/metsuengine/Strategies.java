@@ -25,9 +25,7 @@ public class Strategies {
         return new BaseStrategy(entryRule, exitRule);
     }
     
-    public static Strategy bollingerBandsStrategyLong(BarSeries barSeries) {
-        
-        int window = 1000;
+    public static Strategy vwapDeviationLong(BarSeries barSeries, int window) {
 
         ClosePriceIndicator close = new ClosePriceIndicator(barSeries);
         SMAIndicator sma = new SMAIndicator(close, window);
@@ -41,9 +39,7 @@ public class Strategies {
         return new BaseStrategy(entryRule, exitRule);
     }
 
-    public static Strategy bollingerBandsStrategyShort(BarSeries barSeries) {
-        
-        int window = 1000;
+    public static Strategy vwapDeviationShort(BarSeries barSeries, int window) {
 
         ClosePriceIndicator close = new ClosePriceIndicator(barSeries);
         SMAIndicator sma = new SMAIndicator(close, window);

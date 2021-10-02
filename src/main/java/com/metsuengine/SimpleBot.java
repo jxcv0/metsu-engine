@@ -9,13 +9,12 @@ import org.ta4j.core.Strategy;
 import org.ta4j.core.Trade;
 import org.ta4j.core.TradingRecord;
 import org.ta4j.core.analysis.criteria.MaximumDrawdownCriterion;
-import org.ta4j.core.analysis.criteria.pnl.GrossReturnCriterion;
-import org.ta4j.core.indicators.SMAIndicator;
+import org.ta4j.core.analysis.criteria.pnl.ProfitLossPercentageCriterion;
 import org.ta4j.core.indicators.bollinger.BollingerBandsLowerIndicator;
 import org.ta4j.core.indicators.bollinger.BollingerBandsMiddleIndicator;
 import org.ta4j.core.indicators.bollinger.BollingerBandsUpperIndicator;
-import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import org.ta4j.core.indicators.statistics.StandardDeviationIndicator;
+import org.ta4j.core.indicators.volume.VWAPIndicator;
 
 public class SimpleBot {
 
@@ -32,18 +31,18 @@ public class SimpleBot {
         BarSeries barSeries = manager.barSeriesFromCSV();
         BarSeriesManager barSeriesManager = new BarSeriesManager(barSeries);
 
-        Strategy longStrategy = Strategies.bollingerBandsStrategyLong(barSeries);
+        int window = 200;
+
+        Strategy longStrategy = Strategies.vwapDeviationLong(barSeries, window);
         TradingRecord longTradingRecord = barSeriesManager.run(longStrategy, Trade.TradeType.BUY);
 
-        Strategy shortStrategy = Strategies.bollingerBandsStrategyShort(barSeries);
+        Strategy shortStrategy = Strategies.vwapDeviationShort(barSeries, window);
         TradingRecord shortTradingRecord = barSeriesManager.run(shortStrategy, Trade.TradeType.SELL);
         
         LOGGER.info("Creating chart indicators");
-        int window = 20;
-        ClosePriceIndicator close = new ClosePriceIndicator(barSeries);
-        SMAIndicator sma = new SMAIndicator(close, window);
-        StandardDeviationIndicator stdDev = new StandardDeviationIndicator(close, window);
-        BollingerBandsMiddleIndicator middle = new BollingerBandsMiddleIndicator(sma);
+        VWAPIndicator vwap = new VWAPIndicator(barSeries, window);
+        StandardDeviationIndicator stdDev = new StandardDeviationIndicator(vwap, window);
+        BollingerBandsMiddleIndicator middle = new BollingerBandsMiddleIndicator(vwap);
         BollingerBandsLowerIndicator lower = new BollingerBandsLowerIndicator(middle, stdDev);
         BollingerBandsUpperIndicator upper = new BollingerBandsUpperIndicator(middle, stdDev);
         
@@ -59,19 +58,17 @@ public class SimpleBot {
         chart.displayChart();
 
         AnalysisCriterion drawdownCriterion = new MaximumDrawdownCriterion();
-        AnalysisCriterion returnCriterion = new GrossReturnCriterion();
+        AnalysisCriterion pnl = new ProfitLossPercentageCriterion();
 
         double longDrawdown = drawdownCriterion.calculate(barSeries, longTradingRecord).doubleValue();
-        double longReturn = returnCriterion.calculate(barSeries, longTradingRecord).doubleValue();
+        double longPnl = pnl.calculate(barSeries, longTradingRecord).doubleValue();
         double shortDrawdown = drawdownCriterion.calculate(barSeries, shortTradingRecord).doubleValue();
-        double shortReturn = returnCriterion.calculate(barSeries, shortTradingRecord).doubleValue();
+        double shortPnl = pnl.calculate(barSeries, shortTradingRecord).doubleValue();
         
         System.out.println("Long Drawdown: " + longDrawdown * 100);
-        System.out.println("Long Return: " + longReturn * 100);
+        System.out.println("Long Return: " + longPnl * 100);
         System.out.println("Short Drawdown: " + shortDrawdown * 100);
-        System.out.println("Short Return: " + shortReturn * 100);
-        System.out.println("Total Drawdown: " + (longDrawdown + shortDrawdown) * 100);
-        System.out.println("Total Return: " + (longReturn + shortReturn) * 100);
+        System.out.println("Short Return: " + shortPnl * 100);
     }
 
     public static void createKlineCSV(int from, int to) {
