@@ -22,7 +22,7 @@ public class VolumeDistribution extends TreeMap<Double, Double> {
     }
 
     public void createVolumeProfile(TickSeries tickSeries) {
-        for (Tick tick : tickSeries.getTrades()) {
+        for (Tick tick : tickSeries.getTicks()) {
             update(tick);
         }
     }

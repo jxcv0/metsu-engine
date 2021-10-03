@@ -22,7 +22,7 @@ public class MeanReversion {
             @Override
             public void stateChanged(ChangeEvent event) {
                 TickSeries source = (TickSeries) event.getSource();
-                Tick tick = source.getLastTrade();
+                Tick tick = source.getLastTick();
 
                 movingAverage.addTickToTimeSeries(tick);
                 stdDev.addTickToTimeSeries(tick);

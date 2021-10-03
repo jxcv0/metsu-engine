@@ -3,6 +3,7 @@ package com.metsuengine;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.logging.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,22 +15,28 @@ import okhttp3.Response;
 
 public class BybitEndpoint {
 
+    private static final Logger LOGGER = Logger.getLogger(BybitEndpoint.class.getName());
+
     private String symbol;
 
     public BybitEndpoint(String symbol) {
         this.symbol = symbol;
     }
 
-    public TickSeries getTradingRecords(int limit) {
+    public TickSeries getTradingRecords(ZonedDateTime from, ZonedDateTime to) {
 
-        String url = "https://api.bybit.com/v2/public/trading-records?symbol=" + this.symbol + "&limit=" + limit;
+        String url = "https://api.bybit.com/v2/public/trading-records?symbol="+ this.symbol
+            + "&from=" + from.toEpochSecond()
+            + "&limit=1000";
 
-        TickSeries tradeSeries = new TickSeries();
+        TickSeries tickSeries = new TickSeries();
 
         try {
             Request request = new Request.Builder()
                 .url(url)
                 .build();
+            
+            LOGGER.info(request.toString());
                         
             OkHttpClient client = new OkHttpClient();
             Call call = client.newCall(request);
@@ -43,11 +50,15 @@ public class BybitEndpoint {
                 JsonNode results = jsonNode.findValue("result");
 
                 for (JsonNode result : results) {
-                    tradeSeries.addTrade(new Tick(
+                    Tick tick = new Tick(
                         ZonedDateTime.parse(result.findValue("time").asText()),
                         result.findValue("side").asText(),
                         result.findValue("price").asDouble(),
-                        result.findValue("qty").asDouble()));
+                        result.findValue("qty").asDouble());
+                    
+                    if (tick.time().isAfter(from) && tick.time().isBefore(to)) {
+                        tickSeries.add(tick);
+                    }
                 }
             }
 
@@ -55,7 +66,7 @@ public class BybitEndpoint {
             e.printStackTrace();
         }
 
-        return tradeSeries;
+        return tickSeries;
     }
 
     public void getKlineRecords(int from) {

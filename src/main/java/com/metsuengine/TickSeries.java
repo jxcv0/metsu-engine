@@ -20,11 +20,11 @@ public class TickSeries extends LinkedList<Tick> {
         this.addChangeListener(listener);
     }
 
-    public LinkedList<Tick> getTrades() {
+    public LinkedList<Tick> getTicks() {
         return this;
     }
 
-    public Tick getTrade(int index){
+    public Tick getTick(int index){
         return this.get(index);
     }
 
@@ -32,7 +32,7 @@ public class TickSeries extends LinkedList<Tick> {
         return this.getLast().price();
     }
 
-    public Tick getLastTrade() {
+    public Tick getLastTick() {
         return this.getLast();
     }
 
@@ -40,7 +40,7 @@ public class TickSeries extends LinkedList<Tick> {
         return this.size();
     }
 
-    public void addTrade(Tick tick) {
+    public void addTick(Tick tick) {
         this.add(tick);
         fireStateChanged();
     }
@@ -63,6 +63,18 @@ public class TickSeries extends LinkedList<Tick> {
             total += tick.size();
         }
         return total;
+    }
+
+    public int getSeriesDelta() {
+        int delta = 0;
+        for(Tick tick : this) {
+            if (tick.side().equals("Buy")) {
+                delta += tick.size();
+            } else {
+                delta -= tick.size();
+            }
+        }
+        return delta;
     }
 
     public void addChangeListener(ChangeListener listener) {

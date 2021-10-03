@@ -71,7 +71,7 @@ public class CSVManager {
         Collections.reverse(ticks);
 
         for (Tick tick : ticks) {
-            this.tickSeries.addTrade(tick);
+            this.tickSeries.addTick(tick);
         }
     }
 

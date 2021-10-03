@@ -53,7 +53,7 @@ public class BybitWebSocket {
                         data.findValue("size").asDouble());
                     
                     // fires change
-                    tickSeries.addTrade(tick);
+                    tickSeries.addTick(tick);
                 }
             }
   
