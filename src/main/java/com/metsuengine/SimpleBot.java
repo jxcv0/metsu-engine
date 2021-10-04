@@ -9,9 +9,12 @@ import org.ta4j.core.Trade.TradeType;
 import org.ta4j.core.TradingRecord;
 import org.ta4j.core.analysis.criteria.MaximumDrawdownCriterion;
 import org.ta4j.core.analysis.criteria.pnl.GrossReturnCriterion;
-import org.ta4j.core.indicators.EMAIndicator;
-import org.ta4j.core.indicators.MACDIndicator;
+import org.ta4j.core.indicators.SMAIndicator;
+import org.ta4j.core.indicators.bollinger.BollingerBandsLowerIndicator;
+import org.ta4j.core.indicators.bollinger.BollingerBandsMiddleIndicator;
+import org.ta4j.core.indicators.bollinger.BollingerBandsUpperIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
+import org.ta4j.core.indicators.statistics.StandardDeviationIndicator;
 
 public class SimpleBot {
 
@@ -19,36 +22,39 @@ public class SimpleBot {
 
     public static void main(String[] args) {
 
-        // int to = 1600000000-30000;
-        // int from = to - 60000;
+        // int from = (int) ZonedDateTime.now().minusMonths(1).toEpochSecond();
+        // int to = (int) ZonedDateTime.now().toEpochSecond();
         // createKlineCSV(from, to);
 
         LOGGER.info("Getting kline data from CSV");
-        CSVManager manager = new CSVManager("BTCUSD-inSampleKline-1.csv");
+        CSVManager manager = new CSVManager("BTCUSD-03-10-21-minus1month.csv");
         BarSeries barSeries = manager.barSeriesFromCSV();
         BarSeriesManager barSeriesManager = new BarSeriesManager(barSeries);
 
-        TradingRecord longTradingRecord = barSeriesManager.run(Strategies.momentumStrategy(barSeries), TradeType.BUY);
+        int window = 100;
+
+        TradingRecord longTradingRecord = barSeriesManager.run(
+            Strategies.standardDeviationLong(barSeries.getSubSeries(0, 1000), window), TradeType.BUY
+            );
 
         LOGGER.info("Creating chart indicators");
-        ClosePriceIndicator closePrice = new ClosePriceIndicator(barSeries);
-        EMAIndicator shortEma = new EMAIndicator(closePrice, 9);
-        EMAIndicator longEma = new EMAIndicator(closePrice, 26);
-        MACDIndicator macd = new MACDIndicator(closePrice, 9, 26);
-        EMAIndicator emaMacd = new EMAIndicator(macd, 18);
- 
+        ClosePriceIndicator close = new ClosePriceIndicator(barSeries);
+        SMAIndicator sma = new SMAIndicator(close, window);
+        StandardDeviationIndicator stdDev = new StandardDeviationIndicator(close, window);
+        BollingerBandsMiddleIndicator middle = new BollingerBandsMiddleIndicator(sma);
+        BollingerBandsUpperIndicator upper = new BollingerBandsUpperIndicator(middle, stdDev);
+        BollingerBandsLowerIndicator lower = new BollingerBandsLowerIndicator(middle, stdDev);
+        
         
         LOGGER.info("Building Chart");
         TimeSeriesChart chart = new TimeSeriesChart("BTCUSD");
-        chart.buildDataset("close", barSeries);
-        chart.buildDataset("shortEma", barSeries, shortEma);
-        chart.buildDataset("longEma", barSeries, longEma);
-        chart.addMarkers(barSeries, Strategies.momentumStrategy(barSeries));
-        chart.displayChart();
+        chart.buildDataset("Close", barSeries);
+        chart.buildDataset("SMA", barSeries, middle);
+        chart.buildDataset("Upper Band", barSeries, upper);
+        chart.buildDataset("Lower Band", barSeries, lower);
 
         TimeSeriesChart indicatorChart = new TimeSeriesChart("Other Indicators");
-        indicatorChart.buildDataset("macd", barSeries, macd);
-        indicatorChart.buildDataset("emaMacd", barSeries, emaMacd);
+                
         indicatorChart.displayChart();
 
         AnalysisCriterion drawdownCriterion = new MaximumDrawdownCriterion();

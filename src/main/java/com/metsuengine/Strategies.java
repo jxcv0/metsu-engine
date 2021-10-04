@@ -4,7 +4,6 @@ import org.ta4j.core.BarSeries;
 import org.ta4j.core.BaseStrategy;
 import org.ta4j.core.Rule;
 import org.ta4j.core.Strategy;
-import org.ta4j.core.indicators.CCIIndicator;
 import org.ta4j.core.indicators.EMAIndicator;
 import org.ta4j.core.indicators.MACDIndicator;
 import org.ta4j.core.indicators.SMAIndicator;
@@ -13,7 +12,6 @@ import org.ta4j.core.indicators.bollinger.BollingerBandsMiddleIndicator;
 import org.ta4j.core.indicators.bollinger.BollingerBandsUpperIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import org.ta4j.core.indicators.statistics.StandardDeviationIndicator;
-import org.ta4j.core.num.Num;
 import org.ta4j.core.rules.CrossedDownIndicatorRule;
 import org.ta4j.core.rules.CrossedUpIndicatorRule;
 import org.ta4j.core.rules.OverIndicatorRule;
@@ -44,35 +42,16 @@ public class Strategies {
 
         return new BaseStrategy(entryRule, exitRule);
     }
-
-    public static Strategy CCICorrectionStrategy(BarSeries barSeries) {
-        CCIIndicator longCci = new CCIIndicator(barSeries, 200);
-        CCIIndicator shortCci = new CCIIndicator(barSeries, 5);
-        Num plus100 = barSeries.numOf(100);
-        Num minus100 = barSeries.numOf(-100);
-
-        Rule entryRule = new OverIndicatorRule(longCci, plus100) // Bull trend
-                .and(new UnderIndicatorRule(shortCci, minus100)); // Signal
-
-        Rule exitRule = new UnderIndicatorRule(longCci, minus100) // Bear trend
-                .and(new OverIndicatorRule(shortCci, plus100)); // Signal
-
-        Strategy strategy = new BaseStrategy(entryRule, exitRule);
-        strategy.setUnstablePeriod(5);
-        return strategy;
-    }
     
     public static Strategy standardDeviationLong(BarSeries barSeries, int window) {
 
         ClosePriceIndicator close = new ClosePriceIndicator(barSeries);
-        EMAIndicator ema = new EMAIndicator(close, window*5);
         SMAIndicator sma = new SMAIndicator(close, window);
         StandardDeviationIndicator stdDev = new StandardDeviationIndicator(close, window);
         BollingerBandsMiddleIndicator middle = new BollingerBandsMiddleIndicator(sma);
         BollingerBandsLowerIndicator lower = new BollingerBandsLowerIndicator(middle, stdDev);
 
-        Rule entryRule = new CrossedDownIndicatorRule(close, lower)
-            .and(new OverIndicatorRule(close, ema));
+        Rule entryRule = new CrossedDownIndicatorRule(close, lower);
         Rule exitRule = new CrossedUpIndicatorRule(close, middle);
 
         return new BaseStrategy(entryRule, exitRule);
@@ -81,14 +60,12 @@ public class Strategies {
     public static Strategy standardDeviationShort(BarSeries barSeries, int window) {
 
         ClosePriceIndicator close = new ClosePriceIndicator(barSeries);
-        EMAIndicator ema = new EMAIndicator(close, window*5);
         SMAIndicator sma = new SMAIndicator(close, window);
         StandardDeviationIndicator stdDev = new StandardDeviationIndicator(close, window);
         BollingerBandsMiddleIndicator middle = new BollingerBandsMiddleIndicator(sma);
         BollingerBandsUpperIndicator upper = new BollingerBandsUpperIndicator(middle, stdDev);
 
-        Rule entryRule = new CrossedUpIndicatorRule(close, upper)
-            .and(new UnderIndicatorRule(close, ema));
+        Rule entryRule = new CrossedUpIndicatorRule(close, upper);
         Rule exitRule = new CrossedDownIndicatorRule(close, middle);
 
         return new BaseStrategy(entryRule, exitRule);

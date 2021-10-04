@@ -73,7 +73,7 @@ public class BybitEndpoint {
 
         String url = "https://api.bybit.com/v2/public/kline/list?symbol=" + this.symbol + "&interval=1&limit=1&from=" + from;
         
-        CSVManager manager = new CSVManager("src\\main\\resources\\BTCUSD-inSampleKline.csv");
+        CSVManager manager = new CSVManager("src\\main\\resources\\BTCUSD-03-10-21-minus1month.csv");
 
         try {
             Request request = new Request.Builder()
