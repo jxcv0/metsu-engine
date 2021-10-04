@@ -28,44 +28,34 @@ public class SimpleBot {
 
         LOGGER.info("Getting kline data from CSV");
         CSVManager manager = new CSVManager("BTCUSD-03-10-21-minus1month.csv");
-        BarSeries barSeries = manager.barSeriesFromCSV();
-        BarSeriesManager barSeriesManager = new BarSeriesManager(barSeries);
+        BarSeries barSeries = manager.barSeriesFromCSV().getSubSeries(0, 10);
+        // BarSeriesManager barSeriesManager = new BarSeriesManager(barSeries);
 
-        int window = 100;
-
-        TradingRecord longTradingRecord = barSeriesManager.run(
-            Strategies.standardDeviationLong(barSeries.getSubSeries(0, 1000), window), TradeType.BUY
-            );
+        // TradingRecord longTradingRecord = barSeriesManager.run(
+        //     Strategies.standardDeviationLong(barSeries.getSubSeries(0, 1000), window), TradeType.BUY
+        //     );
 
         LOGGER.info("Creating chart indicators");
-        ClosePriceIndicator close = new ClosePriceIndicator(barSeries);
-        SMAIndicator sma = new SMAIndicator(close, window);
-        StandardDeviationIndicator stdDev = new StandardDeviationIndicator(close, window);
-        BollingerBandsMiddleIndicator middle = new BollingerBandsMiddleIndicator(sma);
-        BollingerBandsUpperIndicator upper = new BollingerBandsUpperIndicator(middle, stdDev);
-        BollingerBandsLowerIndicator lower = new BollingerBandsLowerIndicator(middle, stdDev);
-        
+        GaussianIndicator gaussianIndicator = new GaussianIndicator(barSeries, 13, 8);
         
         LOGGER.info("Building Chart");
         TimeSeriesChart chart = new TimeSeriesChart("BTCUSD");
         chart.buildDataset("Close", barSeries);
-        chart.buildDataset("SMA", barSeries, middle);
-        chart.buildDataset("Upper Band", barSeries, upper);
-        chart.buildDataset("Lower Band", barSeries, lower);
+        chart.displayChart();
 
-        TimeSeriesChart indicatorChart = new TimeSeriesChart("Other Indicators");
-                
+        TimeSeriesChart indicatorChart = new TimeSeriesChart("Indicator Chart");
+        indicatorChart.buildDataset("Gaussian Filter", barSeries, gaussianIndicator);
         indicatorChart.displayChart();
 
-        AnalysisCriterion drawdownCriterion = new MaximumDrawdownCriterion();
-        AnalysisCriterion returnCriterion = new GrossReturnCriterion();
+        // AnalysisCriterion drawdownCriterion = new MaximumDrawdownCriterion();
+        // AnalysisCriterion returnCriterion = new GrossReturnCriterion();
 
-        double longDrawdown = drawdownCriterion.calculate(barSeries, longTradingRecord).doubleValue();
-        double longReturn = returnCriterion.calculate(barSeries, longTradingRecord).doubleValue();
+        // double longDrawdown = drawdownCriterion.calculate(barSeries, longTradingRecord).doubleValue();
+        // double longReturn = returnCriterion.calculate(barSeries, longTradingRecord).doubleValue();
 
-        System.out.println("Number of positions: " + longTradingRecord.getPositionCount());        
-        System.out.println("Long Drawdown: " + longDrawdown * 100);
-        System.out.println("Long Return: " + longReturn * 100);
+        // System.out.println("Number of positions: " + longTradingRecord.getPositionCount());        
+        // System.out.println("Long Drawdown: " + longDrawdown * 100);
+        // System.out.println("Long Return: " + longReturn * 100);
     }
 
     public static void createKlineCSV(int from, int to) {
