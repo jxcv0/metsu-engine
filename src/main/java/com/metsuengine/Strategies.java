@@ -12,7 +12,7 @@ import org.ta4j.core.indicators.bollinger.BollingerBandsMiddleIndicator;
 import org.ta4j.core.indicators.bollinger.BollingerBandsUpperIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import org.ta4j.core.indicators.statistics.StandardDeviationIndicator;
-import org.ta4j.core.num.DoubleNum;
+import org.ta4j.core.num.DecimalNum;
 import org.ta4j.core.num.Num;
 import org.ta4j.core.rules.CrossedDownIndicatorRule;
 import org.ta4j.core.rules.CrossedUpIndicatorRule;
@@ -26,9 +26,11 @@ public class Strategies {
         ClosePriceIndicator close = new ClosePriceIndicator(barSeries);
         EMAIndicator ema = new EMAIndicator(close, window);
         EMAIndicator compoundEma = new EMAIndicator(ema, window);
+        
+        Num stop = DecimalNum.valueOf(0.);
 
         Rule entryRule = new CrossedUpIndicatorRule(ema, compoundEma);
-        Rule exitRule = new TrailingStopLossRule(barSeries);
+        Rule exitRule = new TrailingStopLossRule(close, stop);
 
         return new BaseStrategy(entryRule, exitRule);
     }
@@ -36,23 +38,17 @@ public class Strategies {
     public static Strategy momentumStrategy(BarSeries barSeries) {
         ClosePriceIndicator closePrice = new ClosePriceIndicator(barSeries);
 
-        // The bias is bullish when the shorter-moving average moves above the longer
-        // moving average.
-        // The bias is bearish when the shorter-moving average moves below the longer
-        // moving average.
         EMAIndicator shortEma = new EMAIndicator(closePrice, 9);
         EMAIndicator longEma = new EMAIndicator(closePrice, 26);
 
         MACDIndicator macd = new MACDIndicator(closePrice, 9, 26);
         EMAIndicator emaMacd = new EMAIndicator(macd, 18);
 
-        // Entry rule
-        Rule entryRule = new OverIndicatorRule(shortEma, longEma) // Trend
-                .and(new OverIndicatorRule(macd, emaMacd)); // Signal 2
+        Rule entryRule = new OverIndicatorRule(shortEma, longEma) 
+                .and(new OverIndicatorRule(macd, emaMacd)); 
 
-        // Exit rule
-        Rule exitRule = new UnderIndicatorRule(shortEma, longEma) // Trend
-                .and(new UnderIndicatorRule(macd, emaMacd)); // Signal 2
+        Rule exitRule = new UnderIndicatorRule(shortEma, longEma) 
+                .and(new UnderIndicatorRule(macd, emaMacd)); 
 
         return new BaseStrategy(entryRule, exitRule);
     }
