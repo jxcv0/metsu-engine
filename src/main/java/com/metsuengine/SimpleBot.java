@@ -11,7 +11,6 @@ import org.ta4j.core.analysis.criteria.MaximumDrawdownCriterion;
 import org.ta4j.core.analysis.criteria.pnl.GrossReturnCriterion;
 import org.ta4j.core.indicators.EMAIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
-import org.ta4j.core.indicators.volume.ChaikinMoneyFlowIndicator;
 
 public class SimpleBot {
 
@@ -27,29 +26,18 @@ public class SimpleBot {
 
         LOGGER.info("Getting kline data from CSV");
         CSVManager manager = new CSVManager("BTCUSD-03-10-21-minus1month.csv");
-        BarSeries barSeries = manager.barSeriesFromCSV().getSubSeries(0, 1000);
+        BarSeries barSeries = manager.barSeriesFromCSV().getSubSeries(0, 10000);
         BarSeriesManager barSeriesManager = new BarSeriesManager(barSeries);
 
-        TradingRecord longTradingRecord = barSeriesManager.run(Strategies.basicEmaStrategy(barSeries, window), TradeType.BUY);
+        TradingRecord longTradingRecord = barSeriesManager.run(Strategies.momentumStrategy(barSeries), TradeType.BUY);
 
         LOGGER.info("Creating chart indicators");
-        ClosePriceIndicator close = new ClosePriceIndicator(barSeries);
-        EMAIndicator ema = new EMAIndicator(close, window);
-        EMAIndicator compoundEma = new EMAIndicator(ema, window);
-
-        ChaikinMoneyFlowIndicator chaikin = new ChaikinMoneyFlowIndicator(barSeries, window);
         
         LOGGER.info("Building Chart");
         TimeSeriesChart chart = new TimeSeriesChart("BTCUSD");
         chart.buildDataset("Close", barSeries);
-        chart.buildDataset(window + " EMA", barSeries, ema);
-        chart.buildDataset(window + " Compound EMA", barSeries, compoundEma);
-        chart.addMarkers(barSeries, Strategies.basicEmaStrategy(barSeries, window));
+        chart.addMarkers(barSeries, Strategies.momentumStrategy(barSeries));
         chart.displayChart();
-
-        TimeSeriesChart otherChart = new TimeSeriesChart("Other Indicators");
-        otherChart.buildDataset("Chaikin", barSeries, chaikin);
-        otherChart.displayChart();
 
         AnalysisCriterion drawdownCriterion = new MaximumDrawdownCriterion();
         AnalysisCriterion returnCriterion = new GrossReturnCriterion();
