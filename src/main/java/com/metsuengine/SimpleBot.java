@@ -28,7 +28,7 @@ public class SimpleBot {
 
         LOGGER.info("Getting kline data from CSV");
         CSVManager manager = new CSVManager("BTCUSD-03-10-21-minus1month.csv");
-        BarSeries barSeries = manager.barSeriesFromCSV().getSubSeries(0, 10);
+        BarSeries barSeries = manager.barSeriesFromCSV().getSubSeries(0, 1000);
         // BarSeriesManager barSeriesManager = new BarSeriesManager(barSeries);
 
         // TradingRecord longTradingRecord = barSeriesManager.run(
