@@ -12,12 +12,26 @@ import org.ta4j.core.indicators.bollinger.BollingerBandsMiddleIndicator;
 import org.ta4j.core.indicators.bollinger.BollingerBandsUpperIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import org.ta4j.core.indicators.statistics.StandardDeviationIndicator;
+import org.ta4j.core.num.DoubleNum;
+import org.ta4j.core.num.Num;
 import org.ta4j.core.rules.CrossedDownIndicatorRule;
 import org.ta4j.core.rules.CrossedUpIndicatorRule;
 import org.ta4j.core.rules.OverIndicatorRule;
+import org.ta4j.core.rules.TrailingStopLossRule;
 import org.ta4j.core.rules.UnderIndicatorRule;
 
 public class Strategies {
+
+    public static Strategy basicEmaStrategy(BarSeries barSeries, int window) {
+        ClosePriceIndicator close = new ClosePriceIndicator(barSeries);
+        EMAIndicator ema = new EMAIndicator(close, window);
+        EMAIndicator compoundEma = new EMAIndicator(ema, window);
+
+        Rule entryRule = new CrossedUpIndicatorRule(ema, compoundEma);
+        Rule exitRule = new TrailingStopLossRule(barSeries);
+
+        return new BaseStrategy(entryRule, exitRule);
+    }
 
     public static Strategy momentumStrategy(BarSeries barSeries) {
         ClosePriceIndicator closePrice = new ClosePriceIndicator(barSeries);
