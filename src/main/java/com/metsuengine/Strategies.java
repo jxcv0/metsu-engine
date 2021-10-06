@@ -59,7 +59,7 @@ public class Strategies {
         SMAIndicator sma = new SMAIndicator(close, window);
         StandardDeviationIndicator stdDev = new StandardDeviationIndicator(close, window);
         BollingerBandsMiddleIndicator middle = new BollingerBandsMiddleIndicator(sma);
-        BollingerBandsLowerIndicator lower = new BollingerBandsLowerIndicator(middle, stdDev);
+        BollingerBandsLowerIndicator lower = new BollingerBandsLowerIndicator(middle, stdDev, DecimalNum.valueOf(2.5));
 
         Rule entryRule = new CrossedDownIndicatorRule(close, lower);
         Rule exitRule = new CrossedUpIndicatorRule(close, middle);

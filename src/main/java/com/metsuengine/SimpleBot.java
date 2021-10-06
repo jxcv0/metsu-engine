@@ -9,8 +9,15 @@ import org.ta4j.core.Trade.TradeType;
 import org.ta4j.core.TradingRecord;
 import org.ta4j.core.analysis.criteria.MaximumDrawdownCriterion;
 import org.ta4j.core.analysis.criteria.pnl.GrossReturnCriterion;
+import org.ta4j.core.indicators.ATRIndicator;
+import org.ta4j.core.indicators.ChandelierExitLongIndicator;
 import org.ta4j.core.indicators.EMAIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
+import org.ta4j.core.indicators.keltner.KeltnerChannelLowerIndicator;
+import org.ta4j.core.indicators.keltner.KeltnerChannelMiddleIndicator;
+import org.ta4j.core.indicators.keltner.KeltnerChannelUpperIndicator;
+import org.ta4j.core.indicators.pivotpoints.PivotPointIndicator;
+import org.ta4j.core.indicators.pivotpoints.TimeLevel;
 
 public class SimpleBot {
 
@@ -22,21 +29,27 @@ public class SimpleBot {
         // int to = (int) ZonedDateTime.now().toEpochSecond();
         // createKlineCSV(from, to);
 
-        int window = 100;
+        int window = 210;
 
         LOGGER.info("Getting kline data from CSV");
         CSVManager manager = new CSVManager("BTCUSD-03-10-21-minus1month.csv");
-        BarSeries barSeries = manager.barSeriesFromCSV().getSubSeries(0, 10000);
+        BarSeries barSeries = manager.barSeriesFromCSV().getSubSeries(0, 5000);
         BarSeriesManager barSeriesManager = new BarSeriesManager(barSeries);
 
-        TradingRecord longTradingRecord = barSeriesManager.run(Strategies.momentumStrategy(barSeries), TradeType.BUY);
+        TradingRecord longTradingRecord = barSeriesManager.run(Strategies.standardDeviationLong(barSeries, window), TradeType.BUY);
 
         LOGGER.info("Creating chart indicators");
-        
+        ClosePriceIndicator close = new ClosePriceIndicator(barSeries);
+        EMAIndicator ema = new EMAIndicator(close, window);
+        ChandelierExitLongIndicator trailingStop = new ChandelierExitLongIndicator(barSeries);
+        PivotPointIndicator pivotPointIndicator = new PivotPointIndicator(barSeries, TimeLevel.DAY);
+
         LOGGER.info("Building Chart");
-        TimeSeriesChart chart = new TimeSeriesChart("BTCUSD");
+        TimeSeriesChart chart = new TimeSeriesChart("BTCUSD"); 
         chart.buildDataset("Close", barSeries);
-        chart.addMarkers(barSeries, Strategies.momentumStrategy(barSeries));
+        chart.buildDataset("pivotPointIndicator", barSeries, pivotPointIndicator);
+        chart.buildDataset("trailingStop", barSeries, trailingStop);
+        chart.buildDataset("ema", barSeries, ema);
         chart.displayChart();
 
         AnalysisCriterion drawdownCriterion = new MaximumDrawdownCriterion();
