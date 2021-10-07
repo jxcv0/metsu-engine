@@ -4,6 +4,8 @@ import org.ta4j.core.BarSeries;
 import org.ta4j.core.BaseStrategy;
 import org.ta4j.core.Rule;
 import org.ta4j.core.Strategy;
+import org.ta4j.core.indicators.DistanceFromMAIndicator;
+import org.ta4j.core.indicators.EMAIndicator;
 import org.ta4j.core.indicators.SMAIndicator;
 import org.ta4j.core.indicators.bollinger.BollingerBandsLowerIndicator;
 import org.ta4j.core.indicators.bollinger.BollingerBandsMiddleIndicator;
@@ -45,5 +47,16 @@ public class Strategies {
         Strategy strategy = new BaseStrategy(entryRule, exitRule);
         strategy.setUnstablePeriod(100);
         return strategy;
+    }
+
+    public static Strategy momentumHedgeLong(BarSeries barSeries, int window) {
+        ClosePriceIndicator close = new ClosePriceIndicator(barSeries);
+        EMAIndicator ema = new EMAIndicator(close, window * 3);
+        DistanceFromMAIndicator distance = new DistanceFromMAIndicator(barSeries, ema);
+
+        Rule entryRule = new CrossedUpIndicatorRule(close, ema);
+        Rule exitRule = new CrossedDownIndicatorRule(close, ema);
+
+        return new BaseStrategy(entryRule, exitRule);
     }
 }
