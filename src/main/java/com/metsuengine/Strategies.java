@@ -5,7 +5,6 @@ import org.ta4j.core.BaseStrategy;
 import org.ta4j.core.Rule;
 import org.ta4j.core.Strategy;
 import org.ta4j.core.indicators.EMAIndicator;
-import org.ta4j.core.indicators.SMAIndicator;
 import org.ta4j.core.indicators.bollinger.BollingerBandsLowerIndicator;
 import org.ta4j.core.indicators.bollinger.BollingerBandsMiddleIndicator;
 import org.ta4j.core.indicators.bollinger.BollingerBandsUpperIndicator;
@@ -19,9 +18,9 @@ public class Strategies {
     public static Strategy standardDeviationLong(BarSeries barSeries, int window) {
 
         ClosePriceIndicator close = new ClosePriceIndicator(barSeries);
-        SMAIndicator sma = new SMAIndicator(close, window);
+        EMAIndicator ema = new EMAIndicator(close, window);
         StandardDeviationIndicator stdDev = new StandardDeviationIndicator(close, window);
-        BollingerBandsMiddleIndicator middle = new BollingerBandsMiddleIndicator(sma);
+        BollingerBandsMiddleIndicator middle = new BollingerBandsMiddleIndicator(ema);
         BollingerBandsLowerIndicator lower = new BollingerBandsLowerIndicator(middle, stdDev);
 
         Rule entryRule = new CrossedDownIndicatorRule(close, lower);
@@ -34,9 +33,9 @@ public class Strategies {
     public static Strategy standardDeviationShort(BarSeries barSeries, int window) {
 
         ClosePriceIndicator close = new ClosePriceIndicator(barSeries);
-        SMAIndicator sma = new SMAIndicator(close, window);
+        EMAIndicator ema = new EMAIndicator(close, window);
         StandardDeviationIndicator stdDev = new StandardDeviationIndicator(close, window);
-        BollingerBandsMiddleIndicator middle = new BollingerBandsMiddleIndicator(sma);
+        BollingerBandsMiddleIndicator middle = new BollingerBandsMiddleIndicator(ema);
         BollingerBandsUpperIndicator upper = new BollingerBandsUpperIndicator(middle, stdDev);
 
         Rule entryRule = new CrossedUpIndicatorRule(close, upper);
@@ -45,27 +44,5 @@ public class Strategies {
         Strategy strategy = new BaseStrategy("SD", entryRule, exitRule, 100);
         strategy.setUnstablePeriod(100);
         return strategy;
-    }
-
-    public static Strategy momentumHedgeLong(BarSeries barSeries, int window) {
-        ClosePriceIndicator close = new ClosePriceIndicator(barSeries);
-        EMAIndicator emaShort = new EMAIndicator(close, window);
-        EMAIndicator emaLong = new EMAIndicator(close, window * 2);
-
-        Rule entryRule = new CrossedUpIndicatorRule( emaShort, emaLong);
-        Rule exitRule = new CrossedDownIndicatorRule(emaShort, emaLong);
-
-        return new BaseStrategy("MH", entryRule, exitRule);
-    }
-
-    public static Strategy momentumHedgeShort(BarSeries barSeries, int window) {
-        ClosePriceIndicator close = new ClosePriceIndicator(barSeries);
-        EMAIndicator emaShort = new EMAIndicator(close, window);
-        EMAIndicator emaLong = new EMAIndicator(close, window * 2);
-
-        Rule entryRule = new CrossedDownIndicatorRule(emaShort, emaLong);
-        Rule exitRule = new CrossedUpIndicatorRule(emaShort, emaLong);
-
-        return new BaseStrategy("MH", entryRule, exitRule);
     }
 }

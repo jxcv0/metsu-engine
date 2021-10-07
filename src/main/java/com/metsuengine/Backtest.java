@@ -16,6 +16,7 @@ import org.ta4j.core.indicators.bollinger.BollingerBandsMiddleIndicator;
 import org.ta4j.core.indicators.bollinger.BollingerBandsUpperIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import org.ta4j.core.indicators.statistics.StandardDeviationIndicator;
+import org.ta4j.core.num.DecimalNum;
 
 public class Backtest {
 
@@ -29,25 +30,26 @@ public class Backtest {
 
         LOGGER.info("Getting kline data from CSV");
         CSVManager manager = new CSVManager("BTCUSD-03-10-21-minus1month.csv");
-        BarSeries barSeries = manager.barSeriesFromCSV().getSubSeries(0, 10000);
+        BarSeries barSeries = manager.barSeriesFromCSV();
         BarSeriesManager barSeriesManager = new BarSeriesManager(barSeries);
 
-        int window = 600;
+        int window = 1000;
 
         TradingRecord longSDTradingRecord = barSeriesManager.run(Strategies.standardDeviationLong(barSeries, window), TradeType.BUY);
         TradingRecord shortSDTradingRecord = barSeriesManager.run(Strategies.standardDeviationShort(barSeries, window), TradeType.SELL);
-        TradingRecord longMHTradingRecord = barSeriesManager.run(Strategies.momentumHedgeLong(barSeries, window), TradeType.BUY);
-        TradingRecord shortMHTradingRecord = barSeriesManager.run(Strategies.momentumHedgeShort(barSeries, window), TradeType.SELL);
 
         LOGGER.info("Creating chart indicators");
         ClosePriceIndicator close = new ClosePriceIndicator(barSeries);
-        SMAIndicator sma = new SMAIndicator(close, window);
+        EMAIndicator ema = new EMAIndicator(close, window);
+        SMAIndicator sma = new SMAIndicator(close, window/2);
         StandardDeviationIndicator sd = new StandardDeviationIndicator(close, window);
-        BollingerBandsMiddleIndicator bbm = new BollingerBandsMiddleIndicator(sma);
+
+        BollingerBandsMiddleIndicator bbm = new BollingerBandsMiddleIndicator(ema);
         BollingerBandsLowerIndicator bbl = new BollingerBandsLowerIndicator(bbm, sd);
         BollingerBandsUpperIndicator bbu = new BollingerBandsUpperIndicator(bbm, sd);
-        EMAIndicator emaShort = new EMAIndicator(close, window);
-        EMAIndicator emaLong = new EMAIndicator(close, window * 2);
+        BollingerBandsMiddleIndicator tpm = new BollingerBandsMiddleIndicator(sma);
+        BollingerBandsLowerIndicator tpl = new BollingerBandsLowerIndicator(tpm, sd, DecimalNum.valueOf(0.5));
+        BollingerBandsUpperIndicator tpu = new BollingerBandsUpperIndicator(tpm, sd, DecimalNum.valueOf(0.5));
 
         LOGGER.info("Building Chart");
         TimeSeriesChart chart = new TimeSeriesChart("BTCUSD");
@@ -55,12 +57,10 @@ public class Backtest {
         chart.buildDataset("BBM", barSeries, bbm);
         chart.buildDataset("BBL", barSeries, bbl);
         chart.buildDataset("BBU", barSeries, bbu);
-        chart.buildDataset("Short EMA", barSeries, emaShort);
-        chart.buildDataset("Long EMA", barSeries, emaLong);
+        chart.buildDataset("TPL", barSeries, tpl);
+        chart.buildDataset("TPU", barSeries, tpu);
         chart.addMarkers(barSeries, Strategies.standardDeviationLong(barSeries, window), TradeType.BUY);
         chart.addMarkers(barSeries, Strategies.standardDeviationShort(barSeries, window), TradeType.SELL);
-        chart.addMarkers(barSeries, Strategies.momentumHedgeLong(barSeries, window), TradeType.BUY);
-        chart.addMarkers(barSeries, Strategies.momentumHedgeShort(barSeries, window), TradeType.SELL);
         chart.displayChart();
 
         AnalysisCriterion maxDrawdownCriterion = new MaximumDrawdownCriterion();
@@ -70,10 +70,6 @@ public class Backtest {
         double longReturn = returnCriterion.calculate(barSeries, longSDTradingRecord).doubleValue();
         double shortDrawdown = maxDrawdownCriterion.calculate(barSeries, shortSDTradingRecord).doubleValue();
         double shortReturn = returnCriterion.calculate(barSeries, shortSDTradingRecord).doubleValue();
-        double longHedgeDrawdown = maxDrawdownCriterion.calculate(barSeries, longMHTradingRecord).doubleValue();
-        double longHedgeReturn = returnCriterion.calculate(barSeries, longMHTradingRecord).doubleValue();
-        double shortHedgeDrawdown = maxDrawdownCriterion.calculate(barSeries, shortMHTradingRecord).doubleValue();
-        double shortHedgeReturn = returnCriterion.calculate(barSeries, shortMHTradingRecord).doubleValue();
 
         System.out.println("Number of Long positions: " + longSDTradingRecord.getPositionCount());
         System.out.println("Number of Short positions: " + shortSDTradingRecord.getPositionCount());
@@ -81,21 +77,17 @@ public class Backtest {
         System.out.println("Long Return: " + longReturn * 100);
         System.out.println("Short Drawdown: " + shortDrawdown * 100);
         System.out.println("Short Return: " + shortReturn * 100);
-        System.out.println("Number of Long positions: " + longMHTradingRecord.getPositionCount());
-        System.out.println("Number of Short positions: " + shortMHTradingRecord.getPositionCount());
-        System.out.println("Hedge Long Drawdown: " + longHedgeDrawdown * 100);
-        System.out.println("Hedge Long Return: " + longHedgeReturn * 100);
-        System.out.println("Hedge Short Drawdown: " + shortHedgeDrawdown * 100);
-        System.out.println("Hedge Short Return: " + shortHedgeReturn * 100);
 
         int totalPositionCount = longSDTradingRecord.getPositionCount() 
-            + shortSDTradingRecord.getPositionCount()
-            + longMHTradingRecord.getPositionCount()
-            + shortMHTradingRecord.getPositionCount();
+            + shortSDTradingRecord.getPositionCount();
 
         System.out.println("Total Position Count: " + totalPositionCount);
-        System.out.println("Combined Drawdown: " + (longDrawdown + shortDrawdown + longHedgeDrawdown + shortHedgeDrawdown) * 100);
-        System.out.println("Combined Return: " + (longReturn * shortReturn * longHedgeReturn * shortHedgeReturn) * 100);
+        System.out.println("Combined Drawdown: " + (longDrawdown + shortDrawdown) * 100);
+        System.out.println("Combined Return: " + (longReturn * shortReturn) * 100);
+        
+        double fees = totalPositionCount * 100 * 0.0015;
+        
+        System.out.println("Fees as Percentage: " + fees);
     }
 
     public static void createKlineCSV(int from, int to) {
