@@ -4,7 +4,6 @@ import org.ta4j.core.BarSeries;
 import org.ta4j.core.BaseStrategy;
 import org.ta4j.core.Rule;
 import org.ta4j.core.Strategy;
-import org.ta4j.core.indicators.DistanceFromMAIndicator;
 import org.ta4j.core.indicators.EMAIndicator;
 import org.ta4j.core.indicators.SMAIndicator;
 import org.ta4j.core.indicators.bollinger.BollingerBandsLowerIndicator;
@@ -51,11 +50,22 @@ public class Strategies {
 
     public static Strategy momentumHedgeLong(BarSeries barSeries, int window) {
         ClosePriceIndicator close = new ClosePriceIndicator(barSeries);
-        EMAIndicator ema = new EMAIndicator(close, window * 3);
-        DistanceFromMAIndicator distance = new DistanceFromMAIndicator(barSeries, ema);
+        EMAIndicator emaShort = new EMAIndicator(close, window);
+        EMAIndicator emaLong = new EMAIndicator(close, window * 2);
 
-        Rule entryRule = new CrossedUpIndicatorRule(close, ema);
-        Rule exitRule = new CrossedDownIndicatorRule(close, ema);
+        Rule entryRule = new CrossedUpIndicatorRule(emaShort, emaLong);
+        Rule exitRule = new CrossedDownIndicatorRule(emaShort, emaLong);
+
+        return new BaseStrategy(entryRule, exitRule);
+    }
+
+    public static Strategy momentumHedgeShort(BarSeries barSeries, int window) {
+        ClosePriceIndicator close = new ClosePriceIndicator(barSeries);
+        EMAIndicator emaShort = new EMAIndicator(close, window);
+        EMAIndicator emaLong = new EMAIndicator(close, window * 2);
+
+        Rule entryRule = new CrossedDownIndicatorRule(emaShort, emaLong);
+        Rule exitRule = new CrossedUpIndicatorRule(emaShort, emaLong);
 
         return new BaseStrategy(entryRule, exitRule);
     }
