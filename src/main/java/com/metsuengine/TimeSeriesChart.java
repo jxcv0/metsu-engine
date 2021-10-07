@@ -89,14 +89,14 @@ public class TimeSeriesChart extends ApplicationFrame {
                 double entrySignalTime = new Minute(Date.from(barSeries.getBar(position.getEntry().getIndex()).getEndTime().toInstant())).getFirstMillisecond();
                 Marker entryMarker = new ValueMarker(entrySignalTime);
                 entryMarker.setPaint(Color.RED);
-                entryMarker.setLabel("SHORT ENTRY");
+                entryMarker.setLabel(strategy.getName() + " SHORT ENTRY");
                 entryMarker.setLabelAnchor(RectangleAnchor.CENTER);
                 markers.add(entryMarker);
     
                 double exitSignalTime = new Minute(Date.from(barSeries.getBar(position.getExit().getIndex()).getEndTime().toInstant())).getFirstMillisecond();
                 Marker exitMarker = new ValueMarker(exitSignalTime);
                 exitMarker.setPaint(Color.GREEN);
-                exitMarker.setLabel("SHORT EXIT");
+                exitMarker.setLabel(strategy.getName() + " SHORT EXIT");
                 exitMarker.setLabelAnchor(RectangleAnchor.CENTER);
                 markers.add(exitMarker);
             }  
@@ -106,14 +106,14 @@ public class TimeSeriesChart extends ApplicationFrame {
                 double buySignalTime = new Minute(Date.from(barSeries.getBar(position.getEntry().getIndex()).getEndTime().toInstant())).getFirstMillisecond();
                 Marker entryMarker = new ValueMarker(buySignalTime);
                 entryMarker.setPaint(Color.GREEN);
-                entryMarker.setLabel("LONG ENTRY");
+                entryMarker.setLabel(strategy.getName() + " LONG ENTRY");
                 entryMarker.setLabelAnchor(RectangleAnchor.CENTER);
                 markers.add(entryMarker);
     
                 double sellSignalTime = new Minute(Date.from(barSeries.getBar(position.getExit().getIndex()).getEndTime().toInstant())).getFirstMillisecond();
                 Marker exitMarker = new ValueMarker(sellSignalTime);
                 exitMarker.setPaint(Color.RED);
-                exitMarker.setLabel("LONG EXIT");
+                exitMarker.setLabel(strategy.getName() + " LONG EXIT");
                 exitMarker.setLabelAnchor(RectangleAnchor.CENTER);
                 markers.add(exitMarker);
             }

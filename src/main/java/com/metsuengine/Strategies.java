@@ -27,8 +27,7 @@ public class Strategies {
         Rule entryRule = new CrossedDownIndicatorRule(close, lower);
         Rule exitRule = new CrossedUpIndicatorRule(close, middle);
 
-        Strategy strategy = new BaseStrategy(entryRule, exitRule);
-        strategy.setUnstablePeriod(100);
+        Strategy strategy = new BaseStrategy("SD", entryRule, exitRule, 100);
         return strategy;
     }
 
@@ -43,7 +42,7 @@ public class Strategies {
         Rule entryRule = new CrossedUpIndicatorRule(close, upper);
         Rule exitRule = new CrossedDownIndicatorRule(close, middle);
 
-        Strategy strategy = new BaseStrategy(entryRule, exitRule);
+        Strategy strategy = new BaseStrategy("SD", entryRule, exitRule, 100);
         strategy.setUnstablePeriod(100);
         return strategy;
     }
@@ -53,10 +52,10 @@ public class Strategies {
         EMAIndicator emaShort = new EMAIndicator(close, window);
         EMAIndicator emaLong = new EMAIndicator(close, window * 2);
 
-        Rule entryRule = new CrossedUpIndicatorRule(emaShort, emaLong);
+        Rule entryRule = new CrossedUpIndicatorRule( emaShort, emaLong);
         Rule exitRule = new CrossedDownIndicatorRule(emaShort, emaLong);
 
-        return new BaseStrategy(entryRule, exitRule);
+        return new BaseStrategy("MH", entryRule, exitRule);
     }
 
     public static Strategy momentumHedgeShort(BarSeries barSeries, int window) {
@@ -67,6 +66,6 @@ public class Strategies {
         Rule entryRule = new CrossedDownIndicatorRule(emaShort, emaLong);
         Rule exitRule = new CrossedUpIndicatorRule(emaShort, emaLong);
 
-        return new BaseStrategy(entryRule, exitRule);
+        return new BaseStrategy("MH", entryRule, exitRule);
     }
 }

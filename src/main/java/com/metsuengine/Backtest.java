@@ -87,6 +87,15 @@ public class Backtest {
         System.out.println("Hedge Long Return: " + longHedgeReturn * 100);
         System.out.println("Hedge Short Drawdown: " + shortHedgeDrawdown * 100);
         System.out.println("Hedge Short Return: " + shortHedgeReturn * 100);
+
+        int totalPositionCount = longSDTradingRecord.getPositionCount() 
+            + shortSDTradingRecord.getPositionCount()
+            + longMHTradingRecord.getPositionCount()
+            + shortMHTradingRecord.getPositionCount();
+
+        System.out.println("Total Position Count: " + totalPositionCount);
+        System.out.println("Combined Drawdown: " + (longDrawdown + shortDrawdown + longHedgeDrawdown + shortHedgeDrawdown) * 100);
+        System.out.println("Combined Return: " + (longReturn * shortReturn * longHedgeReturn * shortHedgeReturn) * 100);
     }
 
     public static void createKlineCSV(int from, int to) {
