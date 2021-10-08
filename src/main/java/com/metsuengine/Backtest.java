@@ -7,10 +7,9 @@ import org.ta4j.core.AnalysisCriterion;
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.BarSeriesManager;
 import org.ta4j.core.Trade.TradeType;
-import org.ta4j.core.TradingRecord;
 import org.ta4j.core.analysis.criteria.MaximumDrawdownCriterion;
 import org.ta4j.core.analysis.criteria.pnl.GrossReturnCriterion;
-import org.ta4j.core.indicators.EMAIndicator;
+import org.ta4j.core.TradingRecord;
 import org.ta4j.core.indicators.SMAIndicator;
 import org.ta4j.core.indicators.bollinger.BollingerBandsLowerIndicator;
 import org.ta4j.core.indicators.bollinger.BollingerBandsMiddleIndicator;
@@ -18,7 +17,6 @@ import org.ta4j.core.indicators.bollinger.BollingerBandsUpperIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import org.ta4j.core.indicators.helpers.DifferenceIndicator;
 import org.ta4j.core.indicators.statistics.StandardDeviationIndicator;
-import org.ta4j.core.num.DecimalNum;
 
 public class Backtest {
 
@@ -38,67 +36,43 @@ public class Backtest {
 
         LOGGER.info("Getting kline data from CSV");
         CSVManager btcManager = new CSVManager("BTCUSD08-10.csv");
-        CSVManager xrpXanager = new CSVManager("XRPUSD08-10.csv");
+        CSVManager xrpManager = new CSVManager("XRPUSD08-10.csv");
         BarSeries btcBarSeries = btcManager.barSeriesFromCSV();
-        BarSeries xrpBarSeries = xrpXanager.barSeriesFromCSV();
+        BarSeries xrpBarSeries = xrpManager.barSeriesFromCSV();
 
-        DifferenceIndicator pairSeries = // create new difference series?
+        int window = 220;
 
-        int window = 1000;
-
-        TradingRecord longSDTradingRecord = barSeriesManager.run(Strategies.standardDeviationLong(barSeries, window), TradeType.BUY);
-        TradingRecord shortSDTradingRecord = barSeriesManager.run(Strategies.standardDeviationShort(barSeries, window), TradeType.SELL);
-
-        LOGGER.info("Creating chart indicators");
-        ClosePriceIndicator close = new ClosePriceIndicator(barSeries);
-        EMAIndicator ema = new EMAIndicator(close, window);
-        SMAIndicator sma = new SMAIndicator(close, window/2);
-        StandardDeviationIndicator sd = new StandardDeviationIndicator(close, window);
-
-        BollingerBandsMiddleIndicator bbm = new BollingerBandsMiddleIndicator(ema);
-        BollingerBandsLowerIndicator bbl = new BollingerBandsLowerIndicator(bbm, sd);
-        BollingerBandsUpperIndicator bbu = new BollingerBandsUpperIndicator(bbm, sd);
-        BollingerBandsMiddleIndicator tpm = new BollingerBandsMiddleIndicator(sma);
-        BollingerBandsLowerIndicator tpl = new BollingerBandsLowerIndicator(tpm, sd, DecimalNum.valueOf(0.5));
-        BollingerBandsUpperIndicator tpu = new BollingerBandsUpperIndicator(tpm, sd, DecimalNum.valueOf(0.5));
+        DifferenceIndicator differenceIndicator = new DifferenceIndicator(
+            new ClosePriceIndicator(btcBarSeries), new ClosePriceIndicator(xrpBarSeries));
+        
+        SMAIndicator sma = new SMAIndicator(differenceIndicator, window);
+        StandardDeviationIndicator deviation = new StandardDeviationIndicator(differenceIndicator, window*2);
+        BollingerBandsMiddleIndicator bbm = new BollingerBandsMiddleIndicator(sma);
+        BollingerBandsLowerIndicator bbl = new BollingerBandsLowerIndicator(bbm, deviation);
+        BollingerBandsUpperIndicator bbu = new BollingerBandsUpperIndicator(bbm, deviation);
+        
+        BarSeriesManager btcSeriesManager = new BarSeriesManager(btcBarSeries);
+        BarSeriesManager xrpSeriesManager = new BarSeriesManager(xrpBarSeries);
+        TradingRecord xrpShortRecord = xrpSeriesManager.run(Strategies.meanReversionShort(btcBarSeries, xrpBarSeries, window), TradeType.SELL);
+        TradingRecord btcLongRecord = btcSeriesManager.run(Strategies.meanReversionLong(btcBarSeries, xrpBarSeries, window), TradeType.BUY);
 
         LOGGER.info("Building Chart");
         TimeSeriesChart chart = new TimeSeriesChart("BTCUSD");
-        chart.buildDataset("Close", barSeries);
-        chart.buildDataset("BBM", barSeries, bbm);
-        chart.buildDataset("BBL", barSeries, bbl);
-        chart.buildDataset("BBU", barSeries, bbu);
-        chart.buildDataset("TPL", barSeries, tpl);
-        chart.buildDataset("TPU", barSeries, tpu);
-        chart.addMarkers(barSeries, Strategies.standardDeviationLong(barSeries, window), TradeType.BUY);
-        chart.addMarkers(barSeries, Strategies.standardDeviationShort(barSeries, window), TradeType.SELL);
+        chart.buildDataset("Spread", btcBarSeries, differenceIndicator);
+        chart.buildDataset("SMA", btcBarSeries, sma);
+        chart.buildDataset("BBL", btcBarSeries, bbl);
+        chart.buildDataset("BBU", btcBarSeries, bbu);
+        chart.addMarkers(btcBarSeries, Strategies.meanReversionShort(btcBarSeries, xrpBarSeries, window), TradeType.SELL);
+        chart.addMarkers(xrpBarSeries, Strategies.meanReversionLong(btcBarSeries, xrpBarSeries, window), TradeType.BUY);
         chart.displayChart();
 
-        AnalysisCriterion maxDrawdownCriterion = new MaximumDrawdownCriterion();
-        AnalysisCriterion returnCriterion = new GrossReturnCriterion();
+        AnalysisCriterion maxDrawdown = new MaximumDrawdownCriterion();
+        AnalysisCriterion grossReturn = new GrossReturnCriterion();
 
-        double longDrawdown = maxDrawdownCriterion.calculate(barSeries, longSDTradingRecord).doubleValue();
-        double longReturn = returnCriterion.calculate(barSeries, longSDTradingRecord).doubleValue();
-        double shortDrawdown = maxDrawdownCriterion.calculate(barSeries, shortSDTradingRecord).doubleValue();
-        double shortReturn = returnCriterion.calculate(barSeries, shortSDTradingRecord).doubleValue();
-
-        System.out.println("Number of Long positions: " + longSDTradingRecord.getPositionCount());
-        System.out.println("Number of Short positions: " + shortSDTradingRecord.getPositionCount());
-        System.out.println("Long Drawdown: " + longDrawdown * 100);
-        System.out.println("Long Return: " + longReturn * 100);
-        System.out.println("Short Drawdown: " + shortDrawdown * 100);
-        System.out.println("Short Return: " + shortReturn * 100);
-
-        int totalPositionCount = longSDTradingRecord.getPositionCount() 
-            + shortSDTradingRecord.getPositionCount();
-
-        System.out.println("Total Position Count: " + totalPositionCount);
-        System.out.println("Combined Drawdown: " + (longDrawdown + shortDrawdown) * 100);
-        System.out.println("Combined Return: " + (longReturn * shortReturn) * 100);
-        
-        double fees = totalPositionCount * 100 * 0.0015;
-        
-        System.out.println("Fees as Percentage: " + fees);
+        System.out.println("Long Maximum Drawdown: " + maxDrawdown.calculate(btcBarSeries, btcLongRecord));
+        System.out.println("Short Maximum Drawdown: " + maxDrawdown.calculate(xrpBarSeries, xrpShortRecord));
+        System.out.println("Long Returns : " + grossReturn.calculate(btcBarSeries, btcLongRecord));
+        System.out.println("Short Returns: " + grossReturn.calculate(xrpBarSeries, xrpShortRecord));
     }
 
     public static void createKlineCSV(int from, int to) {
