@@ -1,15 +1,14 @@
 package com.metsuengine;
 
-import java.time.ZonedDateTime;
 import java.util.logging.Logger;
 
 import org.ta4j.core.AnalysisCriterion;
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.BarSeriesManager;
 import org.ta4j.core.Trade.TradeType;
+import org.ta4j.core.TradingRecord;
 import org.ta4j.core.analysis.criteria.MaximumDrawdownCriterion;
 import org.ta4j.core.analysis.criteria.pnl.GrossReturnCriterion;
-import org.ta4j.core.TradingRecord;
 import org.ta4j.core.indicators.SMAIndicator;
 import org.ta4j.core.indicators.bollinger.BollingerBandsLowerIndicator;
 import org.ta4j.core.indicators.bollinger.BollingerBandsMiddleIndicator;
@@ -23,16 +22,10 @@ public class Backtest {
     private static final Logger LOGGER = Logger.getLogger(Backtest.class.getName());
 
     public static void main(String[] args) {
-        int from = (int) ZonedDateTime.now().minusDays(1).toEpochSecond();
-        int to = (int) ZonedDateTime.now().toEpochSecond();
-        createPairsKlineCSV(from, to);
-    }
-
-    public static void notmain(String[] args) {
 
         // int from = (int) ZonedDateTime.now().minusMonths(1).toEpochSecond();
         // int to = (int) ZonedDateTime.now().toEpochSecond();
-        // createKlineCSV(from, to);
+        // createPairsKlineCSV(from, to);
 
         LOGGER.info("Getting kline data from CSV");
         CSVManager btcManager = new CSVManager("BTCUSD08-10.csv");
