@@ -3,6 +3,7 @@ package com.metsuengine;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.logging.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -17,7 +18,7 @@ public class BybitEndpoint {
 
     private static final Logger LOGGER = Logger.getLogger(BybitEndpoint.class.getName());
 
-    private String symbol;
+    private final String symbol;
 
     public BybitEndpoint(String symbol) {
         this.symbol = symbol;
@@ -71,9 +72,10 @@ public class BybitEndpoint {
 
     public void getKlineRecords(int from) {
 
-        String url = "https://api.bybit.com/v2/public/kline/list?symbol=" + this.symbol + "&interval=1&limit=1&from=" + from;
-        
-        CSVManager manager = new CSVManager("src\\main\\resources\\BTCUSD-03-10-21-minus1month.csv");
+        String url = "https://api.bybit.com/v2/public/kline/list?symbol=" + symbol + "&interval=1&limit=1&from=" + from;
+
+        String dateTime = DateTimeFormatter.ofPattern("dd-MM").format(ZonedDateTime.now());
+        CSVManager manager = new CSVManager("src\\main\\resources\\" + symbol + dateTime + ".csv");
 
         try {
             Request request = new Request.Builder()

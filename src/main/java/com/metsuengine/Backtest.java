@@ -1,5 +1,6 @@
 package com.metsuengine;
 
+import java.time.ZonedDateTime;
 import java.util.logging.Logger;
 
 import org.ta4j.core.AnalysisCriterion;
@@ -15,6 +16,7 @@ import org.ta4j.core.indicators.bollinger.BollingerBandsLowerIndicator;
 import org.ta4j.core.indicators.bollinger.BollingerBandsMiddleIndicator;
 import org.ta4j.core.indicators.bollinger.BollingerBandsUpperIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
+import org.ta4j.core.indicators.helpers.DifferenceIndicator;
 import org.ta4j.core.indicators.statistics.StandardDeviationIndicator;
 import org.ta4j.core.num.DecimalNum;
 
@@ -23,15 +25,24 @@ public class Backtest {
     private static final Logger LOGGER = Logger.getLogger(Backtest.class.getName());
 
     public static void main(String[] args) {
+        int from = (int) ZonedDateTime.now().minusDays(1).toEpochSecond();
+        int to = (int) ZonedDateTime.now().toEpochSecond();
+        createPairsKlineCSV(from, to);
+    }
+
+    public static void notmain(String[] args) {
 
         // int from = (int) ZonedDateTime.now().minusMonths(1).toEpochSecond();
         // int to = (int) ZonedDateTime.now().toEpochSecond();
         // createKlineCSV(from, to);
 
         LOGGER.info("Getting kline data from CSV");
-        CSVManager manager = new CSVManager("BTCUSD-03-10-21-minus1month.csv");
-        BarSeries barSeries = manager.barSeriesFromCSV();
-        BarSeriesManager barSeriesManager = new BarSeriesManager(barSeries);
+        CSVManager btcManager = new CSVManager("BTCUSD08-10.csv");
+        CSVManager xrpXanager = new CSVManager("XRPUSD08-10.csv");
+        BarSeries btcBarSeries = btcManager.barSeriesFromCSV();
+        BarSeries xrpBarSeries = xrpXanager.barSeriesFromCSV();
+
+        DifferenceIndicator pairSeries = // create new difference series?
 
         int window = 1000;
 
@@ -96,6 +107,16 @@ public class Backtest {
         LOGGER.info("Getting kline data");
         for (int i = from; i < to; i+=60) {
             endpoint.getKlineRecords(i);
+        }
+    }
+
+    public static void createPairsKlineCSV(int from, int to) {
+        BybitEndpoint firstEndpoint = new BybitEndpoint("BTCUSD");
+        BybitEndpoint secondEndpoint = new BybitEndpoint("XRPUSD");
+        LOGGER.info("Getting kline data");
+        for (int i = from; i < to; i+=60) {
+            firstEndpoint.getKlineRecords(i);
+            secondEndpoint.getKlineRecords(i);
         }
     }
 }
