@@ -29,15 +29,17 @@ public class Backtest {
 
     private static final Logger LOGGER = Logger.getLogger(Backtest.class.getName());
 
-    public static void main(String[] args) {
-
+    public static void NOT(String[] args) {
         int from = (int) ZonedDateTime.now().minusMonths(1).toEpochSecond();
         int to = (int) ZonedDateTime.now().toEpochSecond();
         createPairsKlineCSV(from, to);
+    }
+
+    public static void main(String[] args) {
 
         LOGGER.info("Getting kline data from CSV");
-        CSVManager btcManager = new CSVManager("BTCUSD08-10.csv");
-        CSVManager xrpManager = new CSVManager("XRPUSD08-10.csv");
+        CSVManager btcManager = new CSVManager("BTCUSD09-10.csv");
+        CSVManager xrpManager = new CSVManager("XRPUSD09-10.csv");
         BarSeries btcBarSeries = btcManager.barSeriesFromCSV();
         BarSeries xrpBarSeries = xrpManager.barSeriesFromCSV();
 
