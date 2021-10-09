@@ -1,10 +1,13 @@
 package com.metsuengine;
 
+import java.text.DecimalFormat;
 import java.util.logging.Logger;
 
 import org.ta4j.core.AnalysisCriterion;
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.BarSeriesManager;
+import org.ta4j.core.BaseStrategy;
+import org.ta4j.core.Strategy;
 import org.ta4j.core.Trade.TradeType;
 import org.ta4j.core.TradingRecord;
 import org.ta4j.core.analysis.criteria.MaximumDrawdownCriterion;
@@ -17,6 +20,8 @@ import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import org.ta4j.core.indicators.helpers.DifferenceIndicator;
 import org.ta4j.core.indicators.statistics.SigmaIndicator;
 import org.ta4j.core.indicators.statistics.StandardDeviationIndicator;
+import org.ta4j.core.rules.CrossedDownIndicatorRule;
+import org.ta4j.core.rules.CrossedUpIndicatorRule;
 
 public class Backtest {
 
@@ -40,43 +45,45 @@ public class Backtest {
         ClosePriceIndicator xrpClose = new ClosePriceIndicator(xrpBarSeries); 
         SigmaIndicator btcSigma = new SigmaIndicator(btcClose, window);
         SigmaIndicator xrpSigma = new SigmaIndicator(xrpClose, window);
-        DifferenceIndicator differenceIndicator = new DifferenceIndicator(btcSigma, xrpSigma);
-        SMAIndicator sma = new SMAIndicator(differenceIndicator, window);
-        StandardDeviationIndicator deviation = new StandardDeviationIndicator(differenceIndicator, window);
+        DifferenceIndicator pair = new DifferenceIndicator(btcSigma, xrpSigma);
+        SMAIndicator sma = new SMAIndicator(pair, window);
+        StandardDeviationIndicator deviation = new StandardDeviationIndicator(pair, window);
         BollingerBandsMiddleIndicator bbm = new BollingerBandsMiddleIndicator(sma);
         BollingerBandsLowerIndicator bbl = new BollingerBandsLowerIndicator(bbm, deviation);
         BollingerBandsUpperIndicator bbu = new BollingerBandsUpperIndicator(bbm, deviation);
+        
+        Strategy btcShort = new BaseStrategy("BTC",  new CrossedUpIndicatorRule(pair, bbu), new CrossedDownIndicatorRule(pair, bbm));
+        Strategy xrpShort = new BaseStrategy("XRP",  new CrossedDownIndicatorRule(pair, bbl), new CrossedUpIndicatorRule(pair, bbm));
 
         BarSeriesManager btcSeriesManager = new BarSeriesManager(btcBarSeries);
         BarSeriesManager xrpSeriesManager = new BarSeriesManager(xrpBarSeries);
-        TradingRecord xrpShortRecord = xrpSeriesManager.run(Strategies.meanReversionShort(btcBarSeries, xrpBarSeries, window), TradeType.SELL);
-        TradingRecord btcLongRecord = btcSeriesManager.run(Strategies.meanReversionLong(btcBarSeries, xrpBarSeries, window), TradeType.BUY);
+        TradingRecord btcShortRecord = btcSeriesManager.run(btcShort, TradeType.SELL);
+        TradingRecord xrpShortRecord = xrpSeriesManager.run(xrpShort, TradeType.SELL);
 
         LOGGER.info("Building Charts");
-        TimeSeriesChart differenceChart = new TimeSeriesChart("Difference");
-        differenceChart.buildDataset("Standard Delta", btcBarSeries, differenceIndicator);
-        differenceChart.buildDataset("BBM", btcBarSeries, bbm);
-        differenceChart.buildDataset("BBL", btcBarSeries, bbl);
-        differenceChart.buildDataset("BBU", btcBarSeries, bbu);
-        differenceChart.displayChart();
+        TimeSeriesChart pairChart = new TimeSeriesChart("Difference");
+        pairChart.buildDataset("Pair Delta", btcBarSeries, pair);
+        pairChart.buildDataset("BBM", btcBarSeries, bbm);
+        pairChart.buildDataset("BBL", btcBarSeries, bbl);
+        pairChart.buildDataset("BBU", btcBarSeries, bbu);
+        pairChart.displayChart();
 
-        TimeSeriesChart btcChart = new TimeSeriesChart("BTCUSD");
-        btcChart.buildDataset("BTCUSD", btcBarSeries);
-        btcChart.addMarkers(btcBarSeries, Strategies.meanReversionLong(btcBarSeries, xrpBarSeries, window), TradeType.BUY);
-        btcChart.displayChart();
-        
-        TimeSeriesChart xrpChart = new TimeSeriesChart("XRPUSD");
-        xrpChart.buildDataset("XRPUSD", xrpBarSeries);
-        xrpChart.addMarkers(xrpBarSeries, Strategies.meanReversionShort(btcBarSeries, xrpBarSeries, window), TradeType.BUY);
-        xrpChart.displayChart();
+        TimeSeriesChart sigmaChart = new TimeSeriesChart("Sigma Delta");
+        sigmaChart.buildDataset("BTCUSD", btcBarSeries, btcSigma);
+        sigmaChart.buildDataset("XRPUSD", xrpBarSeries, xrpSigma);
+        sigmaChart.addMarkers(btcBarSeries, btcShortRecord);
+        sigmaChart.displayChart();
 
         AnalysisCriterion maxDrawdown = new MaximumDrawdownCriterion();
         AnalysisCriterion grossReturn = new GrossReturnCriterion();
-
-        System.out.println("Long Maximum Drawdown: " + maxDrawdown.calculate(btcBarSeries, btcLongRecord));
-        System.out.println("Short Maximum Drawdown: " + maxDrawdown.calculate(xrpBarSeries, xrpShortRecord));
-        System.out.println("Long Returns : " + grossReturn.calculate(btcBarSeries, btcLongRecord));
-        System.out.println("Short Returns: " + grossReturn.calculate(xrpBarSeries, xrpShortRecord));
+        
+        DecimalFormat formatter = new DecimalFormat("###.##");
+        System.out.println("Number of BTC Trades: " + btcShortRecord.getPositionCount());
+        System.out.println("Number of XRP Trades: " + xrpShortRecord.getPositionCount());
+        System.out.println("BTC Maximum Short Drawdown: " + formatter.format(maxDrawdown.calculate(btcBarSeries, btcShortRecord).doubleValue() * 100));
+        System.out.println("XRP Maximum Short Drawdown: " + formatter.format(maxDrawdown.calculate(xrpBarSeries, xrpShortRecord).doubleValue() * 100));
+        System.out.println("BTC Short Returns : " + formatter.format(grossReturn.calculate(btcBarSeries, btcShortRecord).doubleValue() * 100));
+        System.out.println("XRP Short Returns: " + formatter.format(grossReturn.calculate(xrpBarSeries, xrpShortRecord).doubleValue() * 100));
     }
 
     public static void createKlineCSV(int from, int to) {
