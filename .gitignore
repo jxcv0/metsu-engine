@@ -1,3 +1,7 @@
 # Historical Data for bactesting #
 ##################################
 *.csv
+
+# vscode settings #
+###################
+.vscode
