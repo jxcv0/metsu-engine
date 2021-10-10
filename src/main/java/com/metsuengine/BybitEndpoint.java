@@ -76,9 +76,51 @@ public class BybitEndpoint {
     }
 
     
-    public void getKlineRecords(int from) {
+    public void getKlineRecord(int from) {
 
         String url = "https://api.bybit.com/v2/public/kline/list?symbol=" + symbol + "&interval=1&limit=1&from=" + from;
+
+        String dateTime = DateTimeFormatter.ofPattern("dd-MM").format(ZonedDateTime.now());
+        CSVManager manager = new CSVManager("src\\main\\resources\\" + symbol + dateTime + ".csv");
+
+        try {
+            Request request = new Request.Builder()
+                .url(url)
+                .build();
+                        
+            OkHttpClient client = new OkHttpClient();
+            Call call = client.newCall(request);
+            Response response = call.execute();
+            String content = response.body().string();
+
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode jsonNode = mapper.readTree(content);
+
+            if (jsonNode.has("result")) {
+                JsonNode results = jsonNode.findValue("result");
+
+                for (JsonNode result : results) {
+                    String[] line = {
+                        secondsToZonedDateTime(result.findValue("open_time").asLong()).toString(),
+                        result.findValue("open").asText(),
+                        result.findValue("high").asText(),
+                        result.findValue("low").asText(),
+                        result.findValue("close").asText(),
+                        result.findValue("volume").asText()
+                    };
+
+                    manager.writeLine(line);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void get200KlineRecords(int from) {
+
+        String url = "https://api.bybit.com/v2/public/kline/list?symbol=" + symbol + "&interval=1&from=" + from;
 
         String dateTime = DateTimeFormatter.ofPattern("dd-MM").format(ZonedDateTime.now());
         CSVManager manager = new CSVManager("src\\main\\resources\\" + symbol + dateTime + ".csv");

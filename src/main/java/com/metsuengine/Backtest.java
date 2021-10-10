@@ -29,8 +29,8 @@ public class Backtest {
 
     private static final Logger LOGGER = Logger.getLogger(Backtest.class.getName());
 
-    public static void NOT(String[] args) {
-        int from = (int) ZonedDateTime.now().minusMonths(1).toEpochSecond();
+    public static void notmain(String[] args) {
+        int from = (int) ZonedDateTime.now().minusMonths(10).toEpochSecond();
         int to = (int) ZonedDateTime.now().toEpochSecond();
         createPairsKlineCSV(from, to);
     }
@@ -38,12 +38,12 @@ public class Backtest {
     public static void main(String[] args) {
 
         LOGGER.info("Getting kline data from CSV");
-        CSVManager btcManager = new CSVManager("BTCUSD09-10.csv");
-        CSVManager xrpManager = new CSVManager("XRPUSD09-10.csv");
+        CSVManager btcManager = new CSVManager("BTCUSD10-10.csv");
+        CSVManager xrpManager = new CSVManager("XRPUSD10-10.csv");
         BarSeries btcBarSeries = btcManager.barSeriesFromCSV();
         BarSeries xrpBarSeries = xrpManager.barSeriesFromCSV();
 
-        int window = 4000;
+        int window = 10000;
         
         ClosePriceIndicator btcClose = new ClosePriceIndicator(btcBarSeries);
         ClosePriceIndicator xrpClose = new ClosePriceIndicator(xrpBarSeries);
@@ -103,13 +103,18 @@ public class Backtest {
         System.out.println("BTC Long Returns: " + formatter.format(grossReturn.calculate(btcBarSeries, btcLongRecord).doubleValue() * 100 - 100));
         System.out.println("XRP Long Returns: " + formatter.format(grossReturn.calculate(xrpBarSeries, xrpLongRecord).doubleValue() * 100 - 100));
 
-        String tradingCost = formatter.format(linearCost.calculate(btcBarSeries, btcShortRecord).doubleValue() 
+        double tradingCost = Double.parseDouble(formatter.format(linearCost.calculate(btcBarSeries, btcShortRecord).doubleValue() 
             + linearCost.calculate(xrpBarSeries, xrpShortRecord).doubleValue()
             + linearCost.calculate(btcBarSeries, btcLongRecord).doubleValue()
-            + linearCost.calculate(xrpBarSeries, xrpLongRecord).doubleValue());
+            + linearCost.calculate(xrpBarSeries, xrpLongRecord).doubleValue()));
+        
+        double totalReturn = (grossReturn.calculate(btcBarSeries, btcShortRecord).doubleValue() * 100 - 100)
+            + (grossReturn.calculate(xrpBarSeries, xrpShortRecord).doubleValue() * 100 - 100)
+            + (grossReturn.calculate(btcBarSeries, btcLongRecord).doubleValue() * 100 - 100)
+            + (grossReturn.calculate(xrpBarSeries, xrpLongRecord).doubleValue() * 100 - 100);
 
         System.out.println("Total trading Cost (%): " + tradingCost);
-        System.out.println("Total returns (inc. cost): " ); // TODO
+        System.out.println("Total returns (inc. cost): " + (totalReturn - tradingCost));
     }
 
     public static void createKlineCSV(int from, int to) {
@@ -117,7 +122,7 @@ public class Backtest {
 
         LOGGER.info("Getting kline data");
         for (int i = from; i < to; i+=60) {
-            endpoint.getKlineRecords(i);
+            endpoint.getKlineRecord(i);
         }
     }
 
@@ -125,9 +130,9 @@ public class Backtest {
         BybitEndpoint firstEndpoint = new BybitEndpoint("BTCUSD");
         BybitEndpoint secondEndpoint = new BybitEndpoint("XRPUSD");
         LOGGER.info("Getting kline data");
-        for (int i = from; i < to; i+=60) {
-            firstEndpoint.getKlineRecords(i);
-            secondEndpoint.getKlineRecords(i);
+        for (int i = from; i < to; i += 12000) {
+            firstEndpoint.get200KlineRecords(i);
+            secondEndpoint.get200KlineRecords(i);
         }
     }
 }
