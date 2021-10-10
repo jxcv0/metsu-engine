@@ -24,6 +24,11 @@ public class BybitEndpoint {
         this.symbol = symbol;
     }
 
+    /**
+     * @param from  The start date
+     * @param to    The end date
+     * @return      The trades that took place bwtween the "from" and "to" dates
+     */
     public TickSeries getTradingRecords(ZonedDateTime from, ZonedDateTime to) {
 
         String url = "https://api.bybit.com/v2/public/trading-records?symbol="+ this.symbol
@@ -70,6 +75,7 @@ public class BybitEndpoint {
         return tickSeries;
     }
 
+    
     public void getKlineRecords(int from) {
 
         String url = "https://api.bybit.com/v2/public/kline/list?symbol=" + symbol + "&interval=1&limit=1&from=" + from;

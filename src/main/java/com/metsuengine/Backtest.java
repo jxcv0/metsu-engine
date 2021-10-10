@@ -43,7 +43,7 @@ public class Backtest {
         BarSeries btcBarSeries = btcManager.barSeriesFromCSV();
         BarSeries xrpBarSeries = xrpManager.barSeriesFromCSV();
 
-        int window = 1200;
+        int window = 4000;
         
         ClosePriceIndicator btcClose = new ClosePriceIndicator(btcBarSeries);
         ClosePriceIndicator xrpClose = new ClosePriceIndicator(xrpBarSeries);
@@ -109,6 +109,7 @@ public class Backtest {
             + linearCost.calculate(xrpBarSeries, xrpLongRecord).doubleValue());
 
         System.out.println("Total trading Cost (%): " + tradingCost);
+        System.out.println("Total returns (inc. cost): " ); // TODO
     }
 
     public static void createKlineCSV(int from, int to) {
