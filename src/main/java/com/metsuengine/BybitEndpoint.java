@@ -120,7 +120,7 @@ public class BybitEndpoint {
 
     public void get200KlineRecords(int from) {
 
-        String url = "https://api.bybit.com/v2/public/kline/list?symbol=" + symbol + "&interval=1&from=" + from;
+        String url = "https://api.bybit.com/v2/public/kline/list?symbol=" + symbol + "&interval=30&from=" + from;
 
         String dateTime = DateTimeFormatter.ofPattern("dd-MM").format(ZonedDateTime.now());
         CSVManager manager = new CSVManager("src\\main\\resources\\" + symbol + dateTime + ".csv");

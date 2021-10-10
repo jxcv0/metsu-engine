@@ -89,7 +89,7 @@ public class TimeSeriesChart extends ApplicationFrame {
         TimeSeries timeSeries = new TimeSeries(title);
         
         for (Bar bar : barSeries.getBarData()) {
-            timeSeries.add(new Minute(Date.from(bar.getEndTime().toInstant())), bar.getClosePrice().doubleValue());
+            timeSeries.addOrUpdate(new Minute(Date.from(bar.getEndTime().toInstant())), bar.getClosePrice().doubleValue());
         }
         dataset.addSeries(timeSeries);
     }
@@ -98,7 +98,7 @@ public class TimeSeriesChart extends ApplicationFrame {
         TimeSeries timeSeries = new TimeSeries(title);
         for (int i = 0; i < barSeries.getBarCount(); i++) {
             Bar bar = barSeries.getBar(i);
-            timeSeries.add(new Minute(Date.from(bar.getEndTime().toInstant())), indicator.getValue(i).doubleValue());
+            timeSeries.addOrUpdate(new Minute(Date.from(bar.getEndTime().toInstant())), indicator.getValue(i).doubleValue());
         }
         dataset.addSeries(timeSeries);
     }
