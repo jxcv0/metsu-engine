@@ -1,6 +1,7 @@
 package com.metsuengine;
 
 import java.text.DecimalFormat;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.logging.Logger;
 
@@ -36,8 +37,8 @@ public class Backtest {
         // createPairsKlineCSV(ZonedDateTime.now(ZoneOffset.UTC).minusMonths(1), ZonedDateTime.now(ZoneOffset.UTC));
 
         LOGGER.info("Getting kline data from CSV");
-        CSVManager btcManager = new CSVManager("BTCUSD10-10.csv");
-        CSVManager altManager = new CSVManager("ETHUSD10-10.csv");
+        CSVManager btcManager = new CSVManager("BTCUSD11-10.csv");
+        CSVManager altManager = new CSVManager("ETHUSD11-10.csv");
         BarSeries btcBarSeries = btcManager.barSeriesFromCSV();
         BarSeries altBarSeries = altManager.barSeriesFromCSV();
         
@@ -55,13 +56,13 @@ public class Backtest {
         BollingerBandsMiddleIndicator bbm = new BollingerBandsMiddleIndicator(zero);
         BollingerBandsLowerIndicator bbl = new BollingerBandsLowerIndicator(bbm, deviation);
         BollingerBandsUpperIndicator bbu = new BollingerBandsUpperIndicator(bbm, deviation);
-        BollingerBandsLowerIndicator tpl = new BollingerBandsLowerIndicator(bbm, deviation, DecimalNum.valueOf(0.25));
-        BollingerBandsUpperIndicator tpu = new BollingerBandsUpperIndicator(bbm, deviation, DecimalNum.valueOf(0.25));
+        // BollingerBandsLowerIndicator tpl = new BollingerBandsLowerIndicator(bbm, deviation, DecimalNum.valueOf(0.25));
+        // BollingerBandsUpperIndicator tpu = new BollingerBandsUpperIndicator(bbm, deviation, DecimalNum.valueOf(0.25));
 
         // Strategy btcLong = new BaseStrategy("BTC", new CrossedDownIndicatorRule(pair, bbl), new CrossedUpIndicatorRule(pair, tpl));
         // Strategy altShort = new BaseStrategy("ALT",  new CrossedDownIndicatorRule(pair, bbl), new CrossedUpIndicatorRule(pair, tpl));
-        Strategy btcShort = new BaseStrategy("BTC",  new CrossedUpIndicatorRule(pair, bbu), new CrossedDownIndicatorRule(pair, tpu));
-        Strategy altLong = new BaseStrategy("ALT",  new CrossedUpIndicatorRule(pair, bbu), new CrossedDownIndicatorRule(pair, tpu));
+        Strategy btcShort = new BaseStrategy("BTC",  new CrossedUpIndicatorRule(pair, bbu), new CrossedDownIndicatorRule(pair, bbm));
+        Strategy altLong = new BaseStrategy("ALT",  new CrossedUpIndicatorRule(pair, bbu), new CrossedDownIndicatorRule(pair, bbm));
         
 
         BarSeriesManager btcSeriesManager = new BarSeriesManager(btcBarSeries);
@@ -77,8 +78,8 @@ public class Backtest {
         spreadChart.buildDataset("BBM", btcBarSeries, bbm);
         spreadChart.buildDataset("BBL", btcBarSeries, bbl);
         spreadChart.buildDataset("BBU", btcBarSeries, bbu);
-        spreadChart.buildDataset("TPL", btcBarSeries, tpl);
-        spreadChart.buildDataset("TPU", btcBarSeries, tpu);
+        // spreadChart.buildDataset("TPL", btcBarSeries, tpl);
+        // spreadChart.buildDataset("TPU", btcBarSeries, tpu);
         // spreadChart.addMarkers(altBarSeries, altShortRecord, altShort);
         spreadChart.addMarkers(altBarSeries, altLongRecord, altLong);
         spreadChart.displayChart();
