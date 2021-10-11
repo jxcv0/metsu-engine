@@ -33,6 +33,11 @@ public class TimeSeriesChart extends ApplicationFrame {
     private final TimeSeriesCollection dataset;
     private final List<Marker> markers;
 
+    /**
+     * Constructor
+     * 
+     * @param title the title of the timeseries chart
+     */
     public TimeSeriesChart(String title) {
         super(title);
         this.dataset = new TimeSeriesCollection();
@@ -44,29 +49,13 @@ public class TimeSeriesChart extends ApplicationFrame {
         panel.setPreferredSize(new java.awt.Dimension(1000, 500));
         setContentPane(panel);
     }
-
+    
     /**
-     * @param title         title of the chart
-     * @param barSeries     the bar series
-     * @param indicators    the indictors to be plotted against the bar series
+     * plots a Time-Price chart from a TickSeries
+     * 
+     * @param title      chart title
+     * @param tickSeries the related TickSeries
      */
-    public TimeSeriesChart(String title, BarSeries barSeries, List<Indicator<Num>> indicators) {
-        super(title);
-        this.dataset = new TimeSeriesCollection();
-        this.markers = new ArrayList<Marker>();
-        this.chart = ChartFactory.createTimeSeriesChart(title, "Time", "Price", dataset);
-        chart.removeLegend();
-
-        ChartPanel panel = new ChartPanel(chart);
-        panel.setPreferredSize(new java.awt.Dimension(800, 600));
-        setContentPane(panel);
-        
-        buildDataset(barSeries.getName(), barSeries);
-        for (Indicator<Num> indicator : indicators) {
-            buildDataset(indicator.toString().substring(0, 4), barSeries, indicator);
-        }
-    }
-
     public void buildDataset(String title, TickSeries tickSeries) {
         TimeSeries timeSeries = new TimeSeries(title);
         for (Tick tick : tickSeries.getTicks()) {

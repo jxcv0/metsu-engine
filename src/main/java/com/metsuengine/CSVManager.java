@@ -9,8 +9,8 @@ import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import com.opencsv.CSVReader;
@@ -21,11 +21,12 @@ import org.ta4j.core.BaseBarSeries;
 
 public class CSVManager {
 
-    private Path path = null;
-    private TickSeries tickSeries = new TickSeries();
+    private final Path path;
+    private final TickSeries tickSeries;
 
     public CSVManager(String file) {
         this.path = Paths.get(file);
+        this.tickSeries = new TickSeries();
     }
 
     public CSVManager(String file, TickSeries tickSeries) {
@@ -58,7 +59,7 @@ public class CSVManager {
     }
 
     private void buildAndSort(List<String[]> lines) {
-        LinkedList<Tick> ticks = new LinkedList<Tick>();
+        List<Tick> ticks = new ArrayList<Tick>();
 
         for (String[] line : lines) {
             ticks.add(new Tick(

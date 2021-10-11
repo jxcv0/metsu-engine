@@ -1,6 +1,6 @@
 package com.metsuengine;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.event.ChangeEvent;
@@ -9,11 +9,11 @@ import javax.swing.event.EventListenerList;
 
 public class TickSeries {
 
-    private final List<Tick> ticks;
+    private final LinkedList<Tick> ticks;
     private final EventListenerList listenerList;
 
     public TickSeries() {
-        this.ticks = new ArrayList<Tick>();
+        this.ticks = new LinkedList<Tick>();
         this.listenerList = new EventListenerList();
     }
 
@@ -23,6 +23,10 @@ public class TickSeries {
 
     public Tick getTick(int index){
         return ticks.get(index);
+    }
+
+    public Tick getLastTick() {
+        return ticks.getLast();
     }
 
     public double getSize() {

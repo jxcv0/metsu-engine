@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @ClientEndpoint
 public class BybitWebSocket {
 
-    private TickSeries tickSeries;
+    private final TickSeries tickSeries;
 
     public BybitWebSocket() {
         this.tickSeries = new TickSeries();
@@ -52,7 +52,6 @@ public class BybitWebSocket {
                         data.findValue("price").asDouble(),
                         data.findValue("size").asDouble());
                     
-                    // fires change
                     tickSeries.addTick(tick);
                 }
             }
