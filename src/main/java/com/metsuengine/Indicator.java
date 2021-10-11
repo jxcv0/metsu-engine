@@ -1,6 +1,6 @@
 package com.metsuengine;
 
-public interface Indicator<T>{
+public interface Indicator<T> {
 
     /**
      * @param index index of a value within the indicator
@@ -9,7 +9,7 @@ public interface Indicator<T>{
     T value(int index);
 
     /**
-     * @return the indicators barseries from which it was built
+     * @return the indicators TickSeries from which it was built
      */
     TickSeries getTickSeries();
 

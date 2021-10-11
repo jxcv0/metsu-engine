@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -27,11 +30,12 @@ import org.ta4j.core.Trade.TradeType;
 import org.ta4j.core.TradingRecord;
 import org.ta4j.core.num.Num;
 
-public class TimeSeriesChart extends ApplicationFrame {
+public class TimeSeriesChart extends ApplicationFrame implements ChangeListener {
 
     private final JFreeChart chart;
     private final TimeSeriesCollection dataset;
     private final List<Marker> markers;
+    private TimeSeries timeSeries;
 
     /**
      * Constructor
@@ -40,7 +44,8 @@ public class TimeSeriesChart extends ApplicationFrame {
      */
     public TimeSeriesChart(String title) {
         super(title);
-        this.dataset = new TimeSeriesCollection();
+        this.timeSeries = new TimeSeries("Tick Data");
+        this.dataset = new TimeSeriesCollection(this.timeSeries);
         this.markers = new ArrayList<Marker>();
         this.chart = ChartFactory.createTimeSeriesChart(title, "Time", "Price", dataset);
         chart.removeLegend();
@@ -139,5 +144,11 @@ public class TimeSeriesChart extends ApplicationFrame {
         for (Marker marker : markers) {
             plot.addDomainMarker(marker);
         }
+    }
+
+    @Override
+    public void stateChanged(ChangeEvent e) {
+        TickSeries source = (TickSeries) e.getSource();
+        this.timeSeries.addOrUpdate(new Millisecond(Date.from(source.getLastTick().time().toInstant())), source.getLastTick().price());
     }
 }
