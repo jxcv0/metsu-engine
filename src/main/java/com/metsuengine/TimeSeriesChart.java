@@ -2,10 +2,8 @@ package com.metsuengine;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import org.jfree.chart.ChartFactory;
@@ -43,7 +41,7 @@ public class TimeSeriesChart extends ApplicationFrame {
         chart.removeLegend();
 
         ChartPanel panel = new ChartPanel(chart);
-        panel.setPreferredSize(new java.awt.Dimension(800, 600));
+        panel.setPreferredSize(new java.awt.Dimension(1000, 500));
         setContentPane(panel);
     }
 
@@ -71,16 +69,8 @@ public class TimeSeriesChart extends ApplicationFrame {
 
     public void buildDataset(String title, TickSeries tickSeries) {
         TimeSeries timeSeries = new TimeSeries(title);
-        for (Tick tick : tickSeries) {
+        for (Tick tick : tickSeries.getTicks()) {
             timeSeries.addOrUpdate(new Millisecond(Date.from(tick.time().toInstant())), tick.price());
-        }
-        dataset.addSeries(timeSeries);
-    }
-
-    public void buildDataset(String title, HashMap<ZonedDateTime, Double> indicator) {
-        TimeSeries timeSeries = new TimeSeries(title);
-        for (ZonedDateTime time : indicator.keySet()) {
-            timeSeries.addOrUpdate(new Millisecond(Date.from(time.toInstant())), indicator.get(time));
         }
         dataset.addSeries(timeSeries);
     }

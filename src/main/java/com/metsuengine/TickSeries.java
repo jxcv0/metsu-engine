@@ -1,80 +1,37 @@
 package com.metsuengine;
 
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
 
-public class TickSeries extends LinkedList<Tick> {
+public class TickSeries {
 
-    private EventListenerList listenerList;
+    private final List<Tick> ticks;
+    private final EventListenerList listenerList;
 
     public TickSeries() {
+        this.ticks = new ArrayList<Tick>();
         this.listenerList = new EventListenerList();
     }
 
-    public TickSeries(ChangeListener listener) {
-        this.addChangeListener(listener);
-    }
-
-    public LinkedList<Tick> getTicks() {
-        return this;
+    public List<Tick> getTicks() {
+        return ticks;
     }
 
     public Tick getTick(int index){
-        return this.get(index);
-    }
-
-    public double lastTradedPrice() {
-        return this.getLast().price();
-    }
-
-    public Tick getLastTick() {
-        return this.getLast();
+        return ticks.get(index);
     }
 
     public double getSize() {
-        return this.size();
+        return ticks.size();
     }
 
     public void addTick(Tick tick) {
-        this.add(tick);
+        ticks.add(tick);
         fireStateChanged();
-    }
-
-    public void writeTradeToCSV(Tick tick) {
-        String[] line = {
-            tick.time().toString(),
-            tick.side(),
-            String.valueOf(tick.price()),
-            String.valueOf(tick.size())
-        };
-
-        CSVManager manager = new CSVManager("BTCUSD-trades.csv");
-        manager.writeLine(line);
-    }
-
-    public double getSeriesVolume() {
-        double total = 0;
-        for(Tick tick : this) {
-            total += tick.size();
-        }
-        return total;
-    }
-
-    public int getSeriesDelta() {
-        int delta = 0;
-        for(Tick tick : this) {
-            if (tick.side().equals("Buy")) {
-                delta += tick.size();
-            } else {
-                delta -= tick.size();
-            }
-        }
-        return delta;
     }
 
     public void addChangeListener(ChangeListener listener) {
@@ -92,24 +49,6 @@ public class TickSeries extends LinkedList<Tick> {
             for (ChangeListener listener : listeners) {
                 listener.stateChanged(event);
             }
-        }
-    }
-
-    public void writeAndPurge(ZonedDateTime date) {
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yy");
-        String formattedDate = formatter.format(date);
-
-        CSVManager manager = new CSVManager(formattedDate + "-trades.csv");
-
-        for (Tick tick : this) {
-            String[] line = {
-                tick.time().toString(),
-                tick.side(),
-                String.valueOf(tick.price()),
-                String.valueOf(tick.size())
-            };
-            manager.writeLine(line);
         }
     }
 }

@@ -1,15 +1,16 @@
 package com.metsuengine;
 
-import java.time.ZonedDateTime;
-import java.util.HashMap;
+public interface Indicator<T>{
 
-public interface Indicator {
+    /**
+     * @param index index of a value within the indicator
+     * @return      the value of the indicator at the index
+     */
+    T value(int index);
 
-    void addTick(Tick tick);
+    /**
+     * @return the indicators barseries from which it was built
+     */
+    TickSeries getTickSeries();
 
-    public void addTickToTimeSeries(Tick tick);
-
-    HashMap<ZonedDateTime, Double> getTimeSeries();
-
-    double value();
 }

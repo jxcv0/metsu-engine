@@ -63,7 +63,7 @@ public class BybitEndpoint {
                         result.findValue("qty").asDouble());
                     
                     if (tick.time().isAfter(from) && tick.time().isBefore(to)) {
-                        tickSeries.add(tick);
+                        tickSeries.addTick(tick);
                     }
                 }
             }

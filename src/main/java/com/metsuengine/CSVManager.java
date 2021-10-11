@@ -43,7 +43,7 @@ public class CSVManager {
         }
     }
 
-    public void createFromCSV() {
+    public void createTickSeriesFromCSV() {
         try {
             InputStream stream = this.getClass().getClassLoader().getResourceAsStream(this.path.toString());
             CSVReader reader = new CSVReader(new InputStreamReader(stream, Charset.forName("UTF-8")));

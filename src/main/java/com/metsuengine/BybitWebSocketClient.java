@@ -12,7 +12,7 @@ import javax.websocket.WebSocketContainer;
 
 import org.json.JSONObject;
 
-public class BybitWebSocketClient implements Runnable {
+public class BybitWebSocketClient extends Thread {
 
     static String api_key = "";
     static String api_secret = "";
