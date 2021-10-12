@@ -1,16 +1,17 @@
 package com.metsuengine;
 
-public interface Indicator<T> {
+import javax.swing.event.ChangeListener;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public interface Indicator extends ChangeListener{
+
+    final Logger logger = LoggerFactory.getLogger(Indicator.class);
 
     /**
      * @param index index of a value within the indicator
      * @return      the value of the indicator at the index
      */
-    T value(int index);
-
-    /**
-     * @return the indicators TickSeries from which it was built
-     */
-    TickSeries getTickSeries();
-
+    double value(int index);
 }
