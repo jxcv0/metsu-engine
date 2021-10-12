@@ -3,11 +3,11 @@ package com.metsuengine;
 public class Metsu {
     public static void main( String[] args ) {
 
-        final TimeSeriesChart chart = new TimeSeriesChart("Live Test");
-        // final TickSeries USDTickSeries = new TickSeries();
+        final TimeSeriesChart chart = new TimeSeriesChart("BTC USD/USDT");
+        //final TickSeries USDTickSeries = new TickSeries();
         final TickSeries tetherTickSeries = new TickSeries();
 
-        // USDTickSeries.addChangeListener(chart);
+        //USDTickSeries.addChangeListener(chart);
         tetherTickSeries.addChangeListener(chart);
         chart.displayChart();
 
@@ -18,10 +18,10 @@ public class Metsu {
         
         BybitWebSocketClient USDTclient = new BybitWebSocketClient(
             new BybitUSDTPerpetualTradeWebSocket(tetherTickSeries),
-            "wss://stream.bytick.com/realtime_private",
+            "wss://stream.bytick.com/realtime_public",
             "trade.BTCUSDT");
         
-        // USDclient.run();
+        //USDclient.run();
         USDTclient.run();
     }
 }

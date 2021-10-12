@@ -40,7 +40,7 @@ public class BybitWebSocketClient extends Thread {
             session.getBasicRemote().sendText(subscribe("subscribe", topic));
 
             while(true) {
-                session.getBasicRemote().sendText("ping");
+                session.getBasicRemote().sendText("{\"op\":\"ping\"}");
                 Thread.sleep(30000);
             }
 

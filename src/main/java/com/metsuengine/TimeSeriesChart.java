@@ -61,12 +61,14 @@ public class TimeSeriesChart extends ApplicationFrame implements ChangeListener 
      * @param title      chart title
      * @param tickSeries the related TickSeries
      */
-    public void buildDataset(String title, TickSeries tickSeries) {
-        TimeSeries timeSeries = new TimeSeries(title);
-        for (Tick tick : tickSeries.getTicks()) {
-            timeSeries.addOrUpdate(new Millisecond(Date.from(tick.time().toInstant())), tick.price());
+    public void buildDataset(String title, TickSeries... tickSeries) {
+        for (TickSeries series : tickSeries) {
+            TimeSeries timeSeries = new TimeSeries(title);
+            for (Tick tick : series.getTicks()) {
+                timeSeries.addOrUpdate(new Millisecond(Date.from(tick.time().toInstant())), tick.price());
+            }
+            dataset.addSeries(timeSeries);
         }
-        dataset.addSeries(timeSeries);
     }
 
     public void buildDataset(String title, BarSeries barSeries) {
@@ -150,5 +152,6 @@ public class TimeSeriesChart extends ApplicationFrame implements ChangeListener 
     public void stateChanged(ChangeEvent e) {
         TickSeries source = (TickSeries) e.getSource();
         this.timeSeries.addOrUpdate(new Millisecond(Date.from(source.getLastTick().time().toInstant())), source.getLastTick().price());
+        // TODO update for multiple timeseries
     }
 }

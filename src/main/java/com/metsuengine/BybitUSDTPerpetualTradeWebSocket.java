@@ -2,6 +2,7 @@ package com.metsuengine;
 
 import java.io.IOException;
 
+import javax.websocket.ClientEndpoint;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
@@ -11,6 +12,7 @@ import javax.websocket.Session;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+@ClientEndpoint
 public class BybitUSDTPerpetualTradeWebSocket extends AbstractWebSocket {
 
     public BybitUSDTPerpetualTradeWebSocket(TickSeries tickSeries) {
