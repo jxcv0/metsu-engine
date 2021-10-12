@@ -13,15 +13,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @ClientEndpoint
-public class BybitWebSocket {
+public class BybitTradeWebSocket {
 
     private final TickSeries tickSeries;
 
-    public BybitWebSocket() {
-        this.tickSeries = new TickSeries();
-    }
-
-    public BybitWebSocket(TickSeries tickSeries) {
+    public BybitTradeWebSocket(TickSeries tickSeries) {
         this.tickSeries = tickSeries;
     }
 

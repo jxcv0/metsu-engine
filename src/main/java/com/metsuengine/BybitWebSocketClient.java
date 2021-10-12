@@ -4,8 +4,6 @@ import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 import javax.websocket.ContainerProvider;
 import javax.websocket.Session;
 import javax.websocket.WebSocketContainer;
@@ -14,58 +12,15 @@ import org.json.JSONObject;
 
 public class BybitWebSocketClient extends Thread {
 
-    static String api_key = "";
-    static String api_secret = "";
+    static String api_key = ""; // TODO
+    static String api_secret = ""; // TODO
     static Session session;
-    private String uri = "wss://stream.bytick.com/realtime";
-    private String topic = null;
-    private BybitWebSocket bybitWebSocket =  new BybitWebSocket();
+    private final String topic;
+    private final BybitTradeWebSocket tradeWebSocket;
 
-    public BybitWebSocketClient(BybitWebSocket bybitWebSocket, String topic) {
-        this.bybitWebSocket = bybitWebSocket;
+    public BybitWebSocketClient(TickSeries tickSeries, String topic) {
+        this.tradeWebSocket = new BybitTradeWebSocket(tickSeries);
         this.topic = topic;        
-    }
-
-    public static String generate_signature(String expires){
-        return sha256_HMAC("GET/realtime"+ expires, api_secret);
-    }
-
-    private static String byteArrayToHexString(byte[] b) {
-        StringBuilder hs = new StringBuilder();
-        String stmp;
-        for (int n = 0; b != null && n < b.length; n++) {
-            stmp = Integer.toHexString(b[n] & 0XFF);
-            if (stmp.length() == 1)
-                hs.append('0');
-            hs.append(stmp);
-        }
-        return hs.toString().toLowerCase();
-    }
-
-    public static String sha256_HMAC(String message, String secret) {
-        String hash = "";
-        try {
-            Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
-            SecretKeySpec secret_key = new SecretKeySpec(secret.getBytes(), "HmacSHA256");
-            sha256_HMAC.init(secret_key);
-            byte[] bytes = sha256_HMAC.doFinal(message.getBytes());
-            hash = byteArrayToHexString(bytes);
-        } catch (Exception e) {
-            System.out.println("Error HmacSHA256 ===========" + e.getMessage());
-        }
-        return hash;
-    }
-
-    public static String getAuthMessage(){
-        JSONObject req = new JSONObject();
-        req.put("op", "auth");
-        List<String> args = new LinkedList<String>();
-        String expires = String.valueOf(System.currentTimeMillis()+1000);
-        args.add(api_key);
-        args.add(expires);
-        args.add(generate_signature(expires));
-        req.put("args", args);
-        return (req.toString());
     }
 
     public static String subscribe(String op, String argv){
@@ -81,10 +36,8 @@ public class BybitWebSocketClient extends Thread {
     public void run() {
         try {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-            String uri = this.uri;
-            container.connectToServer(this.bybitWebSocket, URI.create(uri));
-            // session.getBasicRemote().sendText(getAuthMessage());
-            session.getBasicRemote().sendText(subscribe("subscribe", this.topic));
+            container.connectToServer(tradeWebSocket, URI.create("wss://stream.bytick.com/realtime"));
+            session.getBasicRemote().sendText(subscribe("subscribe", topic));
 
             while(true) {
                 session.getBasicRemote().sendText("ping");

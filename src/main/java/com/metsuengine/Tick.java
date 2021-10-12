@@ -5,10 +5,17 @@ import java.time.ZonedDateTime;
 
 public class Tick implements Serializable {
     
-    private final ZonedDateTime time;
-    private final String side;
-    private final double price;
-    private final double size;
+    private ZonedDateTime time;
+    private String side;
+    private double price;
+    private double size;
+
+    public Tick(){
+        this.time = null;
+        this.side = null;
+        this.price = 0;
+        this.size = 0;
+    }
     
     public Tick(ZonedDateTime time, String side, double price, double size) {
         this.time = time.withFixedOffsetZone();
@@ -24,20 +31,36 @@ public class Tick implements Serializable {
         this.size = size;
     }
 
-    public double volumeByPrice() {
-        return this.price * this.size;
+    public void setTime(ZonedDateTime time) {
+        this.time = time;
+    }
+
+    public void setTime(String time) {
+        this.time = ZonedDateTime.parse(time);
     }
 
     public ZonedDateTime time() {
         return this.time;
     }
 
+    public void setSide(String side) {
+        this.side = side;
+    } 
+
     public String side() {
     	return this.side;
     }
 
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
     public double price() {
     	return this.price;
+    }
+
+    public void setSize(double size) {
+        this.size = size;
     }
 
     public double size() {

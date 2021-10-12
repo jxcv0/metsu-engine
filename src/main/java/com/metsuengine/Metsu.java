@@ -2,8 +2,6 @@ package com.metsuengine;
 
 import com.metsuengine.indicators.SessionVWAPIndicator;
 
-import org.ta4j.core.indicators.volume.VWAPIndicator;
-
 public class Metsu {
     public static void main( String[] args ) {
 
@@ -13,7 +11,7 @@ public class Metsu {
         btcTickSeries.addChangeListener(chart);
         btcTickSeries.addChangeListener(vwap);
         chart.displayChart();
-        BybitWebSocketClient client = new BybitWebSocketClient(new BybitWebSocket(btcTickSeries), "trade.BTCUSD");
+        BybitWebSocketClient client = new BybitWebSocketClient(btcTickSeries, "trade.BTCUSD");
         client.run();
     }
 }
