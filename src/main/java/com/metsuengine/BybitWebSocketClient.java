@@ -12,14 +12,14 @@ import org.json.JSONObject;
 
 public class BybitWebSocketClient extends Thread {
 
-    static String api_key = ""; // TODO
-    static String api_secret = ""; // TODO
     static Session session;
+    private final String uri;
     private final String topic;
-    private final BybitTradeWebSocket tradeWebSocket;
+    private final WebSocket websocket;
 
-    public BybitWebSocketClient(TickSeries tickSeries, String topic) {
-        this.tradeWebSocket = new BybitTradeWebSocket(tickSeries);
+    public BybitWebSocketClient(WebSocket websocket, String uri, String topic) {
+        this.websocket = websocket;
+        this.uri = uri;
         this.topic = topic;        
     }
 
@@ -36,7 +36,7 @@ public class BybitWebSocketClient extends Thread {
     public void run() {
         try {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-            container.connectToServer(tradeWebSocket, URI.create("wss://stream.bytick.com/realtime"));
+            container.connectToServer(websocket, URI.create(uri));
             session.getBasicRemote().sendText(subscribe("subscribe", topic));
 
             while(true) {

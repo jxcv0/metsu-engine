@@ -2,7 +2,6 @@ package com.metsuengine;
 
 import java.io.IOException;
 
-import javax.websocket.ClientEndpoint;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
@@ -12,18 +11,15 @@ import javax.websocket.Session;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@ClientEndpoint
-public class BybitTradeWebSocket {
+public class BybitUSDTPerpetualTradeWebSocket extends AbstractWebSocket {
 
-    private final TickSeries tickSeries;
-
-    public BybitTradeWebSocket(TickSeries tickSeries) {
-        this.tickSeries = tickSeries;
+    public BybitUSDTPerpetualTradeWebSocket(TickSeries tickSeries) {
+        super(tickSeries);
     }
 
     @OnOpen
     public void onOpen(Session session) {
-        System.out.println("Connected to endpoint: " + session.getBasicRemote());
+        LOGGER.info("Connected to USDT Perpetual endpoint: " + session.getBasicRemote());
         try {
             BybitWebSocketClient.session = session;
         } catch (Exception e) {
@@ -56,14 +52,19 @@ public class BybitTradeWebSocket {
             e.printStackTrace();
         }
     }
-    
+
     @OnClose
     public void onClose(Session session) throws IOException {
-        System.out.println("Disconnected");
+        LOGGER.info("Disconnected");
     }
 
     @OnError
     public void processError(Throwable t) {
         t.printStackTrace();
+    }
+
+    @Override
+    public TickSeries tickSeries() {
+        return tickSeries;
     }
 }

@@ -1,17 +1,27 @@
 package com.metsuengine;
 
-import com.metsuengine.indicators.SessionVWAPIndicator;
-
 public class Metsu {
     public static void main( String[] args ) {
 
         final TimeSeriesChart chart = new TimeSeriesChart("Live Test");
-        final SessionVWAPIndicator vwap = new SessionVWAPIndicator();
-        final TickSeries btcTickSeries = new TickSeries();
-        btcTickSeries.addChangeListener(chart);
-        btcTickSeries.addChangeListener(vwap);
+        // final TickSeries USDTickSeries = new TickSeries();
+        final TickSeries tetherTickSeries = new TickSeries();
+
+        // USDTickSeries.addChangeListener(chart);
+        tetherTickSeries.addChangeListener(chart);
         chart.displayChart();
-        BybitWebSocketClient client = new BybitWebSocketClient(btcTickSeries, "trade.BTCUSD");
-        client.run();
+
+        // BybitWebSocketClient USDclient = new BybitWebSocketClient(
+        //     new BybitInversePerpetualTradeWebSocket(USDTickSeries),
+        //     "wss://stream.bytick.com/realtime",
+        //     "trade.BTCUSD");
+        
+        BybitWebSocketClient USDTclient = new BybitWebSocketClient(
+            new BybitUSDTPerpetualTradeWebSocket(tetherTickSeries),
+            "wss://stream.bytick.com/realtime_private",
+            "trade.BTCUSDT");
+        
+        // USDclient.run();
+        USDTclient.run();
     }
 }

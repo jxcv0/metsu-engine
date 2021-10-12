@@ -10,7 +10,7 @@ public class Tick implements Serializable {
     private double price;
     private double size;
 
-    public Tick(){
+    public Tick() {
         this.time = null;
         this.side = null;
         this.price = 0;
