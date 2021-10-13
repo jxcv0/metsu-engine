@@ -1,5 +1,7 @@
 package com.metsuengine;
 
+import java.time.ZonedDateTime;
+
 import javax.swing.event.ChangeListener;
 
 import org.slf4j.Logger;
@@ -13,5 +15,7 @@ public interface Indicator extends ChangeListener{
      * @param index index of a value within the indicator
      * @return      the value of the indicator at the index
      */
-    double value(int index);
+    double value(ZonedDateTime index);
+
+    // void trim();
 }

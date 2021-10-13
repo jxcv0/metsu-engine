@@ -18,8 +18,7 @@ public class Metsu {
 
             new SubscriptionSet(new BybitUSDTPerpetualTradeWebSocket(tetherTickSeries),
                 "wss://stream.bytick.com/realtime_public",
-                "trade.BTCUSDT")
-        );
+                "trade.BTCUSDT"));
         
         client.run();
     }
