@@ -23,7 +23,6 @@ public class TimeSeriesChart extends ApplicationFrame implements ChangeListener 
     private final JFreeChart chart;
     private final TimeSeriesCollection dataset;
     private final List<Marker> markers;
-    private TimeSeries timeSeries;
 
     /**
      * Constructor
@@ -32,8 +31,7 @@ public class TimeSeriesChart extends ApplicationFrame implements ChangeListener 
      */
     public TimeSeriesChart(String title) {
         super(title);
-        this.timeSeries = new TimeSeries("Tick Data");
-        this.dataset = new TimeSeriesCollection(this.timeSeries);
+        this.dataset = new TimeSeriesCollection();
         this.markers = new ArrayList<Marker>();
         this.chart = ChartFactory.createTimeSeriesChart(title, "Time", "Price", dataset);
         chart.removeLegend();
@@ -79,9 +77,14 @@ public class TimeSeriesChart extends ApplicationFrame implements ChangeListener 
         }
     }
 
+    public void addTickSeries(TickSeries tickSeries) {
+        tickSeries.addChangeListener(this);
+        dataset.addSeries(new TimeSeries(tickSeries.getname()));
+    }
+
     @Override
     public void stateChanged(ChangeEvent e) {
         TickSeries source = (TickSeries) e.getSource();
-        this.timeSeries.addOrUpdate(new Millisecond(Date.from(source.getLastTick().time().toInstant())), source.getLastTick().price());
+        dataset.getSeries(source.getname()).addOrUpdate(new Millisecond(Date.from(source.getLastTick().time().toInstant())), source.getLastTick().price());
     }
 }

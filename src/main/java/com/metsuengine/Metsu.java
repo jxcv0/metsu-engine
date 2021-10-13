@@ -6,13 +6,10 @@ public class Metsu {
         final TickSeries USDTickSeries = new TickSeries("BTCUSD");
         final TickSeries tetherTickSeries = new TickSeries("BTCUSDT");
 
-        final TimeSeriesChart USDChart = new TimeSeriesChart(USDTickSeries.getname());
-        final TimeSeriesChart tetherChart = new TimeSeriesChart(tetherTickSeries.getname());
-
-        USDTickSeries.addChangeListener(USDChart);
-        tetherTickSeries.addChangeListener(tetherChart);
-        USDChart.displayChart();
-        tetherChart.displayChart();
+        final TimeSeriesChart chart = new TimeSeriesChart("BTCUSD / BTCUSDT");
+        chart.addTickSeries(USDTickSeries);
+        chart.addTickSeries(tetherTickSeries);
+        chart.displayChart();
 
         BybitWebSocketClient client = new BybitWebSocketClient(
             new SubscriptionSet(new BybitInversePerpetualTradeWebSocket(USDTickSeries), 

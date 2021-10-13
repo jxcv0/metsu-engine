@@ -14,7 +14,6 @@ public class TickSeries {
     private final EventListenerList listenerList;
 
     public TickSeries() {
-        this.name = null;
         this.ticks = new LinkedList<Tick>();
         this.listenerList = new EventListenerList();
     }
