@@ -82,9 +82,19 @@ public class TimeSeriesChart extends ApplicationFrame implements ChangeListener 
         dataset.addSeries(new TimeSeries(tickSeries.getname()));
     }
 
+    public void addIndicator(Indicator indicator) {
+        indicator.addChangeListener(this);
+        dataset.addSeries(new TimeSeries(indicator.getName()));
+    }
+
     @Override
     public void stateChanged(ChangeEvent e) {
-        TickSeries source = (TickSeries) e.getSource();
-        dataset.getSeries(source.getname()).addOrUpdate(new Millisecond(Date.from(source.getLastTick().time().toInstant())), source.getLastTick().price());
+        if (e.getSource().getClass().isInstance(TickSeries.class)) {
+            TickSeries source = (TickSeries) e.getSource();
+            dataset.getSeries(source.getname()).addOrUpdate(new Millisecond(Date.from(source.getLastTick().time().toInstant())), source.getLastTick().price());
+        } else if (e.getSource().getClass().isInstance(Indicator.class)) {
+            Indicator source = (Indicator) e.getSource();
+            dataset.getSeries(source.getName());
+        }
     }
 }

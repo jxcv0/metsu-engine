@@ -67,7 +67,6 @@ public class VolumeDistribution extends TreeMap<Double, Double> {
         double[] oldKeys = this.keysToArray();
         double[] oldValues = this.valuesToArray();
 
-        // TODO tune interpolator bandwidth
         LoessInterpolator interpolator = new LoessInterpolator(0.1, 2);
         double[] values = interpolator.smooth(oldKeys, oldValues);
         double[] keys = this.keysToArray();
