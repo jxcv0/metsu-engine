@@ -13,10 +13,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @ClientEndpoint
-public class BybitUSDTPerpetualTradeWebSocket extends AbstractWebSocket {
+public class BybitUSDTPerpetualTradeWebSocket implements WebSocket {
+
+    private final TickSeries tickSeries;
 
     public BybitUSDTPerpetualTradeWebSocket(TickSeries tickSeries) {
-        super(tickSeries);
+        this.tickSeries = tickSeries;
     }
 
     @OnOpen

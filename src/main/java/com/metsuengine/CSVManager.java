@@ -16,9 +16,6 @@ import java.util.List;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 
-import org.ta4j.core.BarSeries;
-import org.ta4j.core.BaseBarSeries;
-
 public class CSVManager {
 
     private final Path path;
@@ -44,7 +41,7 @@ public class CSVManager {
         }
     }
 
-    public void createTickSeriesFromCSV() {
+    public void simulateTrades() {
         try {
             InputStream stream = this.getClass().getClassLoader().getResourceAsStream(this.path.toString());
             CSVReader reader = new CSVReader(new InputStreamReader(stream, Charset.forName("UTF-8")));
@@ -80,38 +77,5 @@ public class CSVManager {
         long epochMilli = Double.valueOf(epochSeconds * 1000).longValue();
         Instant instant = Instant.ofEpochMilli(epochMilli);
         return ZonedDateTime.ofInstant(instant, ZoneOffset.UTC);
-    }
-
-    public BarSeries barSeriesFromCSV() {
-        BarSeries barSeries = new BaseBarSeries();
-        try {
-            InputStream stream = this.getClass().getClassLoader().getResourceAsStream(this.path.toString());
-            CSVReader reader = new CSVReader(new InputStreamReader(stream, Charset.forName("UTF-8")));
-            List<String[]> lines = reader.readAll();
-            reader.close();
-
-            barSeries = buildKline(lines);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return barSeries;
-    }
-
-    private BarSeries buildKline(List<String[]> lines) {
-        BarSeries barSeries = new BaseBarSeries();
-
-        for (String[] line : lines) {
-            barSeries.addBar(
-                ZonedDateTime.parse(line[0]),
-                Double.parseDouble(line[1]),
-                Double.parseDouble(line[2]),
-                Double.parseDouble(line[3]),
-                Double.parseDouble(line[4]),
-                Double.parseDouble(line[5]));
-        }
-
-        return barSeries;
     }
 }

@@ -19,15 +19,24 @@
   </properties>
 
   <dependencies>
+
+    <dependency>
+      <groupId>org.knowm.xchange</groupId>
+      <artifactId>xchange-stream-bitmex</artifactId>
+      <version>5.0.11</version>
+    </dependency>
+
+
+    <dependency>
+      <groupId>org.knowm.xchange</groupId>
+      <artifactId>xchange-parent</artifactId>
+      <version>5.0.11</version>
+      <type>pom</type>
+    </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-nop</artifactId>
       <version>2.0.0-alpha5</version>
-    </dependency>
-    <dependency>
-      <groupId>org.ta4j</groupId>
-      <artifactId>ta4j-core</artifactId>
-      <version>0.14</version>
     </dependency>
     <dependency>
         <groupId>org.apache.commons</groupId>

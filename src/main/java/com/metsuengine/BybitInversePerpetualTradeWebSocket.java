@@ -13,15 +13,17 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @ClientEndpoint
-public class BybitInversePerpetualTradeWebSocket extends AbstractWebSocket {
+public class BybitInversePerpetualTradeWebSocket implements WebSocket {
+
+    private final TickSeries tickSeries;
 
     public BybitInversePerpetualTradeWebSocket(TickSeries tickSeries) {
-        super(tickSeries);
+        this.tickSeries = tickSeries;
     }
 
     @OnOpen
     public void onOpen(Session session) {
-        LOGGER.info("Connected to Inverse Perpetual endpoint: " + session.getBasicRemote());
+        LOGGER.info("Connected to Inverse Perpetual endpoint: " + session.getRequestURI() + " " + session.getAsyncRemote());
         try {
             BybitWebSocketClient.session = session;
         } catch (Exception e) {

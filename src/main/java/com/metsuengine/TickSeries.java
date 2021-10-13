@@ -9,12 +9,24 @@ import javax.swing.event.EventListenerList;
 
 public class TickSeries {
 
+    private String name;
     private final LinkedList<Tick> ticks;
     private final EventListenerList listenerList;
 
     public TickSeries() {
+        this.name = null;
         this.ticks = new LinkedList<Tick>();
         this.listenerList = new EventListenerList();
+    }
+
+    public TickSeries(String name) {
+        this.name = name;
+        this.ticks = new LinkedList<Tick>();
+        this.listenerList = new EventListenerList();
+    }
+
+    public String getname() {
+        return name;
     }
 
     public List<Tick> getTicks() {
