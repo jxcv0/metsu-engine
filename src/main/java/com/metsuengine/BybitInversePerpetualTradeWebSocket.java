@@ -23,7 +23,7 @@ public class BybitInversePerpetualTradeWebSocket implements WebSocket {
 
     @OnOpen
     public void onOpen(Session session) {
-        LOGGER.info("Connected to Inverse Perpetual endpoint: " + session.getRequestURI() + " " + session.getAsyncRemote());
+        LOGGER.info("Connected to Inverse Perpetual endpoint: " + session.getRequestURI() + " " + session.getBasicRemote());
         try {
             BybitWebSocketClient.session = session;
         } catch (Exception e) {

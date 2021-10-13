@@ -1,6 +1,7 @@
 package com.metsuengine;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -10,17 +11,17 @@ import javax.websocket.WebSocketContainer;
 
 import org.json.JSONObject;
 
-public class BybitWebSocketClient extends Thread {
+public class BybitWebSocketClient implements Runnable {
 
     static Session session;
-    private final String uri;
-    private final String topic;
-    private final WebSocket websocket;
+    private final List<SubscriptionSet> subscriptionSets;
 
-    public BybitWebSocketClient(WebSocket websocket, String uri, String topic) {
-        this.websocket = websocket;
-        this.uri = uri;
-        this.topic = topic;        
+    @SafeVarargs
+    public BybitWebSocketClient(SubscriptionSet... sets) {
+        this.subscriptionSets = new ArrayList<SubscriptionSet>();
+        for (SubscriptionSet set : sets) {
+            this.subscriptionSets.add(set);
+        }      
     }
 
     public static String subscribe(String op, String argv){
@@ -36,8 +37,10 @@ public class BybitWebSocketClient extends Thread {
     public void run() {
         try {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-            container.connectToServer(websocket, URI.create(uri));
-            session.getBasicRemote().sendText(subscribe("subscribe", topic));
+            for (SubscriptionSet set : subscriptionSets) {
+                container.connectToServer(set.getWebSocket(), URI.create(set.getURI()));
+                session.getBasicRemote().sendText(subscribe("subscribe", set.getTopic()));
+            }
 
             while(true) {
                 session.getBasicRemote().sendText("{\"op\":\"ping\"}");

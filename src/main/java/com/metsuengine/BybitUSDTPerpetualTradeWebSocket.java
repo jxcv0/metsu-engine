@@ -23,7 +23,7 @@ public class BybitUSDTPerpetualTradeWebSocket implements WebSocket {
 
     @OnOpen
     public void onOpen(Session session) {
-        LOGGER.info("Connected to USDT Perpetual endpoint: " + session.getBasicRemote());
+        LOGGER.info("Connected to USDT Perpetual endpoint: " + session.getRequestURI() + " " + session.getBasicRemote());
         try {
             BybitWebSocketClient.session = session;
         } catch (Exception e) {
