@@ -12,16 +12,20 @@ public class TickSeries {
     private String name;
     private final LinkedList<Tick> ticks;
     private final EventListenerList listenerList;
+    private final int maxSize;
 
     public TickSeries() {
+        this.name = null;
         this.ticks = new LinkedList<Tick>();
         this.listenerList = new EventListenerList();
+        this.maxSize = Integer.MAX_VALUE;
     }
 
     public TickSeries(String name) {
         this.name = name;
         this.ticks = new LinkedList<Tick>();
         this.listenerList = new EventListenerList();
+        this.maxSize = Integer.MAX_VALUE;
     }
 
     public String getname() {
@@ -46,7 +50,18 @@ public class TickSeries {
 
     public void addTick(Tick tick) {
         ticks.add(tick);
+        trimExcessValues();
         fireStateChanged();
+    }
+
+    public boolean isEmpty() {
+        return this.getSize() < 1;
+    }
+
+    private void trimExcessValues() {
+        if (ticks.size() > maxSize) {
+            ticks.removeLast();
+        }
     }
 
     public void addChangeListener(ChangeListener listener) {

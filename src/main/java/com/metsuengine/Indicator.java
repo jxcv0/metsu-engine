@@ -1,23 +1,32 @@
 package com.metsuengine;
 
-import java.time.ZonedDateTime;
-
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.swing.event.EventListenerList;
 
 public interface Indicator extends ChangeListener{
 
-    final Logger logger = LoggerFactory.getLogger(Indicator.class);
-
-    /**
-     * @param index index of a value within the indicator
-     * @return      the value of the indicator at the index
-     */
-    double value(ZonedDateTime index);
-
-    double calculate(ZonedDateTime index);
+    final EventListenerList listenerList = new EventListenerList();
 
     String getName();
+
+    double calculate();
+
+    default void addChangeListener(ChangeListener listener) {
+        listenerList.add(ChangeListener.class, listener);
+    }
+
+    default void removeChangeListener(ChangeListener listener) {
+        listenerList.remove(ChangeListener.class, listener);
+    }
+
+    default void fireStateChanged() {
+        ChangeListener[] listeners = listenerList.getListeners(ChangeListener.class);
+        if (listeners != null && listeners.length > 0) {
+            ChangeEvent event = new ChangeEvent(this);
+            for (ChangeListener listener : listeners) {
+                listener.stateChanged(event);
+            }
+        }
+    }
 }
