@@ -12,6 +12,8 @@ public interface Indicator extends ChangeListener{
 
     double calculate();
 
+    double getValue();
+
     default void addChangeListener(ChangeListener listener) {
         listenerList.add(ChangeListener.class, listener);
     }

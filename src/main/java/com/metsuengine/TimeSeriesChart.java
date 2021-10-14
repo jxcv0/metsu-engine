@@ -1,6 +1,7 @@
 package com.metsuengine;
 
 import java.awt.Dimension;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -83,13 +84,20 @@ public class TimeSeriesChart extends ApplicationFrame implements ChangeListener 
     }
 
     public void addIndicator(Indicator indicator) {
+        indicator.addChangeListener(this);
         dataset.addSeries(new TimeSeries(indicator.getName()));
     }
 
     @Override
     public void stateChanged(ChangeEvent e) {
-        TickSeries source = (TickSeries) e.getSource();
-        Millisecond milli = new Millisecond(Date.from(source.getLastTick().time().toInstant()));
-        dataset.getSeries(source.getname()).addOrUpdate(milli, source.getLastTick().price());
+        if (e.getSource() instanceof TickSeries) {
+            TickSeries source = (TickSeries) e.getSource();
+            Millisecond milli = new Millisecond(Date.from(source.getLastTick().time().toInstant()));
+            dataset.getSeries(source.getname()).addOrUpdate(milli, source.getLastTick().price());
+        } else if ((e.getSource() instanceof Indicator)) {
+            Indicator source = (Indicator) e.getSource();
+            Millisecond milli = new Millisecond(Date.from(ZonedDateTime.now().toInstant()));
+            dataset.getSeries(source.getName()).addOrUpdate(milli, source.getValue());
+        }
     }
 }
