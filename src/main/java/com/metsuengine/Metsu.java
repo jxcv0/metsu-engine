@@ -1,9 +1,5 @@
 package com.metsuengine;
 
-import com.numericalmethod.suanshu.stats.cointegration.CointegrationMLE;
-import com.numericalmethod.suanshu.stats.timeseries.multivariate.realtime.SimpleMultiVariateTimeSeries;
-import com.numericalmethod.suanshu.stats.timeseries.univariate.realtime.TimeSeries;
-
 public class Metsu {
     public static void main( String[] args ) {
 
@@ -25,7 +21,5 @@ public class Metsu {
                 "trade.BTCUSDT"));
         
         client.run();
-
-        // TODO - remove indicator class - just make single class OptimalBandsCalc using cointegration coeff
     }
 }
