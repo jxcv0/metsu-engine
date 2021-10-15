@@ -64,6 +64,10 @@ public class TickSeries {
         }
     }
 
+    public Double[] toArray() {
+        return ticks.toArray(new Double[0]);
+    }
+
     public void addChangeListener(ChangeListener listener) {
         listenerList.add(ChangeListener.class, listener);
     }

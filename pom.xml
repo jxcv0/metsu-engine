@@ -20,6 +20,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>io.deephaven</groupId>
+      <artifactId>SuanShu</artifactId>
+      <version>0.1.0</version>
+    </dependency>
+    <dependency>
       <groupId>org.knowm.xchange</groupId>
       <artifactId>xchange-parent</artifactId>
       <version>5.0.11</version>
