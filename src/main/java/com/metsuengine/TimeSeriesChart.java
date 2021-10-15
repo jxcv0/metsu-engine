@@ -100,4 +100,6 @@ public class TimeSeriesChart extends ApplicationFrame implements ChangeListener 
             dataset.getSeries(source.getName()).addOrUpdate(milli, source.getValue());
         }
     }
+
+    public TimeSer
 }
