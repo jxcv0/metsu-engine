@@ -1,5 +1,7 @@
 package com.metsuengine;
 
+import java.time.ZonedDateTime;
+
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
@@ -13,6 +15,10 @@ public interface Indicator extends ChangeListener{
     double calculate();
 
     double getValue();
+
+    ZonedDateTime getTime();
+
+    boolean isEmpty();
 
     default void addChangeListener(ChangeListener listener) {
         listenerList.add(ChangeListener.class, listener);
