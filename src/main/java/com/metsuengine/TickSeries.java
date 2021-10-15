@@ -68,6 +68,11 @@ public class TickSeries {
         return ticks.toArray(new Double[0]);
     }
 
+    public Double[] toArray(LinkedList<Double> doubleLinkedList) {
+        Double[] doubleArray = new Double[doubleLinkedList.size()];
+        return doubleLinkedList.toArray(doubleArray);
+    }
+
     public void addChangeListener(ChangeListener listener) {
         listenerList.add(ChangeListener.class, listener);
     }
