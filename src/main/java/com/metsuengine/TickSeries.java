@@ -65,10 +65,10 @@ public class TickSeries {
         }
     }
 
-    public double[] toArray() {
+    public double[] toPriceArray() {
         List<Double> prices = new ArrayList<Double>();
         ticks.forEach(tick -> prices.add(tick.price()));
-        return prices.stream().mapToDouble(d -> d).toArray();
+        return prices.stream().mapToDouble(Double::doubleValue).toArray();
     }
 
     public Double[] toArray(LinkedList<Double> doubleLinkedList) {

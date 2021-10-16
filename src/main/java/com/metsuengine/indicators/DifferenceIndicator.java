@@ -1,8 +1,8 @@
-package com.metsuengine;
+package com.metsuengine.indicators;
 
 import javax.swing.event.ChangeEvent;
 
-import com.metsuengine.indicators.AbstractIndicator;
+import com.metsuengine.TickSeries;
 
 public class DifferenceIndicator extends AbstractIndicator {
     
