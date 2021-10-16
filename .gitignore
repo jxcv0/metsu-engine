@@ -6,9 +6,11 @@
 *.class
 
 # Historical Data for bactesting #
-##################################
 *.csv
 
 # API keys#
-###########
 APIKeys.java
+
+# classpath #
+/.classpath
+/.project
