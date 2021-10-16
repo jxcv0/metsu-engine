@@ -13,7 +13,9 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.Marker;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYSplineRenderer;
+import org.jfree.chart.renderer.category.LineAndShapeRenderer;
+import org.jfree.chart.renderer.xy.DefaultXYItemRenderer;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
@@ -59,15 +61,24 @@ public class TimeSeriesChart extends JFrame implements ChangeListener {
         plot.setDataset(0, timeSeriesDataset);
         plot.setDataset(1, indicatorDataset);
 
-        XYSplineRenderer renderer = new XYSplineRenderer();
-        plot.setRenderer(1, renderer);
-        plot.setRangeAxis(0, new NumberAxis("Price Time Series"));
-        plot.setRangeAxis(1, new NumberAxis("Indicator Time Series"));
-        plot.setDomainAxis(new NumberAxis("Time (Epoc Second)"));
+        plot.setRenderer(0, new XYLineAndShapeRenderer());
+        plot.setRenderer(1, new XYLineAndShapeRenderer());
+
+        NumberAxis priceAxis = new NumberAxis("Price");
+        priceAxis.setAutoRange(true);
+        priceAxis.setAutoRangeIncludesZero(false);
+        NumberAxis valueAxis = new NumberAxis("Indicator");
+        valueAxis.setAutoRange(true);
+        valueAxis.setAutoRangeIncludesZero(false);
+        NumberAxis domainAxis = new NumberAxis("Time (epoch second)");
+        domainAxis.setAutoRange(true);
+        domainAxis.setAutoRangeIncludesZero(false);
+
+        plot.setRangeAxis(0, priceAxis);
+        plot.setRangeAxis(1, valueAxis);
+        plot.setDomainAxis(domainAxis);
         plot.mapDatasetToRangeAxis(0, 0);
         plot.mapDatasetToRangeAxis(1, 1);
-        plot.setDomainPannable(true);
-        plot.setRangePannable(true);
 
         JFreeChart chart = new JFreeChart(getTitle(), plot);
         chart.removeLegend();
@@ -75,10 +86,11 @@ public class TimeSeriesChart extends JFrame implements ChangeListener {
         ChartPanel panel = new ChartPanel(chart);
         panel.setFillZoomRectangle(true);
         panel.setPreferredSize(new Dimension(800, 500));
-        panel.setMouseWheelEnabled(true);
 
         setContentPane(panel);
         pack();
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
     }
 
@@ -95,7 +107,7 @@ public class TimeSeriesChart extends JFrame implements ChangeListener {
     @Override
     public void stateChanged(ChangeEvent e) {
         TickSeries source = (TickSeries) e.getSource();
-        double time = source.getLastTick().time().toEpochSecond();
+        double time = source.getLastTick().time().toInstant().toEpochMilli();
         timeSeriesDataset.getSeries(source.getName()).addOrUpdate(time, source.getLastTick().price());
         for (Indicator indicator : indicators) {
             indicatorDataset.getSeries(indicator.getName()).addOrUpdate(time, indicator.getValue());
