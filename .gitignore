@@ -1,5 +1,6 @@
 # vscode #
 .json
+.prefs
 
 # .class #
 *.class
