@@ -2,26 +2,25 @@ package com.metsuengine;
 
 import java.awt.Dimension;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
+import javax.swing.JFrame;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.Marker;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.ui.ApplicationFrame;
-import org.jfree.data.time.Millisecond;
-import org.jfree.data.time.TimeSeries;
-import org.jfree.data.time.TimeSeriesCollection;
+import org.jfree.chart.renderer.xy.XYSplineRenderer;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 
-public class TimeSeriesChart extends ApplicationFrame implements ChangeListener {
-
-    private final JFreeChart chart;
-    private final TimeSeriesCollection dataset;
+public class TimeSeriesChart extends JFrame implements ChangeListener {
+    
+    private final XYSeriesCollection timeSeriesDataset;
+    private final XYSeriesCollection indicatorDataset;
     private final List<Indicator> indicators;
     private final List<Marker> markers;
 
@@ -32,15 +31,10 @@ public class TimeSeriesChart extends ApplicationFrame implements ChangeListener 
      */
     public TimeSeriesChart(String title) {
         super(title);
-        this.dataset = new TimeSeriesCollection();
+        this.timeSeriesDataset = new XYSeriesCollection();
+        this.indicatorDataset = new XYSeriesCollection();
         this.indicators = new ArrayList<Indicator>();
         this.markers = new ArrayList<Marker>();
-        this.chart = ChartFactory.createTimeSeriesChart(title, "Time", "Price", dataset);
-        chart.removeLegend();
-
-        ChartPanel panel = new ChartPanel(chart);
-        panel.setPreferredSize(new java.awt.Dimension(1000, 500));
-        setContentPane(panel);
     }
     
     /**
@@ -51,51 +45,60 @@ public class TimeSeriesChart extends ApplicationFrame implements ChangeListener 
      */
     public void buildDataset(String title, TickSeries... tickSeries) {
         for (TickSeries series : tickSeries) {
-            TimeSeries timeSeries = new TimeSeries(title);
+            XYSeries timeSeries = new XYSeries(title);
             for (Tick tick : series.getTicks()) {
-                timeSeries.addOrUpdate(new Millisecond(Date.from(tick.time().toInstant())), tick.price());
+                timeSeries.addOrUpdate(tick.time().toEpochSecond(), tick.price());
             }
-            dataset.addSeries(timeSeries);
+            timeSeriesDataset.addSeries(timeSeries);
         }
     }
  
     public void displayChart() {
-
-        ChartPanel panel = new ChartPanel(this.chart);
-        panel.setFillZoomRectangle(true);
-        panel.setPreferredSize(new Dimension(1200, 800));
-        panel.setMouseWheelEnabled(true);
-
-        ApplicationFrame frame = new ApplicationFrame(this.getTitle());
-        frame.setContentPane(panel);
-        frame.pack();
-        frame.setVisible(true);
         
-        XYPlot plot = (XYPlot) chart.getPlot();
+        XYPlot plot = new XYPlot();
+        plot.setDataset(0, timeSeriesDataset);
+        plot.setDataset(1, indicatorDataset);
+
+        XYSplineRenderer renderer = new XYSplineRenderer();
+        plot.setRenderer(1, renderer);
+        plot.setRangeAxis(0, new NumberAxis("Price Time Series"));
+        plot.setRangeAxis(1, new NumberAxis("Indicator Time Series"));
+        plot.setDomainAxis(new NumberAxis("Time (Epoc Second)"));
+        plot.mapDatasetToRangeAxis(0, 0);
+        plot.mapDatasetToRangeAxis(1, 1);
         plot.setDomainPannable(true);
         plot.setRangePannable(true);
-        for (Marker marker : markers) {
-            plot.addDomainMarker(marker);
-        }
+
+        JFreeChart chart = new JFreeChart(getTitle(), plot);
+        chart.removeLegend();
+
+        ChartPanel panel = new ChartPanel(chart);
+        panel.setFillZoomRectangle(true);
+        panel.setPreferredSize(new Dimension(800, 500));
+        panel.setMouseWheelEnabled(true);
+
+        setContentPane(panel);
+        pack();
+        setVisible(true);
     }
 
     public void addTickSeries(TickSeries tickSeries) {
         tickSeries.addChangeListener(this);
-        dataset.addSeries(new TimeSeries(tickSeries.getName()));
+        timeSeriesDataset.addSeries(new XYSeries(tickSeries.getName()));
     }
 
     public void addIndicator(Indicator indicator) {
         indicators.add(indicator);
-        dataset.addSeries(new TimeSeries(indicator.getName()));
+        indicatorDataset.addSeries(new XYSeries(indicator.getName()));
     }
 
     @Override
     public void stateChanged(ChangeEvent e) {
         TickSeries source = (TickSeries) e.getSource();
-        Millisecond milli = new Millisecond(Date.from(source.getLastTick().time().toInstant()));
-        dataset.getSeries(source.getName()).addOrUpdate(milli, source.getLastTick().price());
+        double time = source.getLastTick().time().toEpochSecond();
+        timeSeriesDataset.getSeries(source.getName()).addOrUpdate(time, source.getLastTick().price());
         for (Indicator indicator : indicators) {
-            dataset.getSeries(indicator.getName()).addOrUpdate(milli, indicator.getValue());
+            indicatorDataset.getSeries(indicator.getName()).addOrUpdate(time, indicator.getValue());
         }
     }
 }

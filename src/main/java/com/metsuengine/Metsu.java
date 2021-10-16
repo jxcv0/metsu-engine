@@ -12,6 +12,7 @@ public class Metsu {
         final TimeSeriesChart chart = new TimeSeriesChart("BTCUSD / BTCUSDT");
         chart.addTickSeries(usd);
         chart.addTickSeries(tether);
+        chart.addIndicator(differenceIndicator);
         chart.displayChart();
 
         BybitWebSocketClient client = new BybitWebSocketClient(
