@@ -12,8 +12,6 @@ public class Testing {
         final TickSeries usd = new TickSeries("usd");
         final TickSeries usdt = new TickSeries("usdt");
         final DifferenceIndicator differenceIndicator = new DifferenceIndicator("Difference", usd, usdt);
-        differenceIndicator.addChangeListener(chart);
-
         CSVManager usdManager = new CSVManager("BTCUSD2021-10-15.csv", usd);
         CSVManager usdtManager = new CSVManager("BTCUSDT2021-10-15.csv", usdt);
         usdManager.simulateTrades();
