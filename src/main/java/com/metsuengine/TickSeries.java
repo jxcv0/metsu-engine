@@ -16,7 +16,7 @@ public class TickSeries {
     private final int maxSize;
 
     public TickSeries() {
-        this.name = null;
+        this.name = null;;
         this.ticks = new LinkedList<Tick>();
         this.listenerList = new EventListenerList();
         this.maxSize = Integer.MAX_VALUE;
