@@ -1,14 +1,12 @@
+# vscode #
+.json
+
 # .class #
-##########
 *.class
 
 # Historical Data for bactesting #
 ##################################
 *.csv
-
-# vscode settings #
-###################
-.vscode/
 
 # API keys#
 ###########
