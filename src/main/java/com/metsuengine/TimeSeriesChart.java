@@ -71,7 +71,7 @@ public class TimeSeriesChart extends JFrame implements ChangeListener {
         valueAxis.setAutoRange(true);
         valueAxis.setAutoRangeIncludesZero(false);
         NumberAxis domainAxis = new NumberAxis("Time (epoch second)");
-        domainAxis.setAutoRange(true);
+        domainAxis.setFixedAutoRange(100000);
         domainAxis.setAutoRangeIncludesZero(false);
 
         plot.setRangeAxis(0, priceAxis);
