@@ -20,6 +20,5 @@ public class Testing {
         
         DescriptiveStatistics descStat = new DescriptiveStatistics(differenceIndicator.toArray());
         System.out.println(descStat.getMean());
-
     }
 }

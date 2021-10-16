@@ -22,6 +22,7 @@ public class TimeSeriesChart extends ApplicationFrame implements ChangeListener 
 
     private final JFreeChart chart;
     private final TimeSeriesCollection dataset;
+    private final List<Indicator> indicators;
     private final List<Marker> markers;
 
     /**
@@ -32,6 +33,7 @@ public class TimeSeriesChart extends ApplicationFrame implements ChangeListener 
     public TimeSeriesChart(String title) {
         super(title);
         this.dataset = new TimeSeriesCollection();
+        this.indicators = new ArrayList<Indicator>();
         this.markers = new ArrayList<Marker>();
         this.chart = ChartFactory.createTimeSeriesChart(title, "Time", "Price", dataset);
         chart.removeLegend();
@@ -79,13 +81,21 @@ public class TimeSeriesChart extends ApplicationFrame implements ChangeListener 
 
     public void addTickSeries(TickSeries tickSeries) {
         tickSeries.addChangeListener(this);
-        dataset.addSeries(new TimeSeries(tickSeries.getname()));
+        dataset.addSeries(new TimeSeries(tickSeries.getName()));
+    }
+
+    public void addIndicator(Indicator indicator) {
+        indicators.add(indicator);
+        dataset.addSeries(new TimeSeries(indicator.getName()));
     }
 
     @Override
     public void stateChanged(ChangeEvent e) {
         TickSeries source = (TickSeries) e.getSource();
         Millisecond milli = new Millisecond(Date.from(source.getLastTick().time().toInstant()));
-        dataset.getSeries(source.getname()).addOrUpdate(milli, source.getLastTick().price());
+        dataset.getSeries(source.getName()).addOrUpdate(milli, source.getLastTick().price());
+        for (Indicator indicator : indicators) {
+            dataset.getSeries(indicator.getName()).addOrUpdate(milli, indicator.getValue());
+        }
     }
 }

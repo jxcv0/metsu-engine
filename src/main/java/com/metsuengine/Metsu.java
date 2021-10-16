@@ -1,10 +1,13 @@
 package com.metsuengine;
 
+import com.metsuengine.indicators.DifferenceIndicator;
+
 public class Metsu {
     public static void main( String[] args ) {
 
         final TickSeries usd = new TickSeries("BTCUSD");
         final TickSeries tether = new TickSeries("BTCUSDT");
+        final DifferenceIndicator differenceIndicator = new DifferenceIndicator("Difference", usd, tether);
 
         final TimeSeriesChart chart = new TimeSeriesChart("BTCUSD / BTCUSDT");
         chart.addTickSeries(usd);

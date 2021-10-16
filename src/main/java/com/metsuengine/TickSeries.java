@@ -29,7 +29,7 @@ public class TickSeries {
         this.maxSize = Integer.MAX_VALUE;
     }
 
-    public String getname() {
+    public String getName() {
         return name;
     }
 
