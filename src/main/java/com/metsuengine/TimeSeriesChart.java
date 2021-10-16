@@ -14,6 +14,7 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.Marker;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYSplineRenderer;
 import org.jfree.chart.ui.ApplicationFrame;
 import org.jfree.data.time.Millisecond;
 import org.jfree.data.time.TimeSeries;
@@ -69,8 +70,11 @@ public class TimeSeriesChart extends ApplicationFrame implements ChangeListener 
         frame.setContentPane(panel);
         frame.pack();
         frame.setVisible(true);
-
+        
+        // TODO bubble renderer for trade size
+        XYSplineRenderer renderer = new XYSplineRenderer();
         XYPlot plot = (XYPlot) chart.getPlot();
+        plot.setRenderer(renderer);
         plot.setDomainPannable(true);
         plot.setRangePannable(true);
         for (Marker marker : markers) {
