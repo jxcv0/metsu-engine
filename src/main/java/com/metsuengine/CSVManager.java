@@ -16,7 +16,7 @@ import java.util.List;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 
-public class CSVManager {
+public class CSVManager implements Runnable {
 
     private final Path path;
     private final TickSeries tickSeries;
@@ -41,7 +41,8 @@ public class CSVManager {
         }
     }
 
-    public void simulateTrades() {
+    @Override
+    public void run() {
         try {
             InputStream stream = this.getClass().getClassLoader().getResourceAsStream(this.path.toString());
             CSVReader reader = new CSVReader(new InputStreamReader(stream, Charset.forName("UTF-8")));
