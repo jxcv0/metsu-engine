@@ -1,3 +1,7 @@
+# .class #
+##########
+*.class
+
 # Historical Data for bactesting #
 ##################################
 *.csv
