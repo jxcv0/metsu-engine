@@ -13,8 +13,6 @@ public class DifferenceIndicator extends AbstractIndicator {
         super(name);
         this.first = first;
         this.second = second;
-        this.first.addChangeListener(this);
-        this.second.addChangeListener(this);
     }
 
     @Override
@@ -22,7 +20,6 @@ public class DifferenceIndicator extends AbstractIndicator {
         TickSeries source = (TickSeries) e.getSource();
         if (!first.isEmpty() && !second.isEmpty()) {
             values.put(source.getLastTick().time(), calculate());
-            fireStateChanged();
         }
     }
 
