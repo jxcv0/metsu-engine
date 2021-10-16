@@ -7,7 +7,7 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 public class Testing {
     public static void main(String[] args) {
 
-        TimeSeriesChart chart = new TimeSeriesChart("Testing Chart");
+        TimeSeriesChart chart = new TimeSeriesChart("Testing Chart", false);
 
         final TickSeries usd = new TickSeries("usd");
         final TickSeries usdt = new TickSeries("usdt");

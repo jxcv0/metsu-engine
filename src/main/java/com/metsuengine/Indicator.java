@@ -8,8 +8,6 @@ public interface Indicator extends ChangeListener{
 
     String getName();
 
-    double calculate();
-
     double getValue();
 
     ZonedDateTime getTime();

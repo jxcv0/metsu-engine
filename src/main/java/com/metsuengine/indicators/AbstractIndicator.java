@@ -26,8 +26,6 @@ public abstract class AbstractIndicator implements Indicator {
         return name;
     }
 
-    public abstract double calculate();
-
     public double getValue() {
         return isEmpty() ? 0 : values.get(getTime());
     }
@@ -45,7 +43,7 @@ public abstract class AbstractIndicator implements Indicator {
     }
 
     public boolean isEmpty() {
-        return values.size() < 1;
+        return values.isEmpty();
     }
 
     public double[] toArray() {

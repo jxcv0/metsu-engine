@@ -1,18 +1,18 @@
 package com.metsuengine;
 
-import com.metsuengine.indicators.DifferenceIndicator;
+import com.metsuengine.indicators.MultivariateTimeSeriesIndicator;
 
 public class Metsu {
     public static void main( String[] args ) {
 
         final TickSeries usd = new TickSeries("BTCUSD");
         final TickSeries tether = new TickSeries("BTCUSDT");
-        final DifferenceIndicator differenceIndicator = new DifferenceIndicator("Difference", usd, tether);
+        final MultivariateTimeSeriesIndicator combined = new MultivariateTimeSeriesIndicator("Difference", usd, tether);
 
-        final TimeSeriesChart chart = new TimeSeriesChart("BTCUSD / BTCUSDT");
+        final TimeSeriesChart chart = new TimeSeriesChart("BTCUSD / BTCUSDT", false);
         chart.addTickSeries(usd);
         chart.addTickSeries(tether);
-        chart.addIndicator(differenceIndicator);
+        chart.addIndicator(combined);
         chart.displayChart();
 
         BybitWebSocketClient client = new BybitWebSocketClient(

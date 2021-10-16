@@ -13,6 +13,8 @@ public class DifferenceIndicator extends AbstractIndicator {
         super(name);
         this.first = first;
         this.second = second;
+        this.first.addChangeListener(this);
+        this.second.addChangeListener(this);
     }
 
     @Override
@@ -23,7 +25,6 @@ public class DifferenceIndicator extends AbstractIndicator {
         }
     }
 
-    @Override
     public double calculate() {
         return first.getLastTick().price() - second.getLastTick().price();
     }
