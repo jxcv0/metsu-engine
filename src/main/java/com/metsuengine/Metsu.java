@@ -4,11 +4,13 @@ public class Metsu {
     public static void main( String[] args ) {
 
         final TickSeries usd = new TickSeries("BTCUSD");
-        final TickSeries tether = new TickSeries("BTCUSDT");   
+        final TickSeries tether = new TickSeries("BTCUSDT");
+        BetaCoefficient cfc = new BetaCoefficient("Beta", usd, tether);
 
-        final TimeSeriesChart chart = new TimeSeriesChart("BTCUSD / BTCUSDT");
+        final TimeSeriesChart chart = new TimeSeriesChart("BTCUSD / BTCUSDT", false);
         chart.addTickSeries(tether);
         chart.addTickSeries(usd);
+        chart.addToAlternativeDataset(cfc);
         chart.displayChart();
 
         BybitWebSocketClient client = new BybitWebSocketClient(
