@@ -9,8 +9,6 @@ public class Tick implements Serializable {
     private String side;
     private double price;
     private double size;
-
-
     
     public Tick(ZonedDateTime time, String side, double price, double size) {
         this.time = time.withFixedOffsetZone();

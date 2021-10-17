@@ -1,8 +1,6 @@
 package com.metsuengine;
 
 import java.awt.Dimension;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.event.ChangeEvent;
@@ -11,7 +9,6 @@ import javax.swing.event.ChangeListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.plot.Marker;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYSplineRenderer;
 import org.jfree.data.xy.XYSeries;
@@ -19,26 +16,16 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 public class TimeSeriesChart extends JFrame implements ChangeListener {
     
-    private boolean displayTicks;
-    private boolean displayIndicators;
     private final XYSeriesCollection timeSeriesDataset;
-    private final XYSeriesCollection indicatorDataset;
-    private final List<Indicator> indicators;
-    private final List<Marker> markers;
 
     /**
      * Constructor
      * 
      * @param title the title of the timeseries chart
      */
-    public TimeSeriesChart(String title, boolean displayTicks, boolean displayIndicators) {
+    public TimeSeriesChart(String title) {
         super(title);
-        this.displayTicks = displayTicks;
-        this.displayIndicators = displayIndicators;
         this.timeSeriesDataset = new XYSeriesCollection();
-        this.indicatorDataset = new XYSeriesCollection();
-        this.indicators = new ArrayList<Indicator>();
-        this.markers = new ArrayList<Marker>();
     }
     
     /**
@@ -64,7 +51,6 @@ public class TimeSeriesChart extends JFrame implements ChangeListener {
         
         XYPlot plot = new XYPlot();
         plot.setDataset(0, timeSeriesDataset);
-        plot.setDataset(1, indicatorDataset);
 
         plot.setRenderer(0, new XYSplineRenderer());
         plot.setRenderer(1, new XYSplineRenderer());
@@ -109,27 +95,10 @@ public class TimeSeriesChart extends JFrame implements ChangeListener {
         timeSeriesDataset.addSeries(new XYSeries(tickSeries.getName()));
     }
     
-    /**
-     * Add an indicator to the indicator dataset of the the chart
-     * 
-     * @param indicator the Indicator
-     */
-    public void addIndicator(Indicator indicator) {
-        indicators.add(indicator);
-        indicatorDataset.addSeries(new XYSeries(indicator.getName()));
-    }
-    
     @Override
     public void stateChanged(ChangeEvent e) {
         TickSeries source = (TickSeries) e.getSource();
         double time = source.getLastTick().time().toInstant().toEpochMilli();
-        if (displayTicks) {
-            timeSeriesDataset.getSeries(source.getName()).addOrUpdate(time, source.getLastTick().price());
-        }
-        for (Indicator indicator : indicators) {
-            if (!indicator.isEmpty() && displayIndicators) {
-                indicatorDataset.getSeries(indicator.getName()).addOrUpdate(time, indicator.getValue());
-            }
-        }
+        timeSeriesDataset.getSeries(source.getName()).addOrUpdate(time, source.getLastTick().price());
     }
 }
