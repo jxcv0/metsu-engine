@@ -13,13 +13,14 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.Marker;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.renderer.xy.XYSplineRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 public class TimeSeriesChart extends JFrame implements ChangeListener {
     
     private boolean displayTicks;
+    private boolean displayIndicators;
     private final XYSeriesCollection timeSeriesDataset;
     private final XYSeriesCollection indicatorDataset;
     private final List<Indicator> indicators;
@@ -30,9 +31,10 @@ public class TimeSeriesChart extends JFrame implements ChangeListener {
      * 
      * @param title the title of the timeseries chart
      */
-    public TimeSeriesChart(String title, boolean flag) {
+    public TimeSeriesChart(String title, boolean displayTicks, boolean displayIndicators) {
         super(title);
-        this.displayTicks = flag;
+        this.displayTicks = displayTicks;
+        this.displayIndicators = displayIndicators;
         this.timeSeriesDataset = new XYSeriesCollection();
         this.indicatorDataset = new XYSeriesCollection();
         this.indicators = new ArrayList<Indicator>();
@@ -64,8 +66,8 @@ public class TimeSeriesChart extends JFrame implements ChangeListener {
         plot.setDataset(0, timeSeriesDataset);
         plot.setDataset(1, indicatorDataset);
 
-        plot.setRenderer(0, new XYLineAndShapeRenderer());
-        plot.setRenderer(1, new XYLineAndShapeRenderer());
+        plot.setRenderer(0, new XYSplineRenderer());
+        plot.setRenderer(1, new XYSplineRenderer());
 
         NumberAxis priceAxis = new NumberAxis("Price");
         priceAxis.setAutoRange(true);
@@ -88,7 +90,7 @@ public class TimeSeriesChart extends JFrame implements ChangeListener {
 
         ChartPanel panel = new ChartPanel(chart);
         panel.setFillZoomRectangle(true);
-        panel.setPreferredSize(new Dimension(800, 500));
+        panel.setPreferredSize(new Dimension(1000, 600));
 
         setContentPane(panel);
         pack();
@@ -125,7 +127,7 @@ public class TimeSeriesChart extends JFrame implements ChangeListener {
             timeSeriesDataset.getSeries(source.getName()).addOrUpdate(time, source.getLastTick().price());
         }
         for (Indicator indicator : indicators) {
-            if (!indicator.isEmpty()) {
+            if (!indicator.isEmpty() && displayIndicators) {
                 indicatorDataset.getSeries(indicator.getName()).addOrUpdate(time, indicator.getValue());
             }
         }

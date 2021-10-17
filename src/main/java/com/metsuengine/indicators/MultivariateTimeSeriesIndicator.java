@@ -18,4 +18,4 @@ public class MultivariateTimeSeriesIndicator extends AbstractIndicator {
         TickSeries tickSeries = (TickSeries) e.getSource();
         values.put(tickSeries.getLastTick().time(), tickSeries.getLastTick().price());
     }
-}
+} 
