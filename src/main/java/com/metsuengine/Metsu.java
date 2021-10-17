@@ -9,10 +9,12 @@ public class Metsu {
 
         final TickSeries usd = new TickSeries("BTCUSD");
         final TickSeries tether = new TickSeries("BTCUSDT");
+
         final DifferenceIndicator differenceIndicator = new DifferenceIndicator("Difference", usd, tether);
         final AverageIndicator averageDifference = new AverageIndicator("Avergae Difference", differenceIndicator, 1000, usd, tether);
         final StandardDeviationIndicator stdDev = new StandardDeviationIndicator("SD", differenceIndicator, 1000, 2, usd, tether);
-        final TimeSeriesChart chart = new TimeSeriesChart("BTCUSD / BTCUSDT", true, false);
+
+        final TimeSeriesChart chart = new TimeSeriesChart("BTCUSD / BTCUSDT", false, true);
         chart.addTickSeries(usd);
         chart.addTickSeries(tether);
         chart.addIndicator(averageDifference);
