@@ -22,7 +22,7 @@ public class TickSeries {
         this.maxSize = Integer.MAX_VALUE;
     }
 
-    public TickSeries(String name) {
+    public TickSeries(String name, int maxSize) {
         this.name = name;
         this.ticks = new LinkedList<Tick>();
         this.listenerList = new EventListenerList();

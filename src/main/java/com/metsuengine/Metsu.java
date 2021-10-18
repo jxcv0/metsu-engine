@@ -5,8 +5,8 @@ public class Metsu {
 
         // 1.000346992
 
-        final TickSeries usd = new TickSeries("BTCUSD");
-        final TickSeries tether = new TickSeries("BTCUSDT");
+        final TickSeries usd = new TickSeries("BTCUSD", 10000);
+        final TickSeries tether = new TickSeries("BTCUSDT", 10000);
         OptimalBandSelection bands = new OptimalBandSelection("Beta", usd, tether);
 
         BybitWebSocketClient client = new BybitWebSocketClient(
