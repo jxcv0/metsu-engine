@@ -24,7 +24,11 @@ public class TickDistribution implements ChangeListener {
     }
 
     public void addTick(Tick tick) {
-        profile.get(tick.price()).addTick(tick);
+        if (profile.containsKey(tick.price())) {
+            profile.get(tick.price()).addTick(tick);
+        } else {
+            profile.put(tick.price(), new TickDistributionLevel(tick));
+        }
     }
 
     public double getVolumeAtPrice(double price) {

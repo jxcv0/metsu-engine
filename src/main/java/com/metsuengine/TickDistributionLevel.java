@@ -7,8 +7,9 @@ public class TickDistributionLevel {
     
     private final List<Tick> ticks;
 
-    public TickDistributionLevel() {
+    public TickDistributionLevel(Tick initialTick) {
         this.ticks = new ArrayList<Tick>();
+        addTick(initialTick);
     }
 
     public void addTick(Tick tick) {
