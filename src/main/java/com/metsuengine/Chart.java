@@ -76,7 +76,7 @@ public class Chart extends JFrame implements ChangeListener {
 
         JFreeChart seriesChart = new JFreeChart(getTitle(), tickSeriesPlot);
         ChartPanel seriesChartPanel = new ChartPanel(seriesChart);
-        seriesChartPanel.setPreferredSize(new Dimension(1000, 600));
+        seriesChartPanel.setPreferredSize(new Dimension(1000, 800));
 
         // Generate TickDistribution chart
         XYPlot distributionPlot = new XYPlot();
@@ -95,10 +95,10 @@ public class Chart extends JFrame implements ChangeListener {
 
         distributionPlot.setOrientation(PlotOrientation.HORIZONTAL);
 
-        NumberAxis distributionValueAxis = new NumberAxis("Price");
+        NumberAxis distributionValueAxis = new NumberAxis("Volume");
         distributionValueAxis.setAutoRangeIncludesZero(false);
 
-        NumberAxis distributionDomainAxis = new NumberAxis("Volume");
+        NumberAxis distributionDomainAxis = new NumberAxis("Price");
         distributionDomainAxis.setAutoRangeIncludesZero(false);
 
         distributionPlot.setRangeAxis(distributionValueAxis);
@@ -106,7 +106,7 @@ public class Chart extends JFrame implements ChangeListener {
 
         JFreeChart distributionChart = new JFreeChart("Distribution", distributionPlot);
         ChartPanel distributionChartPanel = new ChartPanel(distributionChart);
-        distributionChartPanel.setPreferredSize(new Dimension(1000, 600));
+        distributionChartPanel.setPreferredSize(new Dimension(800, 800));
 
         JPanel panel = new JPanel();
         panel.add(seriesChartPanel);
