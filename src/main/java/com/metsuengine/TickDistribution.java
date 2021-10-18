@@ -42,4 +42,8 @@ public class TickDistribution implements ChangeListener {
     public String getName() {
         return name;
     }
+
+    public Map<Double, TickDistributionLevel> getLevels() {
+        return this.profile;
+    }
 }

@@ -6,10 +6,10 @@ public class Metsu {
         final TickSeries btcusd = new TickSeries("BTCUSD", 10000);
         TickDistribution distribution = new TickDistribution("BTCUSD", btcusd);
 
-        TimeSeriesChart chart = new TimeSeriesChart("Chart");
+        Chart chart = new Chart("Chart");
         chart.addTickSeries(btcusd);
         chart.addDistribution(distribution);
-        chart.displayChart();
+        chart.buildChart();
 
         BybitWebSocketClient client = new BybitWebSocketClient(
             new SubscriptionSet(new BybitInversePerpetualTradeWebSocket(btcusd), 
