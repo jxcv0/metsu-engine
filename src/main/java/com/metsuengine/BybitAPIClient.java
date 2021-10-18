@@ -14,13 +14,13 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class BybitEndpoint {
+public class BybitAPIClient {
 
-    private static final Logger LOGGER = Logger.getLogger(BybitEndpoint.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(BybitAPIClient.class.getName());
 
     private final String symbol;
 
-    public BybitEndpoint(String symbol) {
+    public BybitAPIClient(String symbol) {
         this.symbol = symbol;
     }
 

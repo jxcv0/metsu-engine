@@ -1,5 +1,6 @@
 package com.metsuengine;
 
+import java.awt.Color;
 import java.awt.Dimension;
 
 import javax.swing.JFrame;
@@ -9,6 +10,8 @@ import javax.swing.event.ChangeListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.Marker;
+import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.DefaultXYItemRenderer;
 import org.jfree.data.xy.XYSeries;
@@ -18,7 +21,7 @@ public class TimeSeriesChart extends JFrame implements ChangeListener {
     
     private final XYSeriesCollection timeSeriesDataset;
     private final XYSeriesCollection alternativeDataset;
-    private BetaCoefficient beta;
+    private OptimalBandSelection bands;
     private boolean flag;
  
     /**
@@ -76,6 +79,14 @@ public class TimeSeriesChart extends JFrame implements ChangeListener {
         plot.mapDatasetToRangeAxis(0, 0);
         plot.mapDatasetToRangeAxis(1, 1);
 
+        Marker upperBand = new ValueMarker(1.001038428);
+        upperBand.setPaint(Color.RED);
+        plot.addRangeMarker(upperBand);
+
+        Marker lowerBand = new ValueMarker(0.9996555559);
+        lowerBand.setPaint(Color.GREEN);
+        plot.addRangeMarker(lowerBand);
+
         JFreeChart chart = new JFreeChart(getTitle(), plot);
         chart.removeLegend();
 
@@ -88,6 +99,7 @@ public class TimeSeriesChart extends JFrame implements ChangeListener {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
+        
     }
     
     /**
@@ -100,9 +112,9 @@ public class TimeSeriesChart extends JFrame implements ChangeListener {
         timeSeriesDataset.addSeries(new XYSeries(tickSeries.getName()));
     }
 
-    public void addToAlternativeDataset(BetaCoefficient beta) {
-        this.beta = beta;
-        alternativeDataset.addSeries(new XYSeries(beta.getName()));
+    public void addToAlternativeDataset(OptimalBandSelection bands) {
+        this.bands = bands;
+        alternativeDataset.addSeries(new XYSeries(bands.getName()));
     }
     
     @Override
@@ -112,8 +124,8 @@ public class TimeSeriesChart extends JFrame implements ChangeListener {
         if (flag) {
             timeSeriesDataset.getSeries(source.getName()).addOrUpdate(time, source.getLastTick().price()); 
         }
-        if (beta.getValue() != 0) {
-            alternativeDataset.getSeries(beta.getName()).addOrUpdate(time, beta.getValue());
+        if (bands.getValue() != 0) {
+            alternativeDataset.getSeries(bands.getName()).addOrUpdate(time, bands.getValue());
         }
     }
 }
