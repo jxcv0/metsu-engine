@@ -1,17 +1,15 @@
 package com.metsuengine;
 
-import java.awt.Color;
 import java.awt.Dimension;
 
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.plot.Marker;
-import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.DefaultXYItemRenderer;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
@@ -78,21 +76,13 @@ public class TimeSeriesChart extends JFrame implements ChangeListener {
         plot.mapDatasetToRangeAxis(0, 0);
         plot.mapDatasetToRangeAxis(1, 1);
 
-        Marker upperBand = new ValueMarker(1.001038428);
-        upperBand.setPaint(Color.RED);
-        plot.addRangeMarker(upperBand);
-
-        Marker lowerBand = new ValueMarker(0.9996555559);
-        lowerBand.setPaint(Color.GREEN);
-        plot.addRangeMarker(lowerBand);
-
         JFreeChart chart = new JFreeChart(getTitle(), plot);
-        chart.removeLegend();
+        ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel.setFillZoomRectangle(true);
+        chartPanel.setPreferredSize(new Dimension(1000, 600));
 
-        ChartPanel panel = new ChartPanel(chart);
-        panel.setFillZoomRectangle(true);
-        panel.setPreferredSize(new Dimension(1000, 600));
-
+        JPanel panel = new JPanel();
+        panel.add(chartPanel);
         setContentPane(panel);
         pack();
         setLocationRelativeTo(null);
@@ -111,7 +101,7 @@ public class TimeSeriesChart extends JFrame implements ChangeListener {
         timeSeriesDataset.addSeries(new XYSeries(tickSeries.getName()));
     }
 
-    public void addVolumeDistribution(TickDistribution tickDistribution) {
+    public void addDistribution(TickDistribution tickDistribution) {
         distributionDataset.addSeries(new XYSeries(tickDistribution.getName()));
     }
     

@@ -1,6 +1,5 @@
 package com.metsuengine;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -63,17 +62,6 @@ public class TickSeries {
         if (ticks.size() > maxSize) {
             ticks.removeLast();
         }
-    }
-
-    public double[] toPriceArray() {
-        List<Double> prices = new ArrayList<Double>();
-        ticks.forEach(tick -> prices.add(tick.price()));
-        return prices.stream().mapToDouble(Double::doubleValue).toArray();
-    }
-
-    public Double[] toArray(LinkedList<Double> doubleLinkedList) {
-        Double[] doubleArray = new Double[doubleLinkedList.size()];
-        return doubleLinkedList.toArray(doubleArray);
     }
 
     public void addChangeListener(ChangeListener listener) {

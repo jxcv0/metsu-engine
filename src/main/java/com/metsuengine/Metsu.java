@@ -4,12 +4,11 @@ public class Metsu {
     public static void main( String[] args ) {
 
         final TickSeries btcusd = new TickSeries("BTCUSD", 10000);
-
         TickDistribution distribution = new TickDistribution("BTCUSD", btcusd);
 
         TimeSeriesChart chart = new TimeSeriesChart("Chart");
         chart.addTickSeries(btcusd);
-        chart.addVolumeDistribution(distribution);
+        chart.addDistribution(distribution);
         chart.displayChart();
 
         BybitWebSocketClient client = new BybitWebSocketClient(

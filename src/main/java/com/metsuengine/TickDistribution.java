@@ -35,6 +35,10 @@ public class TickDistribution implements ChangeListener {
         return profile.get(price).getVolume();
     }
 
+    public double getDeltaAtPrice(double price) {
+        return profile.get(price).getTotalDelta();
+    }
+
     public String getName() {
         return name;
     }
