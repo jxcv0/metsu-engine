@@ -59,4 +59,12 @@ public class Tick implements Serializable {
     public double size() {
     	return this.size;
     }
+
+    public double signedValue() {
+        if (side.equals("Sell")) {
+            return -size;
+        } else {
+            return size;
+        }
+    }
 }

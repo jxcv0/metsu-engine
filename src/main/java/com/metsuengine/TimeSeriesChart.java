@@ -14,26 +14,24 @@ import org.jfree.chart.plot.Marker;
 import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.DefaultXYItemRenderer;
+import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 public class TimeSeriesChart extends JFrame implements ChangeListener {
     
     private final XYSeriesCollection timeSeriesDataset;
-    private final XYSeriesCollection alternativeDataset;
-    private OptimalBandSelection bands;
-    private boolean flag;
+    private final XYSeriesCollection distributionDataset;
  
     /**
      * Constructor
      * 
      * @param title the title of the timeseries chart
      */
-    public TimeSeriesChart(String title, boolean flag) {
+    public TimeSeriesChart(String title) {
         super(title);
         this.timeSeriesDataset = new XYSeriesCollection();
-        this.alternativeDataset = new XYSeriesCollection();
-        this.flag = flag;   
+        this.distributionDataset = new XYSeriesCollection();
     }
     
     /**
@@ -59,10 +57,11 @@ public class TimeSeriesChart extends JFrame implements ChangeListener {
         
         XYPlot plot = new XYPlot();
         plot.setDataset(0, timeSeriesDataset);
-        plot.setDataset(1, alternativeDataset);
-
+        plot.setDataset(1, distributionDataset);
+        
+        XYBarRenderer barRenderer = new XYBarRenderer();
         plot.setRenderer(0, new DefaultXYItemRenderer());
-        plot.setRenderer(1, new DefaultXYItemRenderer());
+        plot.setRenderer(1, barRenderer);
 
         NumberAxis priceAxis = new NumberAxis("Price");
         priceAxis.setAutoRange(true);
@@ -112,20 +111,16 @@ public class TimeSeriesChart extends JFrame implements ChangeListener {
         timeSeriesDataset.addSeries(new XYSeries(tickSeries.getName()));
     }
 
-    public void addToAlternativeDataset(OptimalBandSelection bands) {
-        this.bands = bands;
-        alternativeDataset.addSeries(new XYSeries(bands.getName()));
+    public void addVolumeDistribution(TickDistribution tickDistribution) {
+        distributionDataset.addSeries(new XYSeries(tickDistribution.getName()));
     }
     
     @Override
     public void stateChanged(ChangeEvent e) {
-        TickSeries source = (TickSeries) e.getSource();
-        double time = source.getLastTick().time().toInstant().toEpochMilli();
-        if (flag) {
+        if (e.getSource() instanceof TickSeries) {
+            TickSeries source = (TickSeries) e.getSource();
+            double time = source.getLastTick().time().toInstant().toEpochMilli();
             timeSeriesDataset.getSeries(source.getName()).addOrUpdate(time, source.getLastTick().price()); 
-        }
-        if (bands.getValue() != 0) {
-            alternativeDataset.getSeries(bands.getName()).addOrUpdate(time, bands.getValue());
         }
     }
 }

@@ -3,20 +3,19 @@ package com.metsuengine;
 public class Metsu {
     public static void main( String[] args ) {
 
-        // 1.000346992
+        final TickSeries btcusd = new TickSeries("BTCUSD", 10000);
 
-        final TickSeries usd = new TickSeries("BTCUSD", 10000);
-        final TickSeries tether = new TickSeries("BTCUSDT", 10000);
-        OptimalBandSelection bands = new OptimalBandSelection("Beta", usd, tether);
+        TickDistribution distribution = new TickDistribution("BTCUSD", btcusd);
+
+        TimeSeriesChart chart = new TimeSeriesChart("Chart");
+        chart.addTickSeries(btcusd);
+        chart.addVolumeDistribution(distribution);
+        chart.displayChart();
 
         BybitWebSocketClient client = new BybitWebSocketClient(
-            new SubscriptionSet(new BybitInversePerpetualTradeWebSocket(usd), 
+            new SubscriptionSet(new BybitInversePerpetualTradeWebSocket(btcusd), 
                 "wss://stream.bytick.com/realtime", 
-                "trade.BTCUSD"),
-
-            new SubscriptionSet(new BybitUSDTPerpetualTradeWebSocket(tether),
-                "wss://stream.bytick.com/realtime_public",
-                "trade.BTCUSDT"));
+                "trade.BTCUSD"));
         
         client.run();
     }
