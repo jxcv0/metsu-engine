@@ -1,5 +1,7 @@
 package com.metsuengine;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,11 +34,21 @@ public class TickDistributionLevel {
         return total;
     }
 
-    public double getCount() {
+    public int getCount() {
         return ticks.size();
     }
 
     public List<Tick> getTicks() {
         return ticks;
+    }
+
+    public void removeByTime(int seconds) {
+        List<Tick> toRemove = new ArrayList<Tick>();
+        for (Tick tick : ticks) {
+            if (tick.time().isBefore(ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(seconds))) {
+                toRemove.add(tick);
+            }
+        }
+        ticks.removeAll(toRemove);
     }
 }

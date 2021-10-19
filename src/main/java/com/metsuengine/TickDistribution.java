@@ -9,13 +9,13 @@ import javax.swing.event.ChangeListener;
 public class TickDistribution implements ChangeListener {
 
     private final String name;
-    private final Map<Double, TickDistributionLevel> profile;
-    private final int secondsLag;
+    private final Map<Double, TickDistributionLevel> distribution;
+    private final int seconds;
 
-    public TickDistribution(String name, TickSeries tickSeries, int secondsLag) {
+    public TickDistribution(String name, TickSeries tickSeries, int seconds) {
         this.name = name;
-        this.profile = new ConcurrentHashMap<Double, TickDistributionLevel>();
-        this.secondsLag = secondsLag;
+        this.distribution = new ConcurrentHashMap<Double, TickDistributionLevel>();
+        this.seconds = seconds;
         tickSeries.addChangeListener(this);
     }
 
@@ -26,19 +26,20 @@ public class TickDistribution implements ChangeListener {
     }
 
     public void addTick(Tick tick) {
-        if (profile.containsKey(tick.price())) {
-            profile.get(tick.price()).addTick(tick);
+        if (distribution.containsKey(tick.price())) {
+            distribution.get(tick.price()).addTick(tick);
         } else {
-            profile.put(tick.price(), new TickDistributionLevel(tick));
+            distribution.put(tick.price(), new TickDistributionLevel(tick));
         }
+        trimExcessValues();
     }
 
     public double getVolumeAtPrice(double price) {
-        return profile.get(price).getVolume();
+        return distribution.get(price).getVolume();
     }
 
     public double getDeltaAtPrice(double price) {
-        return profile.get(price).getTotalDelta();
+        return distribution.get(price).getTotalDelta();
     }
 
     public String getName() {
@@ -46,10 +47,20 @@ public class TickDistribution implements ChangeListener {
     }
 
     public Map<Double, TickDistributionLevel> getLevels() {
-        return this.profile;
+        return this.distribution;
+    }
+
+    public int getTotalCount() {
+        int count = 0;
+        for (Double level : distribution.keySet()) {
+            count += distribution.get(level).getCount();
+        }
+        return count;
     }
 
     private void trimExcessValues() {
-        // TODO
+        for (Double level : distribution.keySet()) {
+            distribution.get(level).removeByTime(seconds);
+        }
     }
 }
