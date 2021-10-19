@@ -1,5 +1,6 @@
 package com.metsuengine;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,20 +13,20 @@ public class TickSeries {
     private String name;
     private final LinkedList<Tick> ticks;
     private final EventListenerList listenerList;
-    private final int maxSize;
+    private final int secondsLag;
 
     public TickSeries() {
-        this.name = null;;
+        this.name = null;
         this.ticks = new LinkedList<Tick>();
         this.listenerList = new EventListenerList();
-        this.maxSize = Integer.MAX_VALUE;
+        this.secondsLag = Integer.MAX_VALUE;
     }
 
-    public TickSeries(String name, int maxSize) {
+    public TickSeries(String name, int secondsLag) {
         this.name = name;
         this.ticks = new LinkedList<Tick>();
         this.listenerList = new EventListenerList();
-        this.maxSize = Integer.MAX_VALUE;
+        this.secondsLag = secondsLag;
     }
 
     public String getName() {
@@ -51,6 +52,7 @@ public class TickSeries {
     public void addTick(Tick tick) {
         ticks.add(tick);
         trimExcessValues();
+        System.out.println(ticks.size());
         fireStateChanged();
     }
 
@@ -59,9 +61,17 @@ public class TickSeries {
     }
 
     private void trimExcessValues() {
-        if (ticks.size() > maxSize) {
-            ticks.removeLast();
+        List<Tick> toRemove = new ArrayList<Tick>();
+        for (Tick tick : ticks) {
+            if (tick.time().isBefore(ticks.getLast().time().minusSeconds(secondsLag))) {
+                toRemove.add(tick);
+            }
         }
+        ticks.removeAll(toRemove);
+    }
+
+    public boolean contains(Tick tick) {
+        return ticks.contains(tick);
     }
 
     public void addChangeListener(ChangeListener listener) {

@@ -35,4 +35,8 @@ public class TickDistributionLevel {
     public double getCount() {
         return ticks.size();
     }
+
+    public List<Tick> getTicks() {
+        return ticks;
+    }
 }

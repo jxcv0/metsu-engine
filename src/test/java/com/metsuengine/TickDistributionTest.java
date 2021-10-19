@@ -11,7 +11,7 @@ public class TickDistributionTest {
     @Test
     public void toPriceArrayTest() {
         TickSeries tickSeries = new TickSeries();
-        TickDistribution distribution = new TickDistribution("vd", tickSeries);
+        TickDistribution distribution = new TickDistribution("vd", tickSeries, 20);
         tickSeries.addTick(new Tick(ZonedDateTime.now(), "Buy", 1000, 1000));
         tickSeries.addTick(new Tick(ZonedDateTime.now(), "Sell", 1000, 1000));
         tickSeries.addTick(new Tick(ZonedDateTime.now(), "Buy", 900, 1000));

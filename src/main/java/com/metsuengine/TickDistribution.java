@@ -1,7 +1,7 @@
 package com.metsuengine;
 
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -10,10 +10,12 @@ public class TickDistribution implements ChangeListener {
 
     private final String name;
     private final Map<Double, TickDistributionLevel> profile;
+    private final int secondsLag;
 
-    public TickDistribution(String name, TickSeries tickSeries) {
+    public TickDistribution(String name, TickSeries tickSeries, int secondsLag) {
         this.name = name;
-        this.profile = new TreeMap<Double, TickDistributionLevel>();
+        this.profile = new ConcurrentHashMap<Double, TickDistributionLevel>();
+        this.secondsLag = secondsLag;
         tickSeries.addChangeListener(this);
     }
 
@@ -45,5 +47,9 @@ public class TickDistribution implements ChangeListener {
 
     public Map<Double, TickDistributionLevel> getLevels() {
         return this.profile;
+    }
+
+    private void trimExcessValues() {
+        // TODO
     }
 }
