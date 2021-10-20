@@ -29,7 +29,7 @@ public class TickDistributionLevel {
     public double getTotalDelta() {
         double total = 0;
         for (Tick tick : ticks) {
-            total += tick.signedValue();
+            total += tick.signedVolume();
         }
         return total;
     }

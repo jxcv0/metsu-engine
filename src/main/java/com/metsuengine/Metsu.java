@@ -4,9 +4,13 @@ public class Metsu {
     public static void main( String[] args ) {
 
         CSVManager manager = new CSVManager("BTCUSDT2021-10-15.csv");
-        
+
         final TickSeries btcusd = manager.createTickSeries();
-        System.out.println(btcusd.getSize());
+
+        for (int i = 0; i < btcusd.getSize(); i++) {
+            double test = DeltaSeries.calculate(btcusd.getSubSeries(i, i-5));
+            System.out.println(test);
+        }
 
         // TickDistribution distribution = new TickDistribution("BTCUSD", btcusd, 1800);
         // DeltaSeries deltaSeries = new DeltaSeries("BTCUSD", 10);

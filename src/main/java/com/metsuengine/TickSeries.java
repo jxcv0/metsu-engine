@@ -48,6 +48,16 @@ public class TickSeries {
         return ticks.get(index);
     }
 
+    public List<Tick> getSubSeries(int startIndex, int endIndex) {
+        List<Tick> subSeries = new ArrayList<Tick>();
+        for (int i = startIndex; i <= endIndex; i++) {
+            if (!ticks.get(i).equals(null)) {
+                subSeries.add(ticks.get(i)); 
+            }
+        }
+        return subSeries;
+    }
+
     public Tick getLastTick() {
         return ticks.getLast();
     }

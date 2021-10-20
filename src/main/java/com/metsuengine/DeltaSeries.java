@@ -2,6 +2,7 @@ package com.metsuengine;
 
 import java.time.ZonedDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.event.ChangeEvent;
@@ -20,23 +21,26 @@ public class DeltaSeries implements ChangeListener {
     @Override
     public void stateChanged(ChangeEvent e) {
         TickSeries source = (TickSeries) e.getSource();
-        addTick(source.getLastTick());
+        add(source.getLastTick());
     }
 
-    public void addTick(Tick tick) {
-        ticks.put(tick.time(), tick.signedValue());
+    public void add(Tick tick) {
+        ticks.put(tick.time(), tick.signedVolume());
     }
 
     public double getDelta() {
-        // return ticks.values().stream().mapToDouble(Double::doubleValue).sum();
-        double delta = 0;
-        for (Double x : ticks.values()) {
-            delta += x;
-        }
-        return delta;
+        return ticks.values().stream().mapToDouble(Double::doubleValue).sum();
     }
 
     public String getName() {
         return name;
+    }
+
+    public static double calculate(List<Tick> ticks) {
+        double delta = 0;
+        for (Tick tick : ticks) {
+            delta += tick.signedVolume();
+        }
+        return delta;
     }
 }

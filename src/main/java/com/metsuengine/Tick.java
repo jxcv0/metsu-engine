@@ -60,7 +60,7 @@ public class Tick implements Serializable {
     	return this.size;
     }
 
-    public double signedValue() {
+    public double signedVolume() {
         if (side.equals("Sell")) {
             return -size;
         } else {

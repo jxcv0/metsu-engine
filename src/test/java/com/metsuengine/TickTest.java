@@ -11,10 +11,9 @@ public class TickTest {
     @Test
     public void signedValueTest() {
         Tick tickBuy = new Tick(ZonedDateTime.now(), "Buy", 1000, 200);
-        assertEquals("Failue", 200, tickBuy.signedValue(), 0);
+        assertEquals("Failure", 200, tickBuy.signedVolume(), 0);
 
         Tick tickSell = new Tick(ZonedDateTime.now(), "Sell", 1000, 350);
-        assertEquals("Failue", -350, tickSell.signedValue(), 0);
-    }
-    
+        assertEquals("Failure", -350, tickSell.signedVolume(), 0);
+    }    
 }
