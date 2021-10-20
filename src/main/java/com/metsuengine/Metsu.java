@@ -7,9 +7,10 @@ public class Metsu {
 
         final TickSeries btcusd = manager.createTickSeries();
         
-        for (int i = 5; i < btcusd.getSize(); i++) {
-            double test = DeltaSeries.calculate(btcusd.getSubSeries(i, i+5));
-            System.out.println(test);
+        // why is this slow?
+        for (int i = 0; i <= btcusd.getSize(); i++) {
+            double test = DeltaSeries.calculate(btcusd.getSubSeriesByTime(10, i));
+            System.out.println(btcusd.getSubSeriesByTime(10, i).size());
         }
 
         // TickDistribution distribution = new TickDistribution("BTCUSD", btcusd, 1800);

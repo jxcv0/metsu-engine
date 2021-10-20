@@ -68,9 +68,11 @@ public class TickSeries {
         List<Tick> subSeries = new ArrayList<Tick>();
 
         for (int i = 0; i <= endIndex; i++) {
-            Tick tick = ticks.get(i); 
-            if (tick.time().isAfter(startIndex)) {
-                subSeries.add(tick);
+            if (ticks.get(i) != null) {
+                Tick tick = ticks.get(i);
+                if (tick.time().isAfter(startIndex)) {
+                    subSeries.add(tick);
+                }
             }
         }
 
