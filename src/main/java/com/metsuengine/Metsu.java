@@ -3,12 +3,12 @@ package com.metsuengine;
 public class Metsu {
     public static void main( String[] args ) {
 
-        CSVManager manager = new CSVManager("BTCUSDT2021-10-15.csv");
+        CSVManager manager = new CSVManager("BTCUSD2021-10-15.csv");
 
         final TickSeries btcusd = manager.createTickSeries();
-
-        for (int i = 0; i < btcusd.getSize(); i++) {
-            double test = DeltaSeries.calculate(btcusd.getSubSeries(i, i-5));
+        
+        for (int i = 5; i < btcusd.getSize(); i++) {
+            double test = DeltaSeries.calculate(btcusd.getSubSeries(i, i+5));
             System.out.println(test);
         }
 

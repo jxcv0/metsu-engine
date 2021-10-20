@@ -33,5 +33,26 @@ public class TickSeriesTest {
         expected2.add(tickSeries.getTick(2));
         expected2.add(tickSeries.getTick(3));
         assertEquals(expected2, tickSeries.getSubSeries(2, 3));
-    }   
+    }
+    
+    @Test
+    public void getSubSeriesByTime() {
+
+        ZonedDateTime first = ZonedDateTime.now().minusSeconds(3);
+        ZonedDateTime second = ZonedDateTime.now().minusSeconds(2);
+        ZonedDateTime third = ZonedDateTime.now().minusSeconds(1);
+        ZonedDateTime fourth = ZonedDateTime.now();
+
+        TickSeries tickSeries = new TickSeries();
+        tickSeries.addTick(new Tick(first, "Sell", 1000, 200));
+        tickSeries.addTick(new Tick(second, "Buy", 1000.5, 100));
+        tickSeries.addTick(new Tick(third, "Buy", 1000.5, 150));
+        tickSeries.addTick(new Tick(fourth, "Sell", 1000, 250));
+        
+        List<Tick> expected = new ArrayList<Tick>();
+        expected.add(tickSeries.getTick(1));        
+        expected.add(tickSeries.getTick(2));
+        assertEquals(expected, tickSeries.getSubSeriesByTime(2, 2));
+
+    }
 }

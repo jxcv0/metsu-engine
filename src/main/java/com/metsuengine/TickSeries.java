@@ -1,5 +1,6 @@
 package com.metsuengine;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,12 +50,30 @@ public class TickSeries {
     }
 
     public List<Tick> getSubSeries(int startIndex, int endIndex) {
+        if (startIndex > endIndex) {
+            throw new IllegalArgumentException("Start index must be before end index.");
+        } else {
+            List<Tick> subSeries = new ArrayList<Tick>();
+            for (int i = startIndex; i <= endIndex; i++) {
+                if (!ticks.get(i).equals(null)) {
+                    subSeries.add(ticks.get(i)); 
+                }
+            }
+            return subSeries;
+        }
+    }
+
+    public List<Tick> getSubSeriesByTime(int seconds, int endIndex) {
+        ZonedDateTime startIndex = ticks.get(endIndex).time().minusSeconds(seconds);
         List<Tick> subSeries = new ArrayList<Tick>();
-        for (int i = startIndex; i <= endIndex; i++) {
-            if (!ticks.get(i).equals(null)) {
-                subSeries.add(ticks.get(i)); 
+
+        for (int i = 0; i <= endIndex; i++) {
+            Tick tick = ticks.get(i); 
+            if (tick.time().isAfter(startIndex)) {
+                subSeries.add(tick);
             }
         }
+
         return subSeries;
     }
 
