@@ -16,10 +16,10 @@ import java.util.List;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 
-public class CSVManager implements Runnable {
+public class CSVManager {
 
     private final Path path;
-    private final TickSeries tickSeries;
+    private TickSeries tickSeries;
 
     public CSVManager(String file) {
         this.path = Paths.get(file);
@@ -41,22 +41,38 @@ public class CSVManager implements Runnable {
         }
     }
 
-    @Override
-    public void run() {
+    public TickSeries createTickSeries() {
+        TickSeries tickSeries = new TickSeries();
         try {
             InputStream stream = this.getClass().getClassLoader().getResourceAsStream(this.path.toString());
             CSVReader reader = new CSVReader(new InputStreamReader(stream, Charset.forName("UTF-8")));
             List<String[]> lines = reader.readAll();
             reader.close();
 
-            buildAndSort(lines);
+            List<Tick> ticks = new ArrayList<Tick>();
+
+            for (String[] line : lines) {
+                ticks.add(new Tick(
+                    epochtoZonedDateTime(Double.parseDouble(line[0])),
+                    line[2],
+                    Double.parseDouble(line[4]),
+                    Double.parseDouble(line[3])));
+            }
+    
+            Collections.reverse(ticks);
+            tickSeries.addAll(ticks);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return tickSeries;
     }
 
-    private void buildAndSort(List<String[]> lines) {
+    public List<Tick> getTicks() {
+        return tickSeries.getTicks();
+    }
+
+    public List<Tick> buildAndSort(List<String[]> lines) {
         List<Tick> ticks = new ArrayList<Tick>();
 
         for (String[] line : lines) {
@@ -68,10 +84,8 @@ public class CSVManager implements Runnable {
         }
 
         Collections.reverse(ticks);
+        return ticks;
 
-        for (Tick tick : ticks) {
-            this.tickSeries.addTick(tick);
-        }
     }
 
     private ZonedDateTime epochtoZonedDateTime(Double epochSeconds) {

@@ -22,6 +22,13 @@ public class TickSeries {
         this.seconds = Integer.MAX_VALUE;
     }
 
+    public TickSeries(String name) {
+        this.name = name;
+        this.ticks = new LinkedList<Tick>();
+        this.listenerList = new EventListenerList();
+        this.seconds = Integer.MAX_VALUE;
+    }
+
     public TickSeries(String name, int seconds) {
         this.name = name;
         this.ticks = new LinkedList<Tick>();
@@ -53,6 +60,10 @@ public class TickSeries {
         ticks.add(tick);
         trimExcessValues();
         fireStateChanged();
+    }
+
+    public void addAll(List<Tick> ticks) {
+        this.ticks.addAll(ticks);
     }
 
     public boolean isEmpty() {
