@@ -50,8 +50,8 @@ public class TickSeriesTest {
         tickSeries.addTick(new Tick(fourth, "Sell", 1000, 250));
         
         List<Tick> expected = new ArrayList<Tick>();
-        expected.add(tickSeries.getTick(1));        
-        expected.add(tickSeries.getTick(2));
+        expected.add(tickSeries.getTick(2));        
+        expected.add(tickSeries.getTick(1));
         assertEquals(expected, tickSeries.getSubSeriesByTime(2, 2));
 
     }

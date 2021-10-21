@@ -12,6 +12,8 @@ public class Metsu {
             System.out.println(btcusd.getSubSeriesByTime(10, i).size());
         }
 
+        System.out.println("Done");
+
         // TickDistribution distribution = new TickDistribution("BTCUSD", btcusd, 1800);
         // DeltaSeries deltaSeries = new DeltaSeries("BTCUSD", 10);
 
