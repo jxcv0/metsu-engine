@@ -63,23 +63,16 @@ public class TickSeries {
         }
     }
 
-    public List<Tick> getSubSeriesByTime(int seconds, int index) {
-        ZonedDateTime startIndex = ticks.get(index).time().minusSeconds(seconds);
+    public List<Tick> getSubSeriesByTime(int index, int seconds) {
+        ZonedDateTime endTime = ticks.get(index).time();
+        ZonedDateTime startTime = endTime.minusSeconds(seconds);
+
         List<Tick> subSeries = new ArrayList<Tick>();
-
-        while(index < 0 || ticks.get(index) == null) {
-            // if (index < 0 || ticks.get(index) == null) {
-            //     break;
-            // }
-
-            Tick tick = ticks.get(index);
-            if (tick.time().isAfter(startIndex)) {
-                    subSeries.add(tick);
-            } else {
-                break;
+        subSeries.add(ticks.get(index));
+        for (Tick tick : ticks) {
+            if (tick.time().isAfter(startTime) && tick.time().isBefore(endTime)) {
+                subSeries.add(tick);
             }
-
-            index--;
         }
 
         return subSeries;
