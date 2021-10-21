@@ -55,4 +55,13 @@ public class TickSeriesTest {
         assertEquals(expected, tickSeries.getSubSeriesByTime(2, 2));
 
     }
+
+    @Test
+    public void startIndexTest() {
+        int seconds = 10;
+        ZonedDateTime time = ZonedDateTime.now().minusSeconds(3);
+        Tick tick = new Tick(time, "Sell", 1000, 250);
+
+        assertEquals(tick.time().minusSeconds(seconds).toEpochSecond(), time.minusSeconds(10).toEpochSecond());
+    }
 }

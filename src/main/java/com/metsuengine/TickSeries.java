@@ -67,6 +67,7 @@ public class TickSeries {
         ZonedDateTime startIndex = ticks.get(endIndex).time().minusSeconds(seconds);
         List<Tick> subSeries = new ArrayList<Tick>();
 
+        // TODO - TOO SLOW!!
         for (int i = 0; i <= endIndex; i++) {
             if (ticks.get(i) != null) {
                 Tick tick = ticks.get(i);
