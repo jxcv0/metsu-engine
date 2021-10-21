@@ -7,7 +7,6 @@ public class Metsu {
 
         final TickSeries btcusd = manager.createTickSeries();
         
-        // why is this slow?
         for (int i = 0; i <= btcusd.getSize(); i++) {
             double test = DeltaSeries.calculate(btcusd.getSubSeriesByTime(10, i));
             System.out.println(btcusd.getSubSeriesByTime(10, i).size());
