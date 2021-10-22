@@ -33,7 +33,6 @@ public class BybitInversePerpetualTradeWebSocket implements WebSocket {
 
     @OnMessage
     public void processMessage(String message) {
-
         try {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode response = mapper.readTree(message);
