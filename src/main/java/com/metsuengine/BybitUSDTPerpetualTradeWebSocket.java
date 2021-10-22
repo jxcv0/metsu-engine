@@ -67,7 +67,6 @@ public class BybitUSDTPerpetualTradeWebSocket implements WebSocket {
         t.printStackTrace();
     }
 
-    @Override
     public TickSeries tickSeries() {
         return tickSeries;
     }

@@ -1,6 +1,10 @@
 package com.metsuengine;
 
+import java.io.IOException;
+
 import javax.websocket.ClientEndpoint;
+import javax.websocket.OnClose;
+import javax.websocket.OnError;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
@@ -28,29 +32,61 @@ public class BybitInversePerpetualOrderBookWebsocket implements WebSocket{
     }
 
     @OnMessage
-    public void proccessMessage(String message) {
+    public void processMessage(String message) {
         try {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode response = mapper.readTree(message);
 
             if (response.has("type")) {
-                JsonNode data = response.findValue("data");
+                JsonNode type = response.get("type");
+                if (type.asText().equals("snapshot")) {
+                    JsonNode data = response.get("data");
+    
+                    for (JsonNode node : data) {
+                        double price = Double.parseDouble(node.get("price").asText());
+                        int value = node.get("side").asText().equals("Buy") ? node.get("size").intValue() : -node.get("size").intValue();
+                        orderBook.insert(price, value);
+                    }
+                } else {
+                    JsonNode data = response.get("data");
 
-                if (data)
+                    JsonNode delete = data.get("delete");
+                    for (JsonNode node : delete) {
+                        orderBook.delete(Double.parseDouble(node.get("price").asText()));
+                    }
 
-                if (!data.isNull()) {
-                    Tick tick = new Tick(
-                        data.findValue("timestamp").asText(),
-                        data.findValue("side").asText(),
-                        data.findValue("price").asDouble(),
-                        data.findValue("size").asDouble());
-                    
-                    tickSeries.addTick(tick);
+                    JsonNode update = data.get("update");
+                    for (JsonNode node : update) {
+                        double price = Double.parseDouble(node.get("price").asText());
+                        int value = node.get("side").asText().equals("Buy") ? node.get("size").intValue() : -node.get("size").intValue();
+                        orderBook.update(price, value);
+                    }
+
+                    JsonNode insert = data.get("insert");
+                    for (JsonNode node : insert) {
+                        double price = Double.parseDouble(node.get("price").asText());
+                        int value = node.get("side").asText().equals("Buy") ? node.get("size").intValue() : -node.get("size").intValue();
+                        orderBook.update(price, value);
+                    }
                 }
             }
   
         } catch (Exception e) {
             e.printStackTrace();
         } 
+    }
+
+    @OnClose
+    public void onClose(Session session) throws IOException {
+        LOGGER.info("Disconnected");
+    }
+
+    @OnError
+    public void processError(Throwable t) {
+        t.printStackTrace();
+    }
+
+    public MarketOrderBook orderBook() {
+        return orderBook;
     }
 }

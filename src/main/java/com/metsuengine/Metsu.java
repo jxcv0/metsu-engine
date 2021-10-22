@@ -3,18 +3,6 @@ package com.metsuengine;
 public class Metsu {
     public static void main( String[] args ) {
 
-        CSVManager manager = new CSVManager("BTCUSD2021-10-15.csv");
-
-        final TickSeries btcusd = manager.createTickSeries();
-        
-        for (int i = 0; i <= btcusd.getSize(); i++) {
-            double test = DeltaSeries.calculate(btcusd.getSubSeriesByTime(10, i));
-            System.out.println(btcusd.getSubSeriesByTime(10, i).size());
-            System.out.println(test);
-        }
-
-        System.out.println("Done");
-
         // TickDistribution distribution = new TickDistribution("BTCUSD", btcusd, 1800);
         // DeltaSeries deltaSeries = new DeltaSeries("BTCUSD", 10);
 
@@ -29,5 +17,24 @@ public class Metsu {
         //         "trade.BTCUSD"));
         
         // client.run();
+
+        final MarketOrderBook orderBook = new MarketOrderBook();
+
+        BybitWebSocketClient client = new BybitWebSocketClient(
+            new SubscriptionSet(new BybitInversePerpetualOrderBookWebsocket(orderBook),
+            "wss://stream.bytick.com/realtime",
+            "orderBook_200.100ms.BTCUSD")
+        );
+
+        client.run();
+
+        while(true) {
+            System.out.println(orderBook.size());
+            try {
+                Thread.sleep(1000);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

@@ -66,7 +66,6 @@ public class BybitInversePerpetualTradeWebSocket implements WebSocket {
         t.printStackTrace();
     }
 
-    @Override
     public TickSeries tickSeries() {
         return tickSeries;
     }

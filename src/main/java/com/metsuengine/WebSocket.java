@@ -15,7 +15,6 @@ public interface WebSocket {
 
     public void onClose(Session session) throws IOException;
 
-     public void processError(Throwable t);
+    public void processError(Throwable t);
 
-    TickSeries tickSeries();
 }

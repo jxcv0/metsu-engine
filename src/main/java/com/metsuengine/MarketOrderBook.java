@@ -3,12 +3,18 @@ package com.metsuengine;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.EventListenerList;
+
 public class MarketOrderBook {
 
     private final Map<Double, Integer> orderBook;
+    private final EventListenerList listenerList;
 
     public MarketOrderBook() {
         this.orderBook = new HashMap<Double, Integer>();
+        this.listenerList = new EventListenerList();
     }
 
     /**
@@ -54,5 +60,27 @@ public class MarketOrderBook {
         return orderBook.entrySet().stream()
             .filter(entry -> entry.getValue() < 0).mapToDouble(d -> d.getKey())
             .min().getAsDouble();
+    }
+
+    public int size() {
+        return orderBook.size();
+    }
+
+    public void addChangeListener(ChangeListener listener) {
+        listenerList.add(ChangeListener.class, listener);
+    }
+
+    public void removeChangeListener(ChangeListener listener) {
+        listenerList.remove(ChangeListener.class, listener);
+    }
+
+    protected void fireStateChanged() {
+        ChangeListener[] listeners = listenerList.getListeners(ChangeListener.class);
+        if (listeners != null && listeners.length > 0) {
+            ChangeEvent event = new ChangeEvent(this);
+            for (ChangeListener listener : listeners) {
+                listener.stateChanged(event);
+            }
+        }
     }
 }
