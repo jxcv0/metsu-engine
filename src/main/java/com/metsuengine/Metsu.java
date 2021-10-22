@@ -10,6 +10,7 @@ public class Metsu {
         for (int i = 0; i <= btcusd.getSize(); i++) {
             double test = DeltaSeries.calculate(btcusd.getSubSeriesByTime(10, i));
             System.out.println(btcusd.getSubSeriesByTime(10, i).size());
+            System.out.println(test);
         }
 
         System.out.println("Done");
