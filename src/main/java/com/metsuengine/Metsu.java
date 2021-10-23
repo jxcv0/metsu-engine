@@ -3,8 +3,8 @@ package com.metsuengine;
 public class Metsu {
     public static void main( String[] args ) {
 
-        final MarketOrderBook orderBook = new MarketOrderBook("depth");
-        final TickSeries tickSeries = new TickSeries("ticks");
+        final MarketOrderBook orderBook = new MarketOrderBook();
+        final TickSeries tickSeries = new TickSeries();
 
         BybitWebSocketClient client = new BybitWebSocketClient(
             new SubscriptionSet(new BybitInversePerpetualOrderBookWebsocket(orderBook),

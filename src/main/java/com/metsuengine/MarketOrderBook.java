@@ -9,12 +9,10 @@ import javax.swing.event.EventListenerList;
 
 public class MarketOrderBook {
     
-    private final String name;
     private final Map<Double, Integer> orderBook;
     private final EventListenerList listenerList;
 
-    public MarketOrderBook(String name) {
-        this.name = name;
+    public MarketOrderBook() {
         this.orderBook = new HashMap<Double, Integer>();
         this.listenerList = new EventListenerList();
     }
@@ -60,10 +58,6 @@ public class MarketOrderBook {
         return orderBook.size();
     }
 
-    public String getName() {
-        return name;
-    }
-
     public void addChangeListener(ChangeListener listener) {
         listenerList.add(ChangeListener.class, listener);
     }
@@ -72,7 +66,7 @@ public class MarketOrderBook {
         listenerList.remove(ChangeListener.class, listener);
     }
 
-    public Map<Double, Integer> orderBook() {
+    public Map<Double, Integer> map() {
         return orderBook;
     }
 

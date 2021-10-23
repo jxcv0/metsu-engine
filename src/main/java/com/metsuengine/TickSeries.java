@@ -10,34 +10,20 @@ import javax.swing.event.EventListenerList;
 
 public class TickSeries {
 
-    private String name;
     private final LinkedList<Tick> ticks;
     private final EventListenerList listenerList;
     private final int seconds;
 
     public TickSeries() {
-        this.name = null;
         this.ticks = new LinkedList<Tick>();
         this.listenerList = new EventListenerList();
         this.seconds = Integer.MAX_VALUE;
     }
 
-    public TickSeries(String name) {
-        this.name = name;
-        this.ticks = new LinkedList<Tick>();
-        this.listenerList = new EventListenerList();
-        this.seconds = Integer.MAX_VALUE;
-    }
-
-    public TickSeries(String name, int seconds) {
-        this.name = name;
+    public TickSeries(int seconds) {
         this.ticks = new LinkedList<Tick>();
         this.listenerList = new EventListenerList();
         this.seconds = seconds;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public List<Tick> getTicks() {
