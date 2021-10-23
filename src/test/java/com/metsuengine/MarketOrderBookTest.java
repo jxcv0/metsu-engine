@@ -7,7 +7,7 @@ import org.junit.Test;
 public class MarketOrderBookTest {
 
     @Test
-    public void totalDepthTest() {
+    public void insertTest() {
         MarketOrderBook orderBook = new MarketOrderBook();
         orderBook.insertOrUpdate(1000, 100);
         assertEquals(100, orderBook.delta(), 0);
@@ -29,4 +29,20 @@ public class MarketOrderBookTest {
         assertEquals(1001.5, orderBook.bestAsk(), 0);
     }
     
+    @Test
+    public void totalDepthTest() {
+        MarketOrderBook orderBook = new MarketOrderBook();
+        orderBook.insertOrUpdate(1000, 100);
+        orderBook.insertOrUpdate(1000.5, 100);
+        orderBook.insertOrUpdate(1001, 100);
+        orderBook.insertOrUpdate(1001.5, -100);
+        orderBook.insertOrUpdate(1002, -100);
+        orderBook.insertOrUpdate(1002.5, -100);
+        
+        assertEquals(600, orderBook.totalDepth(), 0);
+
+        orderBook.insertOrUpdate(999.5, 10000);
+
+        assertEquals(10600, orderBook.totalDepth(), 0);
+    }
 }

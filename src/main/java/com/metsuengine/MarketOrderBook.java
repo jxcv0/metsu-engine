@@ -2,6 +2,7 @@ package com.metsuengine;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -40,6 +41,15 @@ public class MarketOrderBook {
 
     public int delta() {
         return orderBook.values().stream().mapToInt(Integer::intValue).sum();
+    }
+
+    public double deltaRatio() {
+        return 0;
+    }
+
+    public double totalDepth() {
+        return orderBook.values().stream().map(n -> Math.abs(n))
+            .collect(Collectors.summingDouble(n -> n));
     }
 
     public double bestBid() {

@@ -6,6 +6,8 @@ public class Metsu {
         final MarketOrderBook orderBook = new MarketOrderBook();
         final TickSeries tickSeries = new TickSeries();
 
+        Controller controller = new Controller(tickSeries, orderBook);
+
         BybitWebSocketClient client = new BybitWebSocketClient(
             new SubscriptionSet(new BybitInversePerpetualOrderBookWebsocket(orderBook),
                 "wss://stream.bytick.com/realtime",
