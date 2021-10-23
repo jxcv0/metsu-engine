@@ -1,14 +1,12 @@
 package com.metsuengine;
 
-import java.time.ZonedDateTime;
-
 public class Metsu {
     public static void main( String[] args ) {
 
         final MarketOrderBook orderBook = new MarketOrderBook();
-        final TickSeries tickSeries = new TickSeries(100);
+        final TickSeries tickSeries = new TickSeries(30);
 
-        Controller controller = new Controller(ZonedDateTime.now().toLocalDate().toString(),
+        new Controller("src\\main\\resources\\DeltaStudy.csv",
             tickSeries,
             orderBook);
 
