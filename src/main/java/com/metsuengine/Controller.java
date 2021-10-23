@@ -7,10 +7,12 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 public class Controller implements ChangeListener {
 
+    private final CSVManager manager;
     private final DescriptiveStatistics descStat;
     private final MarketOrderBook orderBook;
 
-    public Controller(TickSeries tickSeries, MarketOrderBook orderBook) {
+    public Controller(String filename, TickSeries tickSeries, MarketOrderBook orderBook) {
+        this.manager = new CSVManager(filename);
         this.descStat = new DescriptiveStatistics();
         tickSeries.addChangeListener(this);
         this.orderBook = orderBook;
@@ -18,7 +20,10 @@ public class Controller implements ChangeListener {
 
     @Override
     public void stateChanged(ChangeEvent e) {
-        descStat.addValue(orderBook.delta());
-        System.out.println(descStat.getMean());     
+        TickSeries source = (TickSeries) e.getSource();
+        String[] line = {source.lastTick().time().toString(),
+            Double.toString(source.lastTick().price()),
+            Double.toString(orderBook.deltaRatio())};
+        manager.writeLine(line);
     }
 }
