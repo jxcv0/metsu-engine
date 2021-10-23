@@ -18,23 +18,14 @@ public class MarketOrderBook {
     }
 
     /**
-     * Insert a new entry into orderbook
+     * Inserts a new entry into orderbook. Overwrites previous entry
      * 
      * @param price the price of the order
      * @param value the signed size of the order (size * side)
      */
-    public void insert(double price, int value) {
+    public void insertOrUpdate(double price, int value) {
         orderBook.put(price, value);
-    }
-
-    /**
-     * Update a previous entry in orderbook
-     * 
-     * @param price the price of the order
-     * @param value the signed size of the order (size * side)
-     */
-    public void update(double price, int value) {
-        orderBook.replace(price, value);
+        fireStateChanged();
     }
     
     /**
@@ -44,6 +35,7 @@ public class MarketOrderBook {
      */
     public void delete(double price) {
         orderBook.remove(price);
+        fireStateChanged();
     }
 
     public int delta() {
@@ -53,7 +45,7 @@ public class MarketOrderBook {
     public double bestBid() {
         return orderBook.entrySet().stream()
             .filter(entry -> entry.getValue() > 0).mapToDouble(d -> d.getKey())
-            .max().getAsDouble();
+            .max().getAsDouble(); 
     }
 
     public double bestAsk() {
@@ -72,6 +64,10 @@ public class MarketOrderBook {
 
     public void removeChangeListener(ChangeListener listener) {
         listenerList.remove(ChangeListener.class, listener);
+    }
+
+    public Map<Double, Integer> orderBook() {
+        return orderBook;
     }
 
     protected void fireStateChanged() {

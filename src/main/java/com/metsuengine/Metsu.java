@@ -1,5 +1,8 @@
 package com.metsuengine;
 
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 public class Metsu {
     public static void main( String[] args ) {
 
@@ -19,6 +22,16 @@ public class Metsu {
         // client.run();
 
         final MarketOrderBook orderBook = new MarketOrderBook();
+        orderBook.addChangeListener(new ChangeListener(){
+
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                MarketOrderBook source = (MarketOrderBook) e.getSource();
+                if (source.size() > 200) {
+                    System.out.println(source.delta());                
+                }
+            }
+        });
 
         BybitWebSocketClient client = new BybitWebSocketClient(
             new SubscriptionSet(new BybitInversePerpetualOrderBookWebsocket(orderBook),
@@ -27,14 +40,5 @@ public class Metsu {
         );
 
         client.run();
-
-        while(true) {
-            System.out.println(orderBook.size());
-            try {
-                Thread.sleep(1000);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
     }
 }

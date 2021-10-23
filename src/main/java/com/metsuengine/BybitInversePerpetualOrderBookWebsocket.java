@@ -45,7 +45,7 @@ public class BybitInversePerpetualOrderBookWebsocket implements WebSocket{
                     for (JsonNode node : data) {
                         double price = Double.parseDouble(node.get("price").asText());
                         int value = node.get("side").asText().equals("Buy") ? node.get("size").intValue() : -node.get("size").intValue();
-                        orderBook.insert(price, value);
+                        orderBook.insertOrUpdate(price, value);
                     }
                 } else {
                     JsonNode data = response.get("data");
@@ -59,14 +59,14 @@ public class BybitInversePerpetualOrderBookWebsocket implements WebSocket{
                     for (JsonNode node : update) {
                         double price = Double.parseDouble(node.get("price").asText());
                         int value = node.get("side").asText().equals("Buy") ? node.get("size").intValue() : -node.get("size").intValue();
-                        orderBook.update(price, value);
+                        orderBook.insertOrUpdate(price, value);
                     }
 
                     JsonNode insert = data.get("insert");
                     for (JsonNode node : insert) {
                         double price = Double.parseDouble(node.get("price").asText());
                         int value = node.get("side").asText().equals("Buy") ? node.get("size").intValue() : -node.get("size").intValue();
-                        orderBook.update(price, value);
+                        orderBook.insertOrUpdate(price, value);
                     }
                 }
             }
