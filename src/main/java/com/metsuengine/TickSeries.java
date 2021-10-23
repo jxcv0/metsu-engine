@@ -26,6 +26,16 @@ public class TickSeries {
         this.seconds = seconds;
     }
 
+    public void addTick(Tick tick) {
+        ticks.add(tick);
+        trimExcessValues();
+        fireStateChanged();
+    }
+
+    public double delta() {
+        return ticks.stream().mapToDouble(t -> t.signedVolume()).sum();
+    }
+
     public List<Tick> getTicks() {
         return ticks;
     }
@@ -36,12 +46,6 @@ public class TickSeries {
 
     public double size() {
         return ticks.size();
-    }
-
-    public void addTick(Tick tick) {
-        ticks.add(tick);
-        trimExcessValues();
-        fireStateChanged();
     }
 
     public void addAll(List<Tick> ticks) {

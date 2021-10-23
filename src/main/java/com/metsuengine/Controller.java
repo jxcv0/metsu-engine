@@ -23,7 +23,9 @@ public class Controller implements ChangeListener {
         TickSeries source = (TickSeries) e.getSource();
         String[] line = {source.lastTick().time().toString(),
             Double.toString(source.lastTick().price()),
+            Double.toString(source.delta()),
             Double.toString(orderBook.deltaRatio())};
         manager.writeLine(line);
+        System.out.println(source.size());
     }
 }
