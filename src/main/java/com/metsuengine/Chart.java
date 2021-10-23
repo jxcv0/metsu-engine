@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.apache.commons.math3.ode.ODEIntegrator;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
@@ -26,33 +27,20 @@ public class Chart extends JFrame implements ChangeListener {
     
     private final XYSeriesCollection tickSeriesDataset;
     private final XYSeriesCollection orderbookDataset;
-    private TickDistribution distribution;
  
     /**
      * Constructor
      * 
      * @param title the title of the timeseries chart
      */
-    public Chart(String title) {
+    public Chart(String title, TickSeries tickSeries, MarketOrderBook orderBook) {
         super(title);
         this.tickSeriesDataset = new XYSeriesCollection();
         this.orderbookDataset = new XYSeriesCollection();
-    }
-    
-    /**
-     * plots a Time-Price chart from a TickSeries
-     * 
-     * @param title      chart title
-     * @param tickSeries the related TickSeries
-     */
-    public void buildDataset(String title, TickSeries... tickSeries) {
-        for (TickSeries series : tickSeries) {
-            XYSeries timeSeries = new XYSeries(title);
-            for (Tick tick : series.getTicks()) {
-                timeSeries.addOrUpdate(tick.time().toEpochSecond(), tick.price());
-            }
-            tickSeriesDataset.addSeries(timeSeries);
-        }
+        tickSeries.addChangeListener(this);
+        tickSeriesDataset.addSeries(new XYSeries(tickSeries.getName()));
+        orderBook.addChangeListener(this);
+        orderbookDataset.addSeries(new XYSeries(orderBook.getName()));
     }
 
     /**
@@ -79,32 +67,32 @@ public class Chart extends JFrame implements ChangeListener {
         seriesChartPanel.setPreferredSize(new Dimension(800, 600));
 
         // Generate TickDistribution chart
-        XYPlot distributionPlot = new XYPlot();
-        distributionPlot.setDataset(orderbookDataset);
-        XYBarRenderer distributionRenderer = new XYBarRenderer(0.575);
+        XYPlot orderBookPlot = new XYPlot();
+        orderBookPlot.setDataset(orderbookDataset);
+        XYBarRenderer orderBookRenderer = new XYBarRenderer(0.575);
 
-        distributionRenderer.setBarPainter(new StandardXYBarPainter() {
+        orderBookRenderer.setBarPainter(new StandardXYBarPainter() {
                 @Override
                 public void paintBarShadow(Graphics2D g2, XYBarRenderer renderer, int row,
                     int column, RectangularShape bar, RectangleEdge base,
                     boolean pegShadow){}
         });
         
-        distributionRenderer.setSeriesPaint(0, new Color(50, 75, 100));
-        distributionPlot.setRenderer(distributionRenderer);
+        orderBookRenderer.setSeriesPaint(0, new Color(50, 75, 100));
+        orderBookPlot.setRenderer(orderBookRenderer);
 
-        distributionPlot.setOrientation(PlotOrientation.HORIZONTAL);
+        orderBookPlot.setOrientation(PlotOrientation.HORIZONTAL);
 
-        NumberAxis distributionValueAxis = new NumberAxis("Volume");
-        distributionValueAxis.setAutoRangeIncludesZero(false);
+        NumberAxis orderBookValueAxis = new NumberAxis("Volume");
+        orderBookValueAxis.setAutoRangeIncludesZero(false);
 
-        NumberAxis distributionDomainAxis = new NumberAxis("Price");
-        distributionDomainAxis.setAutoRangeIncludesZero(false);
+        NumberAxis orderBookDomainAxis = new NumberAxis("Price");
+        orderBookDomainAxis.setAutoRangeIncludesZero(false);
 
-        distributionPlot.setRangeAxis(distributionValueAxis);
-        distributionPlot.setDomainAxis(distributionDomainAxis);
+        orderBookPlot.setRangeAxis(orderBookValueAxis);
+        orderBookPlot.setDomainAxis(orderBookDomainAxis);
 
-        JFreeChart distributionChart = new JFreeChart("Distribution", distributionPlot);
+        JFreeChart distributionChart = new JFreeChart("Distribution", orderBookPlot);
         ChartPanel distributionChartPanel = new ChartPanel(distributionChart);
         distributionChartPanel.setPreferredSize(new Dimension(600, 600));
 
@@ -118,20 +106,7 @@ public class Chart extends JFrame implements ChangeListener {
         setVisible(true);   
     }
     
-    /**
-     * Add a Tickseries to the timeseries dataset of the chart
-     * 
-     * @param tickSeries the TickSeries
-     */
-    public void addTickSeries(TickSeries tickSeries) {
-        tickSeries.addChangeListener(this);
-        tickSeriesDataset.addSeries(new XYSeries(tickSeries.getName()));
-    }
-
-    public void addDistribution(TickDistribution distribution) {
-        this.distribution = distribution;
-        orderbookDataset.addSeries(new XYSeries(distribution.getName()));
-    }
+    
     
     @Override
     public void stateChanged(ChangeEvent e) {
@@ -139,8 +114,11 @@ public class Chart extends JFrame implements ChangeListener {
             TickSeries source = (TickSeries) e.getSource();
             double time = source.lastTick().time().toInstant().toEpochMilli();
             tickSeriesDataset.getSeries(source.getName()).addOrUpdate(time, source.lastTick().price());
-            for (double level : distribution.getLevels().keySet()) {
-                orderbookDataset.getSeries(distribution.getName()).addOrUpdate(level, distribution.getVolumeAtPrice(level));
+        } else if (e.getSource() instanceof MarketOrderBook) {
+            MarketOrderBook source = (MarketOrderBook) e.getSource();
+            for (double price : source.orderBook().keySet()) {
+                double value = (double) source.orderBook().get(price);
+                orderbookDataset.getSeries(source.getName()).addOrUpdate(price, value);
             }
         }
     }

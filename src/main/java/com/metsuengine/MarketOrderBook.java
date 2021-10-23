@@ -8,11 +8,13 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
 
 public class MarketOrderBook {
-
+    
+    private final String name;
     private final Map<Double, Integer> orderBook;
     private final EventListenerList listenerList;
 
-    public MarketOrderBook() {
+    public MarketOrderBook(String name) {
+        this.name = name;
         this.orderBook = new HashMap<Double, Integer>();
         this.listenerList = new EventListenerList();
     }
@@ -56,6 +58,10 @@ public class MarketOrderBook {
 
     public int size() {
         return orderBook.size();
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void addChangeListener(ChangeListener listener) {
