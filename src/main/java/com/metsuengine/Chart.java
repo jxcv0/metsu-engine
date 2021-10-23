@@ -24,8 +24,8 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 public class Chart extends JFrame implements ChangeListener {
     
-    private final XYSeriesCollection timeSeriesDataset;
-    private final XYSeriesCollection distributionDataset;
+    private final XYSeriesCollection tickSeriesDataset;
+    private final XYSeriesCollection orderbookDataset;
     private TickDistribution distribution;
  
     /**
@@ -35,8 +35,8 @@ public class Chart extends JFrame implements ChangeListener {
      */
     public Chart(String title) {
         super(title);
-        this.timeSeriesDataset = new XYSeriesCollection();
-        this.distributionDataset = new XYSeriesCollection();
+        this.tickSeriesDataset = new XYSeriesCollection();
+        this.orderbookDataset = new XYSeriesCollection();
     }
     
     /**
@@ -51,7 +51,7 @@ public class Chart extends JFrame implements ChangeListener {
             for (Tick tick : series.getTicks()) {
                 timeSeries.addOrUpdate(tick.time().toEpochSecond(), tick.price());
             }
-            timeSeriesDataset.addSeries(timeSeries);
+            tickSeriesDataset.addSeries(timeSeries);
         }
     }
 
@@ -62,7 +62,7 @@ public class Chart extends JFrame implements ChangeListener {
 
         // Generate TickSeries chart
         XYPlot tickSeriesPlot = new XYPlot();
-        tickSeriesPlot.setDataset(timeSeriesDataset);
+        tickSeriesPlot.setDataset(tickSeriesDataset);
         tickSeriesPlot.setRenderer(new DefaultXYItemRenderer());
 
         NumberAxis seriesPriceAxis = new NumberAxis("Price");
@@ -80,7 +80,7 @@ public class Chart extends JFrame implements ChangeListener {
 
         // Generate TickDistribution chart
         XYPlot distributionPlot = new XYPlot();
-        distributionPlot.setDataset(distributionDataset);
+        distributionPlot.setDataset(orderbookDataset);
         XYBarRenderer distributionRenderer = new XYBarRenderer(0.575);
 
         distributionRenderer.setBarPainter(new StandardXYBarPainter() {
@@ -125,22 +125,22 @@ public class Chart extends JFrame implements ChangeListener {
      */
     public void addTickSeries(TickSeries tickSeries) {
         tickSeries.addChangeListener(this);
-        timeSeriesDataset.addSeries(new XYSeries(tickSeries.getName()));
+        tickSeriesDataset.addSeries(new XYSeries(tickSeries.getName()));
     }
 
     public void addDistribution(TickDistribution distribution) {
         this.distribution = distribution;
-        distributionDataset.addSeries(new XYSeries(distribution.getName()));
+        orderbookDataset.addSeries(new XYSeries(distribution.getName()));
     }
     
     @Override
     public void stateChanged(ChangeEvent e) {
         if (e.getSource() instanceof TickSeries) {
             TickSeries source = (TickSeries) e.getSource();
-            double time = source.getLastTick().time().toInstant().toEpochMilli();
-            timeSeriesDataset.getSeries(source.getName()).addOrUpdate(time, source.getLastTick().price());
+            double time = source.lastTick().time().toInstant().toEpochMilli();
+            tickSeriesDataset.getSeries(source.getName()).addOrUpdate(time, source.lastTick().price());
             for (double level : distribution.getLevels().keySet()) {
-                distributionDataset.getSeries(distribution.getName()).addOrUpdate(level, distribution.getVolumeAtPrice(level));
+                orderbookDataset.getSeries(distribution.getName()).addOrUpdate(level, distribution.getVolumeAtPrice(level));
             }
         }
     }

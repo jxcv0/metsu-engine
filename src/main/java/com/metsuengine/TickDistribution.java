@@ -22,7 +22,7 @@ public class TickDistribution implements ChangeListener {
     @Override
     public void stateChanged(ChangeEvent e) {
         TickSeries source = (TickSeries) e.getSource();
-        addTick(source.getLastTick());
+        addTick(source.lastTick());
     }
 
     public void addTick(Tick tick) {

@@ -1,6 +1,5 @@
 package com.metsuengine;
 
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -45,44 +44,11 @@ public class TickSeries {
         return ticks;
     }
 
-    public Tick getTick(int index){
-        return ticks.get(index);
-    }
-
-    public List<Tick> getSubSeries(int startIndex, int endIndex) {
-        if (startIndex > endIndex) {
-            throw new IllegalArgumentException("Start index must be before end index.");
-        } else {
-            List<Tick> subSeries = new ArrayList<Tick>();
-            for (int i = startIndex; i <= endIndex; i++) {
-                if (!ticks.get(i).equals(null)) {
-                    subSeries.add(ticks.get(i)); 
-                }
-            }
-            return subSeries;
-        }
-    }
-
-    public List<Tick> getSubSeriesByTime(int index, int seconds) {
-        ZonedDateTime endTime = ticks.get(index).time();
-        ZonedDateTime startTime = endTime.minusSeconds(seconds);
-
-        List<Tick> subSeries = new ArrayList<Tick>();
-        subSeries.add(ticks.get(index));
-        for (Tick tick : ticks) {
-            if (tick.time().isAfter(startTime) && tick.time().isBefore(endTime)) {
-                subSeries.add(tick);
-            }
-        }
-
-        return subSeries;
-    }
-
-    public Tick getLastTick() {
+    public Tick lastTick() {
         return ticks.getLast();
     }
 
-    public double getSize() {
+    public double size() {
         return ticks.size();
     }
 
@@ -97,7 +63,7 @@ public class TickSeries {
     }
 
     public boolean isEmpty() {
-        return this.getSize() < 1;
+        return ticks.isEmpty();
     }
 
     private void trimExcessValues() {
