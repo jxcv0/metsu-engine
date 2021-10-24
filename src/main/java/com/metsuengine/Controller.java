@@ -5,23 +5,23 @@ import javax.swing.event.ChangeListener;
 
 public class Controller implements ChangeListener {
 
-    private final CSVManager manager;
     private final MarketOrderBook orderBook;
+    private CSVManager csv;
 
     public Controller(String filename, TickSeries tickSeries, MarketOrderBook orderBook) {
-        this.manager = new CSVManager(filename);
         tickSeries.addChangeListener(this);
         this.orderBook = orderBook;
+        this.csv = new CSVManager("DeltaTest.csv");
     }
 
     @Override
     public void stateChanged(ChangeEvent e) {
         TickSeries source = (TickSeries) e.getSource();
-        String[] line = {source.lastTick().time().toString(),
-            Double.toString(source.lastTick().price()),
-            Double.toString(source.delta()),
-            Double.toString(orderBook.deltaRatio())};
-        manager.writeLine(line);
-        System.out.println(source.size());
+        double marketDelta = source.deltaRatio();
+        double limitDelta = orderBook.deltaRatio();
+        double deltaMetric = (marketDelta + limitDelta);
+        System.out.println(source.lastTick().price() + " " + deltaMetric + " " + source.size());
+        String[] line = {Double.toString(source.lastTick().price()), Double.toString(deltaMetric)};
+        csv.writeLine(line);
     }
 }

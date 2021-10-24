@@ -39,10 +39,10 @@ public class MarketOrderBookTest {
         orderBook.insertOrUpdate(1002, -100);
         orderBook.insertOrUpdate(1002.5, -100);
         
-        assertEquals(600, orderBook.totalDepth(), 0);
+        assertEquals(600, orderBook.depth(), 0);
 
         orderBook.insertOrUpdate(999.5, 10000);
 
-        assertEquals(10600, orderBook.totalDepth(), 0);
+        assertEquals(10600, orderBook.depth(), 0);
     }
 }

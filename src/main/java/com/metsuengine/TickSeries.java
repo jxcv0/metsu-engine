@@ -1,6 +1,8 @@
 package com.metsuengine;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -36,6 +38,14 @@ public class TickSeries {
         return ticks.stream().mapToDouble(t -> t.signedVolume()).sum();
     }
 
+    public double volume() {
+        return ticks.stream().mapToDouble(t -> t.size()).sum();
+    }
+
+    public double deltaRatio() {
+        return delta()/volume();
+    }
+
     public List<Tick> getTicks() {
         return ticks;
     }
@@ -57,13 +67,13 @@ public class TickSeries {
     }
 
     private void trimExcessValues() {
-        List<Tick> toRemove = new ArrayList<Tick>();
-        for (Tick tick : ticks) {
-            if (tick.time().isBefore(ticks.getLast().time().minusSeconds(seconds))) {
-                toRemove.add(tick);
+        for (Iterator<Tick> t = ticks.iterator(); t.hasNext();) {
+            Tick tick = t.next();
+            ZonedDateTime cutoff = ticks.getLast().time().minusSeconds(seconds);
+            if (tick.time().isBefore(cutoff)) {
+                t.remove();
             }
         }
-        ticks.removeAll(toRemove);
     }
 
     public boolean contains(Tick tick) {

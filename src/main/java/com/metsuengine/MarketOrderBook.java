@@ -43,13 +43,13 @@ public class MarketOrderBook {
         return orderBook.values().stream().mapToInt(Integer::intValue).sum();
     }
 
-    public double totalDepth() {
+    public double depth() {
         return orderBook.values().stream().map(n -> Math.abs(n))
             .collect(Collectors.summingDouble(n -> n));
     }
 
     public double deltaRatio() {
-        return delta()/totalDepth();
+        return delta()/depth();
     }
 
     public double bestBid() {

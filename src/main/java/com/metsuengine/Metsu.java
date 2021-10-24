@@ -4,7 +4,7 @@ public class Metsu {
     public static void main( String[] args ) {
 
         final MarketOrderBook orderBook = new MarketOrderBook();
-        final TickSeries tickSeries = new TickSeries(30);
+        final TickSeries tickSeries = new TickSeries(10);
 
         new Controller("src\\main\\resources\\DeltaStudy.csv",
             tickSeries,
