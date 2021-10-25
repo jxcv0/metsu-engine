@@ -14,8 +14,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.metsuengine.MarketOrderBook;
 import com.metsuengine.WebSocketHandler;
 
-import org.jfree.data.json.impl.JSONArray;
-
 @ClientEndpoint
 public class CoinbaseSpotOrderbookWebSocket implements WebSocketHandler{
     

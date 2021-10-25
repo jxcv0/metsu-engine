@@ -17,18 +17,14 @@ public class Metsu {
             @Override
             public void stateChanged(ChangeEvent e) {
                 MarketOrderBook orderBook = (MarketOrderBook) e.getSource();
-                for (double level : orderBook.map().keySet()) {
-                    if (orderBook.map().get(level) < 0) {
-                        System.out.println(level + " " +  orderBook.map().get(level));
-                    }
-                }
+                System.out.println(orderBook.delta());
             }
             
         });
 
         CoinbaseWebsocketClient client = new CoinbaseWebsocketClient(
-            new CoinbaseSubscriptionSet(new CoinbaseSpotOrderbookWebSocket(orderBook),
-            "BTC-USDT", "level2")
+            new CoinbaseSubscriptionSet(
+                new CoinbaseSpotOrderbookWebSocket(orderBook), "BTC-USD", "level2")
         );
 
         client.run();

@@ -10,6 +10,7 @@ import javax.swing.event.EventListenerList;
 
 public class MarketOrderBook {
     
+    // TODO - distance from price cuttoff
     private final Map<Double, Double> orderBook;
     private final EventListenerList listenerList;
 
@@ -19,10 +20,11 @@ public class MarketOrderBook {
     }
 
     /**
-     * Inserts a new entry into orderbook. Overwrites previous entry
+     * Inserts a new entry into orderbook. Overwrites previous entry.
+     * If value is 0 then the entry is removed.
      * 
-     * @param price the price of the order
-     * @param value the signed size of the order (size * side)
+     * @param price the price of the order.
+     * @param value the signed size of the order (size * side).
      */
     public void insertOrUpdate(double price, double value) {
         if (value == 0) {
@@ -35,9 +37,9 @@ public class MarketOrderBook {
     }
     
     /**
-     * remove a previous entry from the orderbook
+     * remove an entry from the orderbook.
      * 
-     * @param price the price of the entry to remove
+     * @param price the price of the entry to remove.
      */
     public void delete(double price) {
         // System.out.println("Deleting: " + price);
