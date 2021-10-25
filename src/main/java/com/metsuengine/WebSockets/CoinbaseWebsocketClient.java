@@ -9,6 +9,9 @@ import javax.websocket.ContainerProvider;
 import javax.websocket.Session;
 import javax.websocket.WebSocketContainer;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 public class CoinbaseWebsocketClient implements Runnable {
 
     static Session session;
@@ -21,8 +24,23 @@ public class CoinbaseWebsocketClient implements Runnable {
         );
     }
     
-    private String subscribe() {
-        return null;
+    private String subscribe(String productId, String channel) {
+        String[] productIds = {productId};
+        String[] channels = {channel};
+
+        JSONObject request = new JSONObject();
+        request.put("type", "subscribe");
+
+        JSONArray idArray = new JSONArray();
+        idArray.put(productIds);
+
+        JSONArray channelArray = new JSONArray();
+        channelArray.put(channels);
+
+        request.put("product_ids", productIds);
+        request.put("channels", channels);
+
+        return request.toString();
     }
 
     @Override
@@ -31,7 +49,7 @@ public class CoinbaseWebsocketClient implements Runnable {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             for (CoinbaseSubscriptionSet set : subscriptionSets) {
                 container.connectToServer(set.getHandler(), URI.create("wss://ws-feed.exchange.coinbase.com"));
-                // session.getBasicRemote().sendText(subscribe("subscribe", set.getTopic()));
+                session.getBasicRemote().sendText(subscribe(set.getProductId(), set.getChannel()));
             }
 
             while(true) {

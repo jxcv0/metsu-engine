@@ -10,11 +10,11 @@ import javax.swing.event.EventListenerList;
 
 public class MarketOrderBook {
     
-    private final Map<Double, Integer> orderBook;
+    private final Map<Double, Double> orderBook;
     private final EventListenerList listenerList;
 
     public MarketOrderBook() {
-        this.orderBook = new HashMap<Double, Integer>();
+        this.orderBook = new HashMap<Double, Double>();
         this.listenerList = new EventListenerList();
     }
 
@@ -24,9 +24,14 @@ public class MarketOrderBook {
      * @param price the price of the order
      * @param value the signed size of the order (size * side)
      */
-    public void insertOrUpdate(double price, int value) {
-        orderBook.put(price, value);
-        fireStateChanged();
+    public void insertOrUpdate(double price, double value) {
+        if (value == 0) {
+            delete(price);
+        } else {
+            // System.out.println("Inserting: " + price + " " + value);
+            orderBook.put(price, value);
+            fireStateChanged();
+        }
     }
     
     /**
@@ -35,12 +40,13 @@ public class MarketOrderBook {
      * @param price the price of the entry to remove
      */
     public void delete(double price) {
+        // System.out.println("Deleting: " + price);
         orderBook.remove(price);
         fireStateChanged();
     }
 
-    public int delta() {
-        return orderBook.values().stream().mapToInt(Integer::intValue).sum();
+    public double delta() {
+        return orderBook.values().stream().mapToDouble(Double::doubleValue).sum();
     }
 
     public double depth() {
@@ -76,7 +82,7 @@ public class MarketOrderBook {
         listenerList.remove(ChangeListener.class, listener);
     }
 
-    public Map<Double, Integer> map() {
+    public Map<Double, Double> map() {
         return orderBook;
     }
 

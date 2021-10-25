@@ -1,43 +1,36 @@
 package com.metsuengine;
 
-import com.metsuengine.WebSockets.BybitInversePerpetualOrderBookWebsocket;
-import com.metsuengine.WebSockets.BybitInversePerpetualSubscriptionSet;
-import com.metsuengine.WebSockets.BybitInversePerpetualTradeWebSocket;
-import com.metsuengine.WebSockets.BybitWebSocketClient;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.metsuengine.WebSockets.CoinbaseSpotOrderbookWebSocket;
+import com.metsuengine.WebSockets.CoinbaseSubscriptionSet;
+import com.metsuengine.WebSockets.CoinbaseWebsocketClient;
 
 public class Metsu {
     public static void main( String[] args ) {
 
-        test("BTC-USDT", "level2");
-
         final MarketOrderBook orderBook = new MarketOrderBook();
-        final TickSeries tickSeries = new TickSeries(10);
 
-        Controller controller = new Controller(tickSeries, orderBook);
+        orderBook.addChangeListener(new ChangeListener() {
 
-        BybitWebSocketClient client = new BybitWebSocketClient(
-            new BybitInversePerpetualSubscriptionSet(new BybitInversePerpetualOrderBookWebsocket(orderBook),
-                "wss://stream.bytick.com/realtime",
-                "orderBook_200.100ms.BTCUSD"),
-            new BybitInversePerpetualSubscriptionSet(new BybitInversePerpetualTradeWebSocket(tickSeries),
-                "wss://stream.bytick.com/realtime",
-                "trade.BTCUSD")
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                MarketOrderBook orderBook = (MarketOrderBook) e.getSource();
+                for (double level : orderBook.map().keySet()) {
+                    if (orderBook.map().get(level) < 0) {
+                        System.out.println(level + " " +  orderBook.map().get(level));
+                    }
+                }
+            }
+            
+        });
+
+        CoinbaseWebsocketClient client = new CoinbaseWebsocketClient(
+            new CoinbaseSubscriptionSet(new CoinbaseSpotOrderbookWebSocket(orderBook),
+            "BTC-USDT", "level2")
         );
 
         client.run();
-    }
-
-    public static void test(String productId, String channel) {
-
-        JSONObject request = new JSONObject();
-        request.put("type", "subscribe");
-
-        JSONArray idArray = new JSONArray();
-        idArray.put(productId);
-
-        request.put("product_ids", productId);
     }
 }

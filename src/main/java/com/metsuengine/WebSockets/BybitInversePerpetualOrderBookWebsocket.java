@@ -46,7 +46,7 @@ public class BybitInversePerpetualOrderBookWebsocket implements WebSocketHandler
     
                     for (JsonNode node : data) {
                         double price = Double.parseDouble(node.get("price").asText());
-                        int value = node.get("side").asText().equals("Buy") ? node.get("size").intValue() : -node.get("size").intValue();
+                        double value = node.get("side").asText().equals("Buy") ? node.get("size").doubleValue() : -node.get("size").doubleValue();
                         orderBook.insertOrUpdate(price, value);
                     }
                 } else {
@@ -60,14 +60,14 @@ public class BybitInversePerpetualOrderBookWebsocket implements WebSocketHandler
                     JsonNode update = data.get("update");
                     for (JsonNode node : update) {
                         double price = Double.parseDouble(node.get("price").asText());
-                        int value = node.get("side").asText().equals("Buy") ? node.get("size").intValue() : -node.get("size").intValue();
+                        double value = node.get("side").asText().equals("Buy") ? node.get("size").doubleValue() : -node.get("size").doubleValue();
                         orderBook.insertOrUpdate(price, value);
                     }
 
                     JsonNode insert = data.get("insert");
                     for (JsonNode node : insert) {
                         double price = Double.parseDouble(node.get("price").asText());
-                        int value = node.get("side").asText().equals("Buy") ? node.get("size").intValue() : -node.get("size").intValue();
+                        double value = node.get("side").asText().equals("Buy") ? node.get("size").doubleValue() : -node.get("size").doubleValue();
                         orderBook.insertOrUpdate(price, value);
                     }
                 }
