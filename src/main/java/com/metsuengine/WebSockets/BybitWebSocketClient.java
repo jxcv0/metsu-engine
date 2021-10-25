@@ -2,6 +2,7 @@ package com.metsuengine.WebSockets;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -18,19 +19,18 @@ public class BybitWebSocketClient implements Runnable {
 
     @SafeVarargs
     public BybitWebSocketClient(BybitInversePerpetualSubscriptionSet... sets) {
-        this.subscriptionSets = new ArrayList<BybitInversePerpetualSubscriptionSet>();
-        for (BybitInversePerpetualSubscriptionSet set : sets) {
-            this.subscriptionSets.add(set);
-        }      
+        this.subscriptionSets = new ArrayList<BybitInversePerpetualSubscriptionSet>(
+            Arrays.asList(sets)
+        );    
     }
 
-    public static String subscribe(String op, String argv){
-        JSONObject req = new JSONObject();
-        req.put("op", op);
+    private String subscribe(String op, String argv){
+        JSONObject request = new JSONObject();
+        request.put("op", op);
         List<String> args = new LinkedList<String>();
         args.add(argv);
-        req.put("args", args);
-        return req.toString();
+        request.put("args", args);
+        return request.toString();
     }
 
     @Override
