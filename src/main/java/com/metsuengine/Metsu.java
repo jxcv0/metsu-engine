@@ -17,7 +17,7 @@ public class Metsu {
             @Override
             public void stateChanged(ChangeEvent e) {
                 MarketOrderBook orderBook = (MarketOrderBook) e.getSource();
-                System.out.println(orderBook.delta());
+                System.out.println(orderBook.delta(0.25) + " " + orderBook.depth());
             }
             
         });

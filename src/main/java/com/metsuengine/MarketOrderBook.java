@@ -51,6 +51,17 @@ public class MarketOrderBook {
         return orderBook.values().stream().mapToDouble(Double::doubleValue).sum();
     }
 
+    public double delta(double cuttoff) {
+        double upperBound = bestAsk() * (1 + cuttoff);
+        double lowerBound = bestAsk() * (1 - cuttoff);
+
+        // TODO - keyset not values idiot
+        return orderBook.values().stream()
+            .filter(d -> d < upperBound)
+            .filter(d -> d > lowerBound)
+            .mapToDouble(Double::doubleValue).sum();
+    }
+
     public double depth() {
         return orderBook.values().stream().map(n -> Math.abs(n))
             .collect(Collectors.summingDouble(n -> n));
