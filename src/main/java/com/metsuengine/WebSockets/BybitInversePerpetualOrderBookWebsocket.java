@@ -1,4 +1,4 @@
-package com.metsuengine;
+package com.metsuengine.WebSockets;
 
 import java.io.IOException;
 
@@ -11,9 +11,11 @@ import javax.websocket.Session;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.metsuengine.MarketOrderBook;
+import com.metsuengine.WebSocketHandler;
 
 @ClientEndpoint
-public class BybitInversePerpetualOrderBookWebsocket implements WebSocket{
+public class BybitInversePerpetualOrderBookWebsocket implements WebSocketHandler{
     
     private final MarketOrderBook orderBook;
 

@@ -1,4 +1,4 @@
-package com.metsuengine;
+package com.metsuengine.WebSockets;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -14,12 +14,12 @@ import org.json.JSONObject;
 public class BybitWebSocketClient implements Runnable {
 
     static Session session;
-    private final List<SubscriptionSet> subscriptionSets;
+    private final List<BybitInversePerpetualSubscriptionSet> subscriptionSets;
 
     @SafeVarargs
-    public BybitWebSocketClient(SubscriptionSet... sets) {
-        this.subscriptionSets = new ArrayList<SubscriptionSet>();
-        for (SubscriptionSet set : sets) {
+    public BybitWebSocketClient(BybitInversePerpetualSubscriptionSet... sets) {
+        this.subscriptionSets = new ArrayList<BybitInversePerpetualSubscriptionSet>();
+        for (BybitInversePerpetualSubscriptionSet set : sets) {
             this.subscriptionSets.add(set);
         }      
     }
@@ -37,8 +37,8 @@ public class BybitWebSocketClient implements Runnable {
     public void run() {
         try {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-            for (SubscriptionSet set : subscriptionSets) {
-                container.connectToServer(set.getWebSocket(), URI.create(set.getURI()));
+            for (BybitInversePerpetualSubscriptionSet set : subscriptionSets) {
+                container.connectToServer(set.getHandler(), URI.create(set.getURI()));
                 session.getBasicRemote().sendText(subscribe("subscribe", set.getTopic()));
             }
 

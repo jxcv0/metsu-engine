@@ -1,4 +1,4 @@
-package com.metsuengine;
+package com.metsuengine.WebSockets;
 
 import java.io.IOException;
 
@@ -11,9 +11,12 @@ import javax.websocket.Session;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.metsuengine.Tick;
+import com.metsuengine.TickSeries;
+import com.metsuengine.WebSocketHandler;
 
 @ClientEndpoint
-public class BybitInversePerpetualTradeWebSocket implements WebSocket {
+public class BybitInversePerpetualTradeWebSocket implements WebSocketHandler {
 
     private final TickSeries tickSeries;
 
