@@ -47,7 +47,7 @@ public class CoinbaseWebsocketClient implements Runnable {
         try {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             for (CoinbaseSubscriptionSet set : subscriptionSets) {
-                container.connectToServer(set.getHandler(), URI.create("wss://ws-feed.exchange.coinbase.com"));
+                container.connectToServer(set.getHandler(), URI.create("wss://ws-feed.pro.coinbase.com"));
                 session.getBasicRemote().sendText(subscribe(set.getProductId(), set.getChannels()));
             }
 
