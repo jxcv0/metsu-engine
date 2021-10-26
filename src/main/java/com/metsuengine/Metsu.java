@@ -1,8 +1,5 @@
 package com.metsuengine;
 
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 import com.metsuengine.WebSockets.CoinbaseSpotOrderbookWebSocket;
 import com.metsuengine.WebSockets.CoinbaseSubscriptionSet;
 import com.metsuengine.WebSockets.CoinbaseWebsocketClient;
@@ -12,20 +9,7 @@ public class Metsu {
 
         final MarketOrderBook orderBook = new MarketOrderBook();
 
-        orderBook.addChangeListener(new ChangeListener() {
-
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                MarketOrderBook orderBook = (MarketOrderBook) e.getSource();
-                if (orderBook.isReady()) {
-                    int one = (int) orderBook.delta(0.001);
-                    int two = (int) orderBook.delta(0.01);
-                    int three = (int) orderBook.delta(0.1);
-                    System.out.println(one + " " + two + " " + three);
-                }
-            }
-            
-        });
+        new Controller(orderBook);
 
         String[] channels = {"level2", "heartbeat"};
         CoinbaseWebsocketClient client = new CoinbaseWebsocketClient(
@@ -33,6 +17,7 @@ public class Metsu {
                 new CoinbaseSpotOrderbookWebSocket(orderBook), "BTC-USD", channels)
         );
 
-        client.run();
+        client.start();
+
     }
 }

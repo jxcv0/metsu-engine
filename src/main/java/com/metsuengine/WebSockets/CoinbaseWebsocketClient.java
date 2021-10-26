@@ -12,7 +12,7 @@ import javax.websocket.WebSocketContainer;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class CoinbaseWebsocketClient implements Runnable {
+public class CoinbaseWebsocketClient extends Thread {
 
     static Session session;
     private final List<CoinbaseSubscriptionSet> subscriptionSets;
