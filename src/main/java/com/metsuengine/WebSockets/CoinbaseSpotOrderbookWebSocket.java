@@ -53,6 +53,7 @@ public class CoinbaseSpotOrderbookWebSocket implements WebSocketHandler{
                         orderBook.insertOrUpdate(node.get(0).asDouble(), -node.get(1).asDouble());
                     }
                 } else if (type.asText().equals("l2update")) {
+                    orderBook.ready();
                     if (response.has("changes")) {
                         JsonNode changes = response.get("changes");
                         for (JsonNode node : changes) {
@@ -63,7 +64,10 @@ public class CoinbaseSpotOrderbookWebSocket implements WebSocketHandler{
                             }
                         }                        
                     }
-                }
+                } 
+                // else {
+                //     System.out.println(response);
+                // }
             }
 
         } catch(Exception e) {

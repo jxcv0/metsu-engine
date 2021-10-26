@@ -17,14 +17,15 @@ public class Metsu {
             @Override
             public void stateChanged(ChangeEvent e) {
                 MarketOrderBook orderBook = (MarketOrderBook) e.getSource();
-                System.out.println(orderBook.delta(0.25) + " " + orderBook.depth());
+                
             }
             
         });
 
+        String[] channels = {"level2", "heartbeat"};
         CoinbaseWebsocketClient client = new CoinbaseWebsocketClient(
             new CoinbaseSubscriptionSet(
-                new CoinbaseSpotOrderbookWebSocket(orderBook), "BTC-USD", "level2")
+                new CoinbaseSpotOrderbookWebSocket(orderBook), "BTC-USD", channels)
         );
 
         client.run();

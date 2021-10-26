@@ -24,9 +24,8 @@ public class CoinbaseWebsocketClient implements Runnable {
         );
     }
     
-    private String subscribe(String productId, String channel) {
+    private String subscribe(String productId, String[] channels) {
         String[] productIds = {productId};
-        String[] channels = {channel};
 
         JSONObject request = new JSONObject();
         request.put("type", "subscribe");
@@ -49,11 +48,10 @@ public class CoinbaseWebsocketClient implements Runnable {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             for (CoinbaseSubscriptionSet set : subscriptionSets) {
                 container.connectToServer(set.getHandler(), URI.create("wss://ws-feed.exchange.coinbase.com"));
-                session.getBasicRemote().sendText(subscribe(set.getProductId(), set.getChannel()));
+                session.getBasicRemote().sendText(subscribe(set.getProductId(), set.getChannels()));
             }
 
             while(true) {
-                session.getBasicRemote().sendText("{\"op\":\"ping\"}");
                 Thread.sleep(30000);
             }
 

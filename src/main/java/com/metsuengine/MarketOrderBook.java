@@ -10,13 +10,22 @@ import javax.swing.event.EventListenerList;
 
 public class MarketOrderBook {
     
-    // TODO - distance from price cuttoff
     private final Map<Double, Double> orderBook;
     private final EventListenerList listenerList;
+    private boolean ready;
 
     public MarketOrderBook() {
         this.orderBook = new HashMap<Double, Double>();
         this.listenerList = new EventListenerList();
+        this.ready = false;
+    }
+
+    public void ready() {
+        ready = true; 
+    }
+
+    public boolean isReady() {
+        return ready;
     }
 
     /**
@@ -53,13 +62,13 @@ public class MarketOrderBook {
 
     public double delta(double cuttoff) {
         double upperBound = bestAsk() * (1 + cuttoff);
-        double lowerBound = bestAsk() * (1 - cuttoff);
+        double lowerBound = bestBid() * (1 - cuttoff);
 
-        // TODO - keyset not values idiot
-        return orderBook.values().stream()
-            .filter(d -> d < upperBound)
-            .filter(d -> d > lowerBound)
-            .mapToDouble(Double::doubleValue).sum();
+
+        return orderBook.entrySet().stream()
+            .filter(x -> x.getKey() < upperBound)
+            .filter(x -> x.getKey() > lowerBound)
+            .mapToDouble(x -> x.getValue()).sum();
     }
 
     public double depth() {
@@ -73,7 +82,7 @@ public class MarketOrderBook {
 
     public double bestBid() {
         return orderBook.entrySet().stream()
-            .filter(entry -> entry.getValue() > 0).mapToDouble(d -> d.getKey())
+            .filter(x -> x.getValue() > 0).mapToDouble(x -> x.getKey())
             .max().getAsDouble(); 
     }
 

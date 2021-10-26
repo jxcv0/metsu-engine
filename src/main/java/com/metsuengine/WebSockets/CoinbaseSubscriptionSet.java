@@ -6,12 +6,12 @@ public class CoinbaseSubscriptionSet {
 
     private WebSocketHandler handler;
     private String productId;
-    private String channel;
+    private String[] channels;
 
-    public CoinbaseSubscriptionSet(WebSocketHandler handler, String productId, String channel) {
+    public CoinbaseSubscriptionSet(WebSocketHandler handler, String productId, String[] channels) {
         this.handler = handler;
         this.productId = productId;
-        this.channel = channel;
+        this.channels = channels;
     }
 
     public WebSocketHandler getHandler() {
@@ -22,7 +22,7 @@ public class CoinbaseSubscriptionSet {
         return productId;
     }
 
-    public String getChannel() {
-        return channel;
+    public String[] getChannels() {
+        return channels;
     }
 }
