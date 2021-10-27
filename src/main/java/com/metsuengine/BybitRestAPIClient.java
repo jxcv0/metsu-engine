@@ -58,7 +58,7 @@ public class BybitRestAPIClient {
         Call call = client.newCall(request);
         try {
             Response response = call.execute();
-            System.out.println(response);
+            System.out.println(response.body().string());
         } catch (Exception e) {
             e.printStackTrace();
         }
