@@ -7,14 +7,14 @@ import com.metsuengine.Enums.TimeInForce;
 
 public class Order {
 
-    private final String symbol;
-    private final Side side;
-    private final OrderType orderType;
+    private String symbol;
+    private Side side;
+    private OrderType orderType;
     private double price;
     private double qty;
-    private final TimeInForce timeInForce;
+    private TimeInForce timeInForce;
     private OrderStatus orderStatus;
-    private final String orderLinkId;
+    private String orderLinkId;
     
     /**
      * Limit Orders ONLY for the moment

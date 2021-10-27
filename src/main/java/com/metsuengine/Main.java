@@ -4,18 +4,17 @@ import com.metsuengine.WebSockets.CoinbaseSpotOrderbookWebSocket;
 import com.metsuengine.WebSockets.CoinbaseSubscriptionSet;
 import com.metsuengine.WebSockets.CoinbaseWebsocketClient;
 
-public class Metsu {
+public class Main {
     public static void main( String[] args ) {
 
         BybitRestAPIClient api = new BybitRestAPIClient("BTCUSD");
         try {
             for (Order order : api.getOrders()) {
-                System.out.println(order.price() + order.orderStatus().toString());
+                System.out.println(order.price() + " " + order.orderStatus().toString());
             }
         } catch (Exception e) {
             e.printStackTrace();    
         }
-        
 
         // final MarketOrderBook orderBook = new MarketOrderBook();
 
