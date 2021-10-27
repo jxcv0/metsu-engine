@@ -2,21 +2,34 @@ package com.metsuengine;
 
 import com.metsuengine.Enums.OrderStatus;
 import com.metsuengine.Enums.OrderType;
+import com.metsuengine.Enums.Side;
 import com.metsuengine.Enums.TimeInForce;
 
 public class Order {
 
     private final String symbol;
-    private final String side;
+    private final Side side;
     private final OrderType orderType;
     private double price;
     private double qty;
     private final TimeInForce timeInForce;
     private OrderStatus orderStatus;
     private final String orderLinkId;
+
     
-    public Order(String symbol, String side, OrderType orderType, double price, double qty, TimeInForce timeInForce,
-            OrderStatus orderStatus, String orderLinkId) {
+    /**
+     * Limit Orders ONLY for the moment
+     * 
+     * @param symbol
+     * @param side
+     * @param orderType
+     * @param price
+     * @param qty
+     * @param timeInForce
+     * @param orderStatus
+     * @param orderLinkId
+     */
+    public Order (String symbol, Side side, OrderType orderType, double price, double qty, TimeInForce timeInForce, OrderStatus orderStatus, String orderLinkId) {
         this.symbol = symbol;
         this.side = side;
         this.orderType = orderType;
@@ -26,14 +39,36 @@ public class Order {
         this.orderStatus = orderStatus;
         this.orderLinkId = orderLinkId;
     }
-
-    // "symbol": "BTCUSD",
-    // "side": "Buy",
-    // "order_type": "Limit",
-    // "price": "11756.5",
-    // "qty": 1,
-    // "time_in_force": "PostOnly",
-    // "order_status": "Filled",
-    // "order_link_id": "",
     
+    public String symbol() {
+        return symbol;
+    }
+
+    public Side side() {
+        return side;
+    }
+
+    public OrderType orderType() {
+        return orderType;
+    }
+
+    public double price() {
+        return price;
+    }
+
+    public double qty() {
+        return qty;
+    }
+
+    public TimeInForce timeInForce() {
+        return timeInForce;
+    }
+
+    public OrderStatus orderStatus() {
+        return orderStatus;
+    }
+
+    public String orderLinkId() {
+        return orderLinkId;
+    }
 }

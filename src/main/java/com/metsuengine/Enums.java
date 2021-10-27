@@ -2,6 +2,11 @@ package com.metsuengine;
 
 public class Enums {
 
+    public enum Side {
+        Buy,
+        Sell
+    }
+
     public enum OrderType {
         Limit,
         Market
