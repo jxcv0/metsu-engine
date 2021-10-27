@@ -8,7 +8,7 @@ public class Position {
     private Side side;
     private double size;
     private double entryPrice;
-
+    
     public Position(String symbol, Side side, double size, double entryPrice) {
         this.symbol = symbol;
         this.side = side;

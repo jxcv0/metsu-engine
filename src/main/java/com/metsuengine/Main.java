@@ -12,6 +12,7 @@ public class Main {
             for (Order order : api.getOrders()) {
                 System.out.println(order.price() + " " + order.orderStatus().toString());
             }
+            System.out.println(api.getPosition().entryPrice());
         } catch (Exception e) {
             e.printStackTrace();    
         }

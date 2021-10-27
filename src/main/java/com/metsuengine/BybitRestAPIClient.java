@@ -60,7 +60,7 @@ public class BybitRestAPIClient {
         String queryString = generateQueryString(requestParams);
         
         Request request = new Request.Builder()
-            .url("/v2/private/position/list?" + queryString)
+            .url("https://api.bybit.com/v2/private/position/list?" + queryString)
             .build();
         Call call = client.newCall(request);
 
@@ -162,17 +162,17 @@ public class BybitRestAPIClient {
             JsonNode node = mapper.readTree(response.body().string());
 
             if (node.has("result")) {
-                JsonNode results = node.get("result");
-                for (JsonNode result : results) {
-                    position = new Position(
-                        symbol,
-                        Side.valueOf(result.get("side").asText()),
-                        result.get("size").asDouble(),
-                        result.get("entry_price").asDouble());
-                }
+                JsonNode result = node.get("result");
+
+                position = new Position(
+                    symbol,
+                    Side.valueOf(result.get("side").asText()),
+                    result.get("size").asDouble(),
+                    result.get("entry_price").asDouble());
+
             }
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, LOGGER.getName(), e);
+            LOGGER.log(Level.SEVERE, "Exeption caught while mapping to Position", e);
         }
         return position;
     }
