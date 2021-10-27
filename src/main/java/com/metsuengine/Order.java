@@ -15,19 +15,17 @@ public class Order {
     private TimeInForce timeInForce;
     private OrderStatus orderStatus;
     private String orderLinkId;
+
+    public Order (String symbol, Side side, OrderType orderType, double price, double qty, TimeInForce timeInForce, String orderLinkId) {
+        this.symbol = symbol;
+        this.side = side;
+        this.orderType = orderType;
+        this.price = price;
+        this.qty = qty;
+        this.timeInForce = timeInForce;
+        this.orderLinkId = orderLinkId;
+    }
     
-    /**
-     * Limit Orders ONLY for the moment
-     * 
-     * @param symbol
-     * @param side
-     * @param orderType
-     * @param price
-     * @param qty
-     * @param timeInForce
-     * @param orderStatus
-     * @param orderLinkId
-     */
     public Order (String symbol, Side side, OrderType orderType, double price, double qty, TimeInForce timeInForce, OrderStatus orderStatus, String orderLinkId) {
         this.symbol = symbol;
         this.side = side;
@@ -69,5 +67,9 @@ public class Order {
 
     public String orderLinkId() {
         return orderLinkId;
+    }
+
+    public void setStatus(OrderStatus status) {
+        this.orderStatus = status;
     }
 }

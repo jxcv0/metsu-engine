@@ -1,5 +1,9 @@
 package com.metsuengine;
 
+import com.metsuengine.Enums.OrderStatus;
+import com.metsuengine.Enums.OrderType;
+import com.metsuengine.Enums.Side;
+import com.metsuengine.Enums.TimeInForce;
 import com.metsuengine.WebSockets.CoinbaseSpotOrderbookWebSocket;
 import com.metsuengine.WebSockets.CoinbaseSubscriptionSet;
 import com.metsuengine.WebSockets.CoinbaseWebsocketClient;
@@ -7,12 +11,16 @@ import com.metsuengine.WebSockets.CoinbaseWebsocketClient;
 public class Main {
     public static void main( String[] args ) {
 
+        Order order = new Order("BTCUSD", Side.Buy, OrderType.Limit, 58000, 1, TimeInForce.GoodTillCancel, OrderStatus.New, "test");
+
         BybitRestAPIClient api = new BybitRestAPIClient("BTCUSD");
         try {
-            for (Order order : api.getOrders()) {
-                System.out.println(order.price() + " " + order.orderStatus().toString());
+            api.placeOrder(order);
+            for (Order o : api.getOrders()) {
+                if (o.orderLinkId().length() > 0) {
+                    System.out.println(o.orderLinkId());
+                }
             }
-            System.out.println(api.getPosition().entryPrice());
         } catch (Exception e) {
             e.printStackTrace();    
         }

@@ -29,6 +29,7 @@ import com.metsuengine.Enums.TimeInForce;
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class BybitRestAPIClient {
@@ -104,6 +105,42 @@ public class BybitRestAPIClient {
             LOGGER.log(Level.SEVERE, "Severe: ", e);
         }
         return orders;
+    }
+
+    public void placeOrder(Order order)  throws NoSuchAlgorithmException, InvalidKeyException, IOException {
+        TreeMap<String, String> requestParams = new TreeMap<String, String>(new Comparator<String>() {
+
+            @Override
+            public int compare(String o1, String o2) {
+                return o1.compareTo(o2);
+            }
+            
+        });
+        int qty = (int) order.qty();
+        requestParams.put("side", order.side().toString());
+        requestParams.put("symbol", order.symbol());
+        requestParams.put("order_type", order.orderType().toString());
+        requestParams.put("qty", qty + "");
+        requestParams.put("price", order.price() + "");
+        requestParams.put("time_in_force", order.timeInForce().toString());
+        requestParams.put("timestamp", ZonedDateTime.now(ZoneOffset.UTC).toInstant().toEpochMilli() + "");
+        requestParams.put("api_key", APIKeys.key);
+
+        String queryString = generateQueryString(requestParams);
+                
+        Request request = new Request.Builder()
+            .post(RequestBody.create(new byte[0], null))
+            .url("https://api.bybit.com/v2/private/order/create?" + queryString)
+            .build();
+
+        Call call = client.newCall(request);
+
+        try {
+            Response response = call.execute();
+            System.out.println(response);
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Severe: ", e);
+        }
     }
 
     /**
