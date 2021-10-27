@@ -1,27 +1,99 @@
 package com.metsuengine;
 
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.logging.Logger;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.numericalmethod.suanshu.misc.R.which;
 
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class BybitAPIClient {
+public class BybitRestAPIClient {
 
-    private static final Logger LOGGER = Logger.getLogger(BybitAPIClient.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(BybitRestAPIClient.class.getName());
 
     private final String symbol;
 
-    public BybitAPIClient(String symbol) {
+    public BybitRestAPIClient(String symbol) {
         this.symbol = symbol;
+    }
+
+    public void getOrderList() throws NoSuchAlgorithmException, InvalidKeyException, IOException {
+
+        TreeMap<String, String> requestMap = new TreeMap<String, String>(new Comparator<String>() {
+
+            @Override
+            public int compare(String o1, String o2) {
+                return o1.compareTo(o2);
+            }
+            
+        });
+
+        requestMap.put("symbol", symbol);
+        requestMap.put("timestamp", ZonedDateTime.now(ZoneOffset.UTC).toInstant().toEpochMilli() + "");
+        requestMap.put("api_key", APIKeys.key);
+
+        String url = "https://api.bybit.com/v2/private/order/list";
+    }
+
+    /**
+     * Generates a query string for private endpoints
+     * 
+     * @param params the alphabetically sorted TreeMap containing request parameters
+     * @return the query string
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeyException
+     */
+    public String generateQueryString(TreeMap<String, String> params) throws NoSuchAlgorithmException, InvalidKeyException {
+        Set<String> keySet = params.keySet();
+        Iterator<String> iterator = keySet.iterator();
+        StringBuilder stringBuilder = new StringBuilder();
+        while (iterator.hasNext()) {
+            String key = iterator.next();
+            stringBuilder.append(key + "=" + params.get(key));
+            stringBuilder.append("&");
+        }
+        stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+
+        Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
+        SecretKeySpec secretKey = new SecretKeySpec(APIKeys.secret.getBytes(), "HmacSHA256");
+        sha256_HMAC.init(secretKey);
+
+        return stringBuilder + "&sign" + bytesToHex(sha256_HMAC.doFinal(stringBuilder.toString().getBytes()));
+    }
+    
+    /**
+     * Converts hashed string to hex
+     * @param hash the hashed String
+     * @return the converted hash
+     */
+    private String bytesToHex(byte[] hash) {
+        StringBuffer hexString = new StringBuffer();
+        for (int i = 0; i < hash.length; i++) {
+            String hex = Integer.toHexString(0xff & hash[i]);
+            if (hex.length() == 1) {
+                hexString.append('0');
+            }
+            hexString.append(hex);
+        }
+        return hexString.toString();
     }
 
     /**

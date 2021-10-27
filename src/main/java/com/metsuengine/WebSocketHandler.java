@@ -7,7 +7,7 @@ import javax.websocket.Session;
 
 public interface WebSocketHandler {
 
-    static final Logger LOGGER = Logger.getLogger(BybitAPIClient.class.getName());
+    static final Logger LOGGER = Logger.getLogger(WebSocketHandler.class.getName());
 
     public void onOpen(Session session);
 

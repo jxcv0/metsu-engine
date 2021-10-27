@@ -3,33 +3,33 @@ package com.metsuengine;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-
 public class Controller implements ChangeListener {
 
-    // private boolean inPosition;
+    private boolean inPosition;
     private CSVManager csv;
-    private int tempCount;
+    private int count;
+    private final int frequency;
+    private final double range;
 
-    public Controller(MarketOrderBook orderBook) {
+    public Controller(MarketOrderBook orderBook, int frequency, double range, double threshold) {
         orderBook.addChangeListener(this);
-        // this.inPosition = false;
+        this.inPosition = false;
         this.csv = new CSVManager("src\\main\\resources\\log.csv");
-        this.tempCount = 0;
+        this.frequency = frequency;
+        this.range = range;
     }
 
     @Override
     public void stateChanged(ChangeEvent e) {
-        tempCount++;
-        MarketOrderBook orderBook = (MarketOrderBook) e.getSource();
-        if (orderBook.isReady() && tempCount >= 10000) {
-
-            String[] line = {
-                Double.toString(orderBook.bestBid()),
-                Double.toString(orderBook.delta(0.01))};
-
-            csv.writeLine(line);
-            tempCount = 0;
+        count++;
+        if (count >= frequency) {
+            MarketOrderBook orderBook = (MarketOrderBook) e.getSource();
+            if (orderBook.isReady()) {
+                // if orderBook delta is above threshold && no long orders are placed
+                    // create ladder down to (bestbid - range).
+                    
+                count = 0;
+            }
         }
     }
 }

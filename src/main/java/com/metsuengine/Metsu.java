@@ -9,7 +9,7 @@ public class Metsu {
 
         final MarketOrderBook orderBook = new MarketOrderBook();
 
-        new Controller(orderBook);
+        new Controller(orderBook, 100000, 0.1, 400);
 
         String[] channels = {"level2", "heartbeat"};
         CoinbaseWebsocketClient client = new CoinbaseWebsocketClient(
