@@ -42,6 +42,38 @@ public class BybitRestAPIClient {
         this.client = new OkHttpClient();
     }
 
+    public Position getPosition() throws NoSuchAlgorithmException, InvalidKeyException, IOException {
+
+        TreeMap<String, String> requestParams = new TreeMap<String, String>(new Comparator<String>() {
+
+            @Override
+            public int compare(String o1, String o2) {
+                return o1.compareTo(o2);
+            }
+            
+        });
+
+        requestParams.put("symbol", symbol);
+        requestParams.put("timestamp", ZonedDateTime.now(ZoneOffset.UTC).toInstant().toEpochMilli() + "");
+        requestParams.put("api_key", APIKeys.key);
+
+        String queryString = generateQueryString(requestParams);
+        
+        Request request = new Request.Builder()
+            .url("/v2/private/position/list?" + queryString)
+            .build();
+        Call call = client.newCall(request);
+
+        Position position = null;
+        try {
+            Response response = call.execute();
+            position = mapToPosition(response);
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Exeption cuaght mapping to Postition", e);
+        }
+        return position;
+    }
+
     public List<Order> getOrders() throws NoSuchAlgorithmException, InvalidKeyException, IOException {
         
         TreeMap<String, String> requestParams = new TreeMap<String, String>(new Comparator<String>() {
@@ -115,6 +147,34 @@ public class BybitRestAPIClient {
             hexString.append(hex);
         }
         return hexString.toString();
+    }
+    
+    /**
+     * Maps JSON response to an instance of Position
+     * 
+     * @param response the response
+     * @return a Position
+     */
+    private Position mapToPosition(Response response) {
+        Position position = null;
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode node = mapper.readTree(response.body().string());
+
+            if (node.has("result")) {
+                JsonNode results = node.get("result");
+                for (JsonNode result : results) {
+                    position = new Position(
+                        symbol,
+                        Side.valueOf(result.get("side").asText()),
+                        result.get("size").asDouble(),
+                        result.get("entry_price").asDouble());
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, LOGGER.getName(), e);
+        }
+        return position;
     }
 
     private List<Order> mapToOrder(Response response) {
