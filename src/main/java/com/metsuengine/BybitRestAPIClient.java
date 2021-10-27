@@ -18,7 +18,6 @@ import javax.crypto.spec.SecretKeySpec;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.numericalmethod.suanshu.misc.R.which;
 
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
@@ -28,16 +27,17 @@ import okhttp3.Response;
 public class BybitRestAPIClient {
 
     private static final Logger LOGGER = Logger.getLogger(BybitRestAPIClient.class.getName());
-
+    private final OkHttpClient client;
     private final String symbol;
 
     public BybitRestAPIClient(String symbol) {
         this.symbol = symbol;
+        this.client = new OkHttpClient();
     }
 
     public void getOrderList() throws NoSuchAlgorithmException, InvalidKeyException, IOException {
-
-        TreeMap<String, String> requestMap = new TreeMap<String, String>(new Comparator<String>() {
+        
+        TreeMap<String, String> requestParams = new TreeMap<String, String>(new Comparator<String>() {
 
             @Override
             public int compare(String o1, String o2) {
@@ -46,11 +46,22 @@ public class BybitRestAPIClient {
             
         });
 
-        requestMap.put("symbol", symbol);
-        requestMap.put("timestamp", ZonedDateTime.now(ZoneOffset.UTC).toInstant().toEpochMilli() + "");
-        requestMap.put("api_key", APIKeys.key);
+        requestParams.put("symbol", symbol);
+        requestParams.put("timestamp", ZonedDateTime.now(ZoneOffset.UTC).toInstant().toEpochMilli() + "");
+        requestParams.put("api_key", APIKeys.key);
 
-        String url = "https://api.bybit.com/v2/private/order/list";
+        String queryString = generateQueryString(requestParams);
+        
+        Request request = new Request.Builder()
+            .url("https://api.bybit.com/v2/private/order?" + queryString)
+            .build();
+        Call call = client.newCall(request);
+        try {
+            Response response = call.execute();
+            System.out.println(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -61,13 +72,13 @@ public class BybitRestAPIClient {
      * @throws NoSuchAlgorithmException
      * @throws InvalidKeyException
      */
-    public String generateQueryString(TreeMap<String, String> params) throws NoSuchAlgorithmException, InvalidKeyException {
-        Set<String> keySet = params.keySet();
+    public String generateQueryString(TreeMap<String, String> requestParams) throws NoSuchAlgorithmException, InvalidKeyException {
+        Set<String> keySet = requestParams.keySet();
         Iterator<String> iterator = keySet.iterator();
         StringBuilder stringBuilder = new StringBuilder();
         while (iterator.hasNext()) {
             String key = iterator.next();
-            stringBuilder.append(key + "=" + params.get(key));
+            stringBuilder.append(key + "=" + requestParams.get(key));
             stringBuilder.append("&");
         }
         stringBuilder.deleteCharAt(stringBuilder.length() - 1);
@@ -76,7 +87,7 @@ public class BybitRestAPIClient {
         SecretKeySpec secretKey = new SecretKeySpec(APIKeys.secret.getBytes(), "HmacSHA256");
         sha256_HMAC.init(secretKey);
 
-        return stringBuilder + "&sign" + bytesToHex(sha256_HMAC.doFinal(stringBuilder.toString().getBytes()));
+        return stringBuilder + "&sign=" + bytesToHex(sha256_HMAC.doFinal(stringBuilder.toString().getBytes()));
     }
     
     /**
@@ -116,7 +127,6 @@ public class BybitRestAPIClient {
             
             LOGGER.info(request.toString());
                         
-            OkHttpClient client = new OkHttpClient();
             Call call = client.newCall(request);
             Response response = call.execute();
             String content = response.body().string();
@@ -160,7 +170,6 @@ public class BybitRestAPIClient {
                 .url(url)
                 .build();
                         
-            OkHttpClient client = new OkHttpClient();
             Call call = client.newCall(request);
             Response response = call.execute();
             String content = response.body().string();
