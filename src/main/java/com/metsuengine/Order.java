@@ -15,7 +15,6 @@ public class Order {
     private final TimeInForce timeInForce;
     private OrderStatus orderStatus;
     private final String orderLinkId;
-
     
     /**
      * Limit Orders ONLY for the moment

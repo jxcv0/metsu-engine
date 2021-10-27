@@ -7,10 +7,13 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.crypto.Mac;
@@ -18,6 +21,10 @@ import javax.crypto.spec.SecretKeySpec;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.metsuengine.Enums.OrderStatus;
+import com.metsuengine.Enums.OrderType;
+import com.metsuengine.Enums.Side;
+import com.metsuengine.Enums.TimeInForce;
 
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
@@ -35,7 +42,7 @@ public class BybitRestAPIClient {
         this.client = new OkHttpClient();
     }
 
-    public void getOrderList() throws NoSuchAlgorithmException, InvalidKeyException, IOException {
+    public List<Order> getOrders() throws NoSuchAlgorithmException, InvalidKeyException, IOException {
         
         TreeMap<String, String> requestParams = new TreeMap<String, String>(new Comparator<String>() {
 
@@ -56,12 +63,15 @@ public class BybitRestAPIClient {
             .url("https://api.bybit.com/v2/private/order?" + queryString)
             .build();
         Call call = client.newCall(request);
+
+        List<Order> orders = new ArrayList<Order>();
         try {
             Response response = call.execute();
-            System.out.println(response.body().string());
+            orders.addAll(mapToOrder(response));
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Severe: ", e);
         }
+        return orders;
     }
 
     /**
@@ -105,6 +115,32 @@ public class BybitRestAPIClient {
             hexString.append(hex);
         }
         return hexString.toString();
+    }
+
+    private List<Order> mapToOrder(Response response) {
+        List<Order> orders = new ArrayList<Order>();
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode node = mapper.readTree(response.body().string());
+
+            if (node.has("result")) {
+                JsonNode results = node.get("result");
+                for (JsonNode result : results) {
+                    orders.add(new Order(
+                        symbol,
+                        Side.valueOf(result.get("side").asText()),
+                        OrderType.valueOf(result.get("order_type").asText()),
+                        result.get("price").asDouble(),
+                        result.get("qty").asDouble(),
+                        TimeInForce.valueOf(result.get("time_in_force").asText()),
+                        OrderStatus.valueOf(result.get("order_status").asText()),
+                        result.get("order_link_id").asText()));
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, LOGGER.getName(), e);
+        }
+        return orders;
     }
 
     /**
@@ -151,7 +187,7 @@ public class BybitRestAPIClient {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, LOGGER.getName(), e);
         }
 
         return tickSeries;
