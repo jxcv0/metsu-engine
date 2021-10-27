@@ -11,7 +11,7 @@ import com.metsuengine.WebSockets.CoinbaseWebsocketClient;
 public class Main {
     public static void main( String[] args ) {
 
-        Order order = new Order("BTCUSD", Side.Buy, OrderType.Limit, 58000, 1, TimeInForce.GoodTillCancel, OrderStatus.New, "test");
+        Order order = new Order("BTCUSD", Side.Buy, OrderType.Limit, 58000, 1, TimeInForce.GoodTillCancel, OrderStatus.New, "SUCCESS!");
 
         BybitRestAPIClient api = new BybitRestAPIClient("BTCUSD");
         try {

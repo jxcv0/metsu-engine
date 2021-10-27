@@ -123,6 +123,7 @@ public class BybitRestAPIClient {
         requestParams.put("qty", qty + "");
         requestParams.put("price", order.price() + "");
         requestParams.put("time_in_force", order.timeInForce().toString());
+        requestParams.put("order_link_id", order.orderLinkId());
         requestParams.put("timestamp", ZonedDateTime.now(ZoneOffset.UTC).toInstant().toEpochMilli() + "");
         requestParams.put("api_key", APIKeys.key);
 
