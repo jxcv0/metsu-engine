@@ -1,7 +1,7 @@
 package com.metsuengine;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import javax.swing.event.ChangeEvent;
@@ -15,7 +15,7 @@ public class MarketOrderBook {
     private boolean ready;
 
     public MarketOrderBook() {
-        this.orderBook = new HashMap<Double, Double>();
+        this.orderBook = new ConcurrentHashMap<Double, Double>();
         this.listenerList = new EventListenerList();
         this.ready = false;
     }

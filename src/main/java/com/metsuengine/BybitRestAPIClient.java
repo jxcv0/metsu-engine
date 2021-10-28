@@ -138,6 +138,7 @@ public class BybitRestAPIClient {
 
         try {
             Response response = call.execute();
+            System.out.println(response);
             response.body().close();
             if (!response.isSuccessful()) {
                 LOGGER.warning("Response unsuccessful");

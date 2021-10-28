@@ -19,13 +19,11 @@ public class OrderMatchingStrategy implements ChangeListener {
     private Order ask;
     private BybitRestAPIClient api;
     private MarketOrderBook orderBook;
-    private boolean init;
 
     public OrderMatchingStrategy(TickSeries tickSeries, MarketOrderBook orderBook) {
         tickSeries.addChangeListener(this);
         this.orderBook = orderBook;
         this.api = new BybitRestAPIClient("BTCUSD");
-        this.init = false;
     }
 
     @Override
@@ -38,12 +36,6 @@ public class OrderMatchingStrategy implements ChangeListener {
                 // size is only 1 usd for now
                 bid = new Order("BTCUSD", Side.Buy, OrderType.Limit, bidPrice, 1, TimeInForce.GoodTillCancel, OrderStatus.New, "BID");
                 ask = new Order("BTCUSD", Side.Sell, OrderType.Limit, askPrice, 1, TimeInForce.GoodTillCancel, OrderStatus.New, "ASK");
-
-                if(!init) {
-                    api.placeOrder(bid);
-                    api.placeOrder(ask);
-                    init = true;
-                }
 
                 List<Order> orders = api.getOrders();
 
