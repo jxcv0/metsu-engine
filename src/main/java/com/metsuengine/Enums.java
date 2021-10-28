@@ -4,7 +4,8 @@ public class Enums {
 
     public enum Side {
         Buy,
-        Sell
+        Sell,
+        None
     }
 
     public enum OrderType {

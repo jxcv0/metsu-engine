@@ -41,28 +41,29 @@ public class OrderMatchingStrategy implements ChangeListener {
                 Optional<Order> optionalBid = orders.stream().filter(o -> o.side().equals(Side.Buy)).findAny();
                 if (optionalBid.isPresent()) {
                     Order currentBid = optionalBid.get();
-
                     // if current bid is not the name as the new calculated bid
                     if (!currentBid.isEquivalentTo(newBid)) {
+                        System.out.println("Replacing bid " + currentBid.orderId() + " with " + newBid.price() + " × " + newBid.price());
                         api.replaceOrder(currentBid.orderId(), newBid);
                     }
                 } else {
+                    System.out.println("Placing bid at " + newBid.price());
                     api.placeOrder(newBid);
                 }
 
                 // if orders contains an ask
-                Optional<Order> optionalAsk = orders.stream().filter(o -> o.side().equals(Side.Buy)).findAny();
+                Optional<Order> optionalAsk = orders.stream().filter(o -> o.side().equals(Side.Sell)).findAny();
                 if (optionalAsk.isPresent()) {
                     Order currentAsk = optionalAsk.get();
-
-                    // if current ask is not the name as the new calculated ask
+                    // if current ask is not the name as the new calculated bid
                     if (!currentAsk.isEquivalentTo(newAsk)) {
+                        System.out.println("Replacing ask " + currentAsk.orderId() + " with " + newAsk.price() + " × " + newAsk.price());
                         api.replaceOrder(currentAsk.orderId(), newAsk);
                     }
                 } else {
+                    System.out.println("Placing ask at " + newAsk.price());
                     api.placeOrder(newAsk);
                 }
-
 
             } catch (Exception ex) {
                 LOGGER.log(Level.SEVERE, "CANCELLING ALL ORDERS", ex);

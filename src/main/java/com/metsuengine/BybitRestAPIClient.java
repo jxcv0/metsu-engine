@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Level;
@@ -43,7 +44,7 @@ public class BybitRestAPIClient {
         this.client = new OkHttpClient();
     }
 
-    public Position getPosition() throws NoSuchAlgorithmException, InvalidKeyException, IOException {
+    public Optional<Position> getPosition() throws NoSuchAlgorithmException, InvalidKeyException, IOException {
 
         TreeMap<String, String> requestParams = new TreeMap<String, String>(new Comparator<String>() {
 
@@ -68,11 +69,16 @@ public class BybitRestAPIClient {
         Position position = null;
         try {
             Response response = call.execute();
+            if (!response.isSuccessful()) {
+                LOGGER.warning("Response unsuccessful");
+                System.out.println(response.body().string());
+                response.body().close();
+            } 
             position = mapToPosition(response);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Exeption caught mapping to Postition", e);
         }
-        return position;
+        return Optional.of(position);
     }
 
     public List<Order> getOrders() throws NoSuchAlgorithmException, InvalidKeyException, IOException {
