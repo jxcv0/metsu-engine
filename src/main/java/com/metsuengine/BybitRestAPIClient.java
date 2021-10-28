@@ -8,7 +8,6 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -46,14 +45,7 @@ public class BybitRestAPIClient {
 
     public Optional<Position> getPosition() throws NoSuchAlgorithmException, InvalidKeyException, IOException {
 
-        TreeMap<String, String> requestParams = new TreeMap<String, String>(new Comparator<String>() {
-
-            @Override
-            public int compare(String o1, String o2) {
-                return o1.compareTo(o2);
-            }
-            
-        });
+        TreeMap<String, String> requestParams = new TreeMap<>((o1, o2) -> o1.compareTo(o2));
 
         requestParams.put("symbol", symbol);
         requestParams.put("timestamp", ZonedDateTime.now(ZoneOffset.UTC).toInstant().toEpochMilli() + "");
@@ -75,7 +67,7 @@ public class BybitRestAPIClient {
                 response.body().close();
             } 
             position = mapToPosition(response);
-        } catch (Exception e) {
+        } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Exeption caught mapping to Postition", e);
         }
         return Optional.of(position);
@@ -83,14 +75,7 @@ public class BybitRestAPIClient {
 
     public List<Order> getOrders() throws NoSuchAlgorithmException, InvalidKeyException, IOException {
         
-        TreeMap<String, String> requestParams = new TreeMap<String, String>(new Comparator<String>() {
-
-            @Override
-            public int compare(String o1, String o2) {
-                return o1.compareTo(o2);
-            }
-            
-        });
+        TreeMap<String, String> requestParams = new TreeMap<>((o1, o2) -> o1.compareTo(o2));
 
         requestParams.put("symbol", symbol);
         requestParams.put("timestamp", ZonedDateTime.now(ZoneOffset.UTC).toInstant().toEpochMilli() + "");
@@ -103,25 +88,18 @@ public class BybitRestAPIClient {
             .build();
         Call call = client.newCall(request);
 
-        List<Order> orders = new ArrayList<Order>();
+        List<Order> orders = new ArrayList<>();
         try {
             Response response = call.execute();
             orders.addAll(mapToOrder(response));
-        } catch (Exception e) {
+        } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "", e);
         }
         return orders;
     }
 
     public void placeOrder(Order order)  throws NoSuchAlgorithmException, InvalidKeyException, IOException {
-        TreeMap<String, String> requestParams = new TreeMap<String, String>(new Comparator<String>() {
-
-            @Override
-            public int compare(String o1, String o2) {
-                return o1.compareTo(o2);
-            }
-            
-        });
+        TreeMap<String, String> requestParams = new TreeMap<>((o1, o2) -> o1.compareTo(o2));
 
         int qty = (int) order.qty();
         requestParams.put("side", order.side().toString());
@@ -144,26 +122,19 @@ public class BybitRestAPIClient {
 
         try {
             Response response = call.execute();
-            response.body().close();
             if (!response.isSuccessful()) {
                 LOGGER.warning("Response unsuccessful");
                 System.out.println(response.body().string());
                 response.body().close();
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Exeption caught while placing order", e);
         }
     }
 
     public void replaceOrder(String orderId, Order order)  throws NoSuchAlgorithmException, InvalidKeyException, IOException {
-        TreeMap<String, String> requestParams = new TreeMap<String, String>(new Comparator<String>() {
+        TreeMap<String, String> requestParams = new TreeMap<>((o1, o2) -> o1.compareTo(o2));
 
-            @Override
-            public int compare(String o1, String o2) {
-                return o1.compareTo(o2);
-            }
-            
-        });
         int qty = (int) order.qty();
         requestParams.put("symbol", symbol);
         requestParams.put("p_r_qty", qty + "");
@@ -188,21 +159,14 @@ public class BybitRestAPIClient {
                 System.out.println(response.body().string());
                 response.body().close();
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Exeption caught while placing order", e);
         }
     }
 
     public void cancellAllOrders() {
         try {
-            TreeMap<String, String> requestParams = new TreeMap<String, String>(new Comparator<String>() {
-
-                @Override
-                public int compare(String o1, String o2) {
-                    return o1.compareTo(o2);
-                }
-                
-            });
+            TreeMap<String, String> requestParams = new TreeMap<>((o1, o2) -> o1.compareTo(o2));
 
             requestParams.put("symbol", symbol);
             requestParams.put("timestamp", ZonedDateTime.now(ZoneOffset.UTC).toInstant().toEpochMilli() + "");
@@ -224,12 +188,12 @@ public class BybitRestAPIClient {
                     System.out.println(response.body().string());
                     response.body().close();
                 }
-            } catch (Exception e) {
+            } catch (IOException e) {
                 LOGGER.log(Level.SEVERE, "Exeption caught while cancelling orders", e);
             }
-        } catch (Exception e) {
+        } catch (InvalidKeyException | NoSuchAlgorithmException e) {
             // questionable
-            e.printStackTrace();
+            e.printStackTrace(System.err);
         }
     }
 
@@ -247,7 +211,7 @@ public class BybitRestAPIClient {
         StringBuilder stringBuilder = new StringBuilder();
         while (iterator.hasNext()) {
             String key = iterator.next();
-            stringBuilder.append(key + "=" + requestParams.get(key));
+            stringBuilder.append(key).append("=").append(requestParams.get(key));
             stringBuilder.append("&");
         }
         stringBuilder.deleteCharAt(stringBuilder.length() - 1);
@@ -305,7 +269,7 @@ public class BybitRestAPIClient {
     }
 
     private List<Order> mapToOrder(Response response) {
-        List<Order> orders = new ArrayList<Order>();
+        List<Order> orders = new ArrayList<>();
         try {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode node = mapper.readTree(response.body().string());
@@ -420,7 +384,7 @@ public class BybitRestAPIClient {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(System.err);
         }
     }
 
@@ -436,7 +400,6 @@ public class BybitRestAPIClient {
                 .url(url)
                 .build();
                         
-            OkHttpClient client = new OkHttpClient();
             Call call = client.newCall(request);
             Response response = call.execute();
             String content = response.body().string();
@@ -462,7 +425,7 @@ public class BybitRestAPIClient {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(System.err);
         }
     }
 

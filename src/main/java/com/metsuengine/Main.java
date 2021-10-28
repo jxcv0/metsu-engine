@@ -6,6 +6,7 @@ import com.metsuengine.WebSockets.BybitInversePerpetualTradeWebSocket;
 import com.metsuengine.WebSockets.BybitWebSocketClient;
 
 public class Main {
+
     public static void main( String[] args ) {
 
         final TickSeries tickSeries = new TickSeries(10);

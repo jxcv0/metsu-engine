@@ -19,7 +19,7 @@ public class BybitWebSocketClient extends Thread {
 
     @SafeVarargs
     public BybitWebSocketClient(BybitInversePerpetualSubscriptionSet... sets) {
-        this.subscriptionSets = new ArrayList<BybitInversePerpetualSubscriptionSet>(
+        this.subscriptionSets = new ArrayList<>(
             Arrays.asList(sets)
         );    
     }
@@ -27,7 +27,7 @@ public class BybitWebSocketClient extends Thread {
     private String subscribe(String op, String argv){
         JSONObject request = new JSONObject();
         request.put("op", op);
-        List<String> args = new LinkedList<String>();
+        List<String> args = new LinkedList<>();
         args.add(argv);
         request.put("args", args);
         return request.toString();
@@ -44,11 +44,11 @@ public class BybitWebSocketClient extends Thread {
 
             while(true) {
                 session.getBasicRemote().sendText("{\"op\":\"ping\"}");
-                Thread.sleep(30000);
+                sleep(30000);
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(System.err);
         }
     }
 }

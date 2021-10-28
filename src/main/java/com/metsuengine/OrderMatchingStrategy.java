@@ -12,26 +12,37 @@ import com.metsuengine.Enums.OrderStatus;
 import com.metsuengine.Enums.OrderType;
 import com.metsuengine.Enums.Side;
 import com.metsuengine.Enums.TimeInForce;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 public class OrderMatchingStrategy implements ChangeListener {
 
     private static final Logger LOGGER = Logger.getLogger(OrderMatchingStrategy.class.getName());
-    private BybitRestAPIClient api;
-    private MarketOrderBook orderBook;
+    private final BybitRestAPIClient api;
+    private final MarketOrderBook orderBook;
+    private final DescriptiveStatistics ds = new DescriptiveStatistics();
 
     public OrderMatchingStrategy(TickSeries tickSeries, MarketOrderBook orderBook) {
-        tickSeries.addChangeListener(this);
+        extracted(tickSeries);
         this.orderBook = orderBook;
         this.api = new BybitRestAPIClient("BTCUSD");
     }
 
+    private void extracted(TickSeries tickSeries) {
+        tickSeries.addChangeListener(this);
+    }
+
     @Override
     public void stateChanged(ChangeEvent e) {
+        long start = System.currentTimeMillis();
         if (orderBook.isReady()) {
             try {
                 double bidPrice = orderBook.bestBid();
                 double askPrice = orderBook.bestAsk();
-
+                
                 Order newBid = new Order("BTCUSD", Side.Buy, OrderType.Limit, bidPrice, 1, TimeInForce.GoodTillCancel, OrderStatus.New);
                 Order newAsk = new Order("BTCUSD", Side.Sell, OrderType.Limit, askPrice, 1, TimeInForce.GoodTillCancel, OrderStatus.New);
 
@@ -43,11 +54,9 @@ public class OrderMatchingStrategy implements ChangeListener {
                     Order currentBid = optionalBid.get();
                     // if current bid is not the name as the new calculated bid
                     if (!currentBid.isEquivalentTo(newBid)) {
-                        System.out.println("Replacing bid " + currentBid.orderId() + " with " + newBid.price() + " × " + newBid.price());
                         api.replaceOrder(currentBid.orderId(), newBid);
                     }
                 } else {
-                    System.out.println("Placing bid at " + newBid.price());
                     api.placeOrder(newBid);
                 }
 
@@ -57,18 +66,19 @@ public class OrderMatchingStrategy implements ChangeListener {
                     Order currentAsk = optionalAsk.get();
                     // if current ask is not the name as the new calculated bid
                     if (!currentAsk.isEquivalentTo(newAsk)) {
-                        System.out.println("Replacing ask " + currentAsk.orderId() + " with " + newAsk.price() + " × " + newAsk.price());
                         api.replaceOrder(currentAsk.orderId(), newAsk);
                     }
                 } else {
-                    System.out.println("Placing ask at " + newAsk.price());
                     api.placeOrder(newAsk);
                 }
 
-            } catch (Exception ex) {
+            } catch (IOException | InvalidKeyException | NoSuchAlgorithmException ex) {
                 LOGGER.log(Level.SEVERE, "CANCELLING ALL ORDERS", ex);
                 api.cancellAllOrders();
             }    
         }
+        long end = System.currentTimeMillis();
+        ds.addValue(end - start);
+        System.out.println(ds.getMean());
     }    
 }

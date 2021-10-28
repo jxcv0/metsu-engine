@@ -15,7 +15,7 @@ public class MarketOrderBook {
     private boolean ready;
 
     public MarketOrderBook() {
-        this.orderBook = new ConcurrentHashMap<Double, Double>();
+        this.orderBook = new ConcurrentHashMap<>();
         this.listenerList = new EventListenerList();
         this.ready = false;
     }
