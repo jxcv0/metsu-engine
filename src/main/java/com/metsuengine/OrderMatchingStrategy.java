@@ -39,27 +39,27 @@ public class OrderMatchingStrategy implements ChangeListener {
 
                 List<Order> orders = api.getOrders();
 
-                if (orders.size() < 1) {
+                if (orders.size() > 0) {
+                    for (Order order : orders) {
+                        if (order.orderLinkId() == bid.orderLinkId()) {
+                            if (order.price() != bid.price() || order.qty() != bid.qty()) {
+                                api.replaceOrder(bid);
+                            }
+                        } else {
+                            api.placeOrder(bid);
+                        }
+    
+                        if (order.orderLinkId() == ask.orderLinkId()) {
+                            if (order.price() != ask.price() || order.qty() != ask.qty()) {
+                                api.replaceOrder(ask);
+                            }
+                        } else {
+                            api.placeOrder(ask);
+                        }
+                    }
+                } else {
                     api.placeOrder(bid);
                     api.placeOrder(ask);
-                }
-
-                for (Order order : orders) {
-                    if (order.orderLinkId() == bid.orderLinkId()) {
-                        if (order.price() != bid.price() || order.qty() != bid.qty()) {
-                            api.replaceOrder(bid);
-                        }
-                    } else {
-                        api.placeOrder(bid);
-                    }
-
-                    if (order.orderLinkId() == ask.orderLinkId()) {
-                        if (order.price() != ask.price() || order.qty() != ask.qty()) {
-                            api.replaceOrder(ask);
-                        }
-                    } else {
-                        api.placeOrder(ask);
-                    }
                 }
 
             } catch (Exception ex) {
