@@ -73,6 +73,7 @@ public class BybitRestAPIClient {
         return Optional.of(position);
     }
 
+    // TODO - this is really really slow, move to websocket/calculated
     public List<Order> getOrders() throws NoSuchAlgorithmException, InvalidKeyException, IOException {
         
         TreeMap<String, String> requestParams = new TreeMap<>((o1, o2) -> o1.compareTo(o2));

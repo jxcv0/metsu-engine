@@ -8,7 +8,7 @@ public class MarketOrderBookTest {
 
     @Test
     public void insertTest() {
-        MarketOrderBook orderBook = new MarketOrderBook();
+        LimitOrderBook orderBook = new LimitOrderBook();
         orderBook.insertOrUpdate(1000, 100);
         assertEquals(100, orderBook.delta(), 0);
         orderBook.insertOrUpdate(1000.5, -50);
@@ -17,7 +17,7 @@ public class MarketOrderBookTest {
 
     @Test
     public void bestBidAskTest() {
-        MarketOrderBook orderBook = new MarketOrderBook();
+        LimitOrderBook orderBook = new LimitOrderBook();
         orderBook.insertOrUpdate(1000, 100);
         orderBook.insertOrUpdate(1000.5, 100);
         orderBook.insertOrUpdate(1001, 100);
@@ -31,7 +31,7 @@ public class MarketOrderBookTest {
     
     @Test
     public void totalDepthTest() {
-        MarketOrderBook orderBook = new MarketOrderBook();
+        LimitOrderBook orderBook = new LimitOrderBook();
         orderBook.insertOrUpdate(1000, 100);
         orderBook.insertOrUpdate(1000.5, 100);
         orderBook.insertOrUpdate(1001, 100);

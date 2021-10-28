@@ -10,7 +10,7 @@ public class Main {
     public static void main( String[] args ) {
 
         final TickSeries tickSeries = new TickSeries(10);
-        final MarketOrderBook orderBook = new MarketOrderBook();
+        final LimitOrderBook orderBook = new LimitOrderBook();
 
         new OrderMatchingStrategy(tickSeries, orderBook);
 

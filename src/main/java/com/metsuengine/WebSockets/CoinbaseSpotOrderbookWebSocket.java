@@ -11,15 +11,15 @@ import javax.websocket.Session;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.metsuengine.MarketOrderBook;
+import com.metsuengine.LimitOrderBook;
 import com.metsuengine.WebSocketHandler;
 
 @ClientEndpoint
 public class CoinbaseSpotOrderbookWebSocket implements WebSocketHandler{
     
-    private final MarketOrderBook orderBook;
+    private final LimitOrderBook orderBook;
 
-    public CoinbaseSpotOrderbookWebSocket(MarketOrderBook orderBook) {
+    public CoinbaseSpotOrderbookWebSocket(LimitOrderBook orderBook) {
         this.orderBook = orderBook;
     }
 
@@ -85,7 +85,7 @@ public class CoinbaseSpotOrderbookWebSocket implements WebSocketHandler{
         t.printStackTrace();
     }
 
-    public MarketOrderBook orderBook() {
+    public LimitOrderBook orderBook() {
         return orderBook;
     }
 }

@@ -22,10 +22,10 @@ public class OrderMatchingStrategy implements ChangeListener {
 
     private static final Logger LOGGER = Logger.getLogger(OrderMatchingStrategy.class.getName());
     private final BybitRestAPIClient api;
-    private final MarketOrderBook orderBook;
+    private final LimitOrderBook orderBook;
     private final DescriptiveStatistics ds = new DescriptiveStatistics();
 
-    public OrderMatchingStrategy(TickSeries tickSeries, MarketOrderBook orderBook) {
+    public OrderMatchingStrategy(TickSeries tickSeries, LimitOrderBook orderBook) {
         extracted(tickSeries);
         this.orderBook = orderBook;
         this.api = new BybitRestAPIClient("BTCUSD");
@@ -48,7 +48,7 @@ public class OrderMatchingStrategy implements ChangeListener {
 
                 List<Order> orders = api.getOrders();
 
-                // if orders contains a bid
+                // if orders contains a bid - SLOOOOOOOOWWWWWWWWW
                 Optional<Order> optionalBid = orders.stream().filter(o -> o.side().equals(Side.Buy)).findAny();
                 if (optionalBid.isPresent()) {
                     Order currentBid = optionalBid.get();
@@ -60,7 +60,7 @@ public class OrderMatchingStrategy implements ChangeListener {
                     api.placeOrder(newBid);
                 }
 
-                // if orders contains an ask
+                // if orders contains an ask - ALSO SLOOOOOOOOOOWWWWWWWWW
                 Optional<Order> optionalAsk = orders.stream().filter(o -> o.side().equals(Side.Sell)).findAny();
                 if (optionalAsk.isPresent()) {
                     Order currentAsk = optionalAsk.get();

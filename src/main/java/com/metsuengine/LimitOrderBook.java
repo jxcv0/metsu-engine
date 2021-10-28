@@ -8,13 +8,13 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
 
-public class MarketOrderBook {
+public class LimitOrderBook {
     
     private final Map<Double, Double> orderBook;
     private final EventListenerList listenerList;
     private boolean ready;
 
-    public MarketOrderBook() {
+    public LimitOrderBook() {
         this.orderBook = new ConcurrentHashMap<>();
         this.listenerList = new EventListenerList();
         this.ready = false;
