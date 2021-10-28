@@ -1,6 +1,7 @@
 package com.metsuengine;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,8 +16,6 @@ import com.metsuengine.Enums.TimeInForce;
 public class OrderMatchingStrategy implements ChangeListener {
 
     private static final Logger LOGGER = Logger.getLogger(OrderMatchingStrategy.class.getName());
-    private Order bid;
-    private Order ask;
     private BybitRestAPIClient api;
     private MarketOrderBook orderBook;
 
@@ -33,40 +32,42 @@ public class OrderMatchingStrategy implements ChangeListener {
                 double bidPrice = orderBook.bestBid();
                 double askPrice = orderBook.bestAsk();
 
-                // size is only 1 usd for now
-                bid = new Order("BTCUSD", Side.Buy, OrderType.Limit, bidPrice, 1, TimeInForce.GoodTillCancel, OrderStatus.New, "BID");
-                ask = new Order("BTCUSD", Side.Sell, OrderType.Limit, askPrice, 1, TimeInForce.GoodTillCancel, OrderStatus.New, "ASK");
+                Order newBid = new Order("BTCUSD", Side.Buy, OrderType.Limit, bidPrice, 1, TimeInForce.GoodTillCancel, OrderStatus.New);
+                Order newAsk = new Order("BTCUSD", Side.Sell, OrderType.Limit, askPrice, 1, TimeInForce.GoodTillCancel, OrderStatus.New);
 
                 List<Order> orders = api.getOrders();
 
-                if (orders.size() > 0) {
-                    for (Order order : orders) {
-                        if (order.orderLinkId() == bid.orderLinkId()) {
-                            if (order.price() != bid.price() || order.qty() != bid.qty()) {
-                                api.replaceOrder(bid);
-                            }
-                        } else {
-                            api.placeOrder(bid);
-                        }
-    
-                        if (order.orderLinkId() == ask.orderLinkId()) {
-                            if (order.price() != ask.price() || order.qty() != ask.qty()) {
-                                api.replaceOrder(ask);
-                            }
-                        } else {
-                            api.placeOrder(ask);
-                        }
+                // if orders contains a bid
+                Optional<Order> optionalBid = orders.stream().filter(o -> o.side().equals(Side.Buy)).findAny();
+                if (optionalBid.isPresent()) {
+                    Order currentBid = optionalBid.get();
+
+                    // if current bid is not the name as the new calculated bid
+                    if (!currentBid.isEquivalentTo(newBid)) {
+                        api.replaceOrder(currentBid.orderId(), newBid);
                     }
                 } else {
-                    api.placeOrder(bid);
-                    api.placeOrder(ask);
+                    api.placeOrder(newBid);
                 }
+
+                // if orders contains an ask
+                Optional<Order> optionalAsk = orders.stream().filter(o -> o.side().equals(Side.Buy)).findAny();
+                if (optionalAsk.isPresent()) {
+                    Order currentAsk = optionalAsk.get();
+
+                    // if current ask is not the name as the new calculated ask
+                    if (!currentAsk.isEquivalentTo(newAsk)) {
+                        api.replaceOrder(currentAsk.orderId(), newAsk);
+                    }
+                } else {
+                    api.placeOrder(newAsk);
+                }
+
 
             } catch (Exception ex) {
                 LOGGER.log(Level.SEVERE, "CANCELLING ALL ORDERS", ex);
                 api.cancellAllOrders();
-            }
-                
+            }    
         }
     }    
 }

@@ -14,19 +14,18 @@ public class Order {
     private double qty;
     private TimeInForce timeInForce;
     private OrderStatus orderStatus;
-    private String orderLinkId;
+    private String orderId;
 
-    public Order (String symbol, Side side, OrderType orderType, double price, double qty, TimeInForce timeInForce, String orderLinkId) {
+    public Order (String symbol, Side side, OrderType orderType, double price, double qty, TimeInForce timeInForce) {
         this.symbol = symbol;
         this.side = side;
         this.orderType = orderType;
         this.price = price;
         this.qty = qty;
         this.timeInForce = timeInForce;
-        this.orderLinkId = orderLinkId;
     }
     
-    public Order (String symbol, Side side, OrderType orderType, double price, double qty, TimeInForce timeInForce, OrderStatus orderStatus, String orderLinkId) {
+    public Order (String symbol, Side side, OrderType orderType, double price, double qty, TimeInForce timeInForce, OrderStatus orderStatus) {
         this.symbol = symbol;
         this.side = side;
         this.orderType = orderType;
@@ -34,7 +33,6 @@ public class Order {
         this.qty = qty;
         this.timeInForce = timeInForce;
         this.orderStatus = orderStatus;
-        this.orderLinkId = orderLinkId;
     }
     
     public String symbol() {
@@ -65,11 +63,23 @@ public class Order {
         return orderStatus;
     }
 
-    public String orderLinkId() {
-        return orderLinkId;
+    public String orderId() {
+        return orderId;
+    }
+
+    public void setId(String orderId) {
+        this.orderId = orderId;
     }
 
     public void setStatus(OrderStatus status) {
         this.orderStatus = status;
+    }
+
+    public boolean isEquivalentTo(Order order) {
+        if (order.side() == this.side && order.price() == this.price && order.qty() == this.qty) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

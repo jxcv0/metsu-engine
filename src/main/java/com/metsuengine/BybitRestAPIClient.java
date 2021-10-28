@@ -116,6 +116,7 @@ public class BybitRestAPIClient {
             }
             
         });
+
         int qty = (int) order.qty();
         requestParams.put("side", order.side().toString());
         requestParams.put("symbol", symbol);
@@ -123,12 +124,11 @@ public class BybitRestAPIClient {
         requestParams.put("qty", qty + "");
         requestParams.put("price", order.price() + "");
         requestParams.put("time_in_force", order.timeInForce().toString());
-        requestParams.put("order_link_id", order.orderLinkId());
         requestParams.put("timestamp", ZonedDateTime.now(ZoneOffset.UTC).toInstant().toEpochMilli() + "");
         requestParams.put("api_key", APIKeys.key);
 
         String queryString = generateQueryString(requestParams);
-                
+
         Request request = new Request.Builder()
             .post(RequestBody.create(new byte[0], null))
             .url("https://api.bybit.com/v2/private/order/create?" + queryString)
@@ -138,11 +138,10 @@ public class BybitRestAPIClient {
 
         try {
             Response response = call.execute();
-            System.out.println(response);
             response.body().close();
             if (!response.isSuccessful()) {
                 LOGGER.warning("Response unsuccessful");
-                System.out.println(response);
+                System.out.println(response.body().string());
                 response.body().close();
             }
         } catch (Exception e) {
@@ -150,7 +149,7 @@ public class BybitRestAPIClient {
         }
     }
 
-    public void replaceOrder(Order order)  throws NoSuchAlgorithmException, InvalidKeyException, IOException {
+    public void replaceOrder(String orderId, Order order)  throws NoSuchAlgorithmException, InvalidKeyException, IOException {
         TreeMap<String, String> requestParams = new TreeMap<String, String>(new Comparator<String>() {
 
             @Override
@@ -163,7 +162,7 @@ public class BybitRestAPIClient {
         requestParams.put("symbol", symbol);
         requestParams.put("p_r_qty", qty + "");
         requestParams.put("p_r_price", order.price() + "");
-        requestParams.put("order_link_id", order.orderLinkId());
+        requestParams.put("order_id", orderId);
         requestParams.put("timestamp", ZonedDateTime.now(ZoneOffset.UTC).toInstant().toEpochMilli() + "");
         requestParams.put("api_key", APIKeys.key);
 
@@ -180,7 +179,7 @@ public class BybitRestAPIClient {
             Response response = call.execute();
             if (!response.isSuccessful()) {
                 LOGGER.warning("Response unsuccessful");
-                System.out.println(response);
+                System.out.println(response.body().string());
                 response.body().close();
             }
         } catch (Exception e) {
@@ -216,7 +215,7 @@ public class BybitRestAPIClient {
                 Response response = call.execute();
                 if (!response.isSuccessful()) {
                     LOGGER.warning("Response unsuccessful");
-                    System.out.println(response);
+                    System.out.println(response.body().string());
                     response.body().close();
                 }
             } catch (Exception e) {
@@ -308,15 +307,17 @@ public class BybitRestAPIClient {
             if (node.has("result")) {
                 JsonNode results = node.get("result");
                 for (JsonNode result : results) {
-                    orders.add(new Order(
+                    Order order = new Order(
                         symbol,
                         Side.valueOf(result.get("side").asText()),
                         OrderType.valueOf(result.get("order_type").asText()),
                         result.get("price").asDouble(),
                         result.get("qty").asDouble(),
                         TimeInForce.valueOf(result.get("time_in_force").asText()),
-                        OrderStatus.valueOf(result.get("order_status").asText()),
-                        result.get("order_link_id").asText()));
+                        OrderStatus.valueOf(result.get("order_status").asText()));
+                        
+                        order.setId(result.get("order_id").asText());
+                        orders.add(order);
                 }
             }
         } catch (Exception e) {
