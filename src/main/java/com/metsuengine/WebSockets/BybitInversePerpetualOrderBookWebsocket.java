@@ -50,6 +50,7 @@ public class BybitInversePerpetualOrderBookWebsocket implements WebSocketHandler
                         orderBook.insertOrUpdate(price, value);
                     }
                 } else {
+                    orderBook.ready();
                     JsonNode data = response.get("data");
 
                     JsonNode delete = data.get("delete");

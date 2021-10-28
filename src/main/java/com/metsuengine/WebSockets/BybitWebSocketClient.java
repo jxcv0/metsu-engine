@@ -12,7 +12,7 @@ import javax.websocket.WebSocketContainer;
 
 import org.json.JSONObject;
 
-public class BybitWebSocketClient implements Runnable {
+public class BybitWebSocketClient extends Thread {
 
     static Session session;
     private final List<BybitInversePerpetualSubscriptionSet> subscriptionSets;

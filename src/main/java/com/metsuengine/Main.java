@@ -1,41 +1,31 @@
 package com.metsuengine;
 
-import com.metsuengine.Enums.OrderStatus;
-import com.metsuengine.Enums.OrderType;
-import com.metsuengine.Enums.Side;
-import com.metsuengine.Enums.TimeInForce;
-import com.metsuengine.WebSockets.CoinbaseSpotOrderbookWebSocket;
-import com.metsuengine.WebSockets.CoinbaseSubscriptionSet;
-import com.metsuengine.WebSockets.CoinbaseWebsocketClient;
+import com.metsuengine.WebSockets.BybitInversePerpetualOrderBookWebsocket;
+import com.metsuengine.WebSockets.BybitInversePerpetualSubscriptionSet;
+import com.metsuengine.WebSockets.BybitInversePerpetualTradeWebSocket;
+import com.metsuengine.WebSockets.BybitWebSocketClient;
 
 public class Main {
     public static void main( String[] args ) {
 
-        Order order = new Order("BTCUSD", Side.Buy, OrderType.Limit, 58000, 1, TimeInForce.GoodTillCancel, OrderStatus.New, "SUCCESS!");
+        final TickSeries tickSeries = new TickSeries(10);
+        final MarketOrderBook orderBook = new MarketOrderBook();
 
-        BybitRestAPIClient api = new BybitRestAPIClient("BTCUSD");
-        try {
-            api.placeOrder(order);
-            for (Order o : api.getOrders()) {
-                if (o.orderLinkId().length() > 0) {
-                    System.out.println(o.orderLinkId());
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();    
-        }
+        new OrderMatchingStrategy(tickSeries, orderBook);
 
-        // final MarketOrderBook orderBook = new MarketOrderBook();
+        BybitWebSocketClient client = new BybitWebSocketClient(
+            new BybitInversePerpetualSubscriptionSet(
+                new BybitInversePerpetualTradeWebSocket(tickSeries),
+                    "wss://stream.bytick.com/realtime",
+                    "trade.BTCUSD"),
+            new BybitInversePerpetualSubscriptionSet(
+                new BybitInversePerpetualOrderBookWebsocket(orderBook),
+                    "wss://stream.bytick.com/realtime",
+                    "orderBookL2_25.BTCUSD")
+            
+        );
 
-        // new Controller(orderBook, 100000, 0.1, 400);
-
-        // String[] channels = {"level2", "heartbeat"};
-        // CoinbaseWebsocketClient client = new CoinbaseWebsocketClient(
-        //     new CoinbaseSubscriptionSet(
-        //         new CoinbaseSpotOrderbookWebSocket(orderBook), "BTC-USD", channels)
-        // );
-
-        // client.start();
+        client.start();
 
     }
 }

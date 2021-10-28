@@ -56,6 +56,10 @@ public class MarketOrderBook {
         fireStateChanged();
     }
 
+    public double getVolumeAtLevel(double level) {
+        return orderBook.get(level);
+    }
+
     public double delta() {
         return orderBook.values().stream().mapToDouble(Double::doubleValue).sum();
     }

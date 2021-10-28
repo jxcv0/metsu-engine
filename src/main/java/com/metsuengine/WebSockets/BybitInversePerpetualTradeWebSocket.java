@@ -40,8 +40,6 @@ public class BybitInversePerpetualTradeWebSocket implements WebSocketHandler {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode response = mapper.readTree(message);
 
-            System.out.println(response);
-
             if (response.has("data")) {
                 JsonNode data = response.findValue("data");
 

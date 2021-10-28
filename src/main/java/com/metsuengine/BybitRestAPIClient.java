@@ -70,7 +70,7 @@ public class BybitRestAPIClient {
             Response response = call.execute();
             position = mapToPosition(response);
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Exeption cuaght mapping to Postition", e);
+            LOGGER.log(Level.SEVERE, "Exeption caught mapping to Postition", e);
         }
         return position;
     }
@@ -102,7 +102,7 @@ public class BybitRestAPIClient {
             Response response = call.execute();
             orders.addAll(mapToOrder(response));
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Severe: ", e);
+            LOGGER.log(Level.SEVERE, "", e);
         }
         return orders;
     }
@@ -118,7 +118,7 @@ public class BybitRestAPIClient {
         });
         int qty = (int) order.qty();
         requestParams.put("side", order.side().toString());
-        requestParams.put("symbol", order.symbol());
+        requestParams.put("symbol", symbol);
         requestParams.put("order_type", order.orderType().toString());
         requestParams.put("qty", qty + "");
         requestParams.put("price", order.price() + "");
@@ -138,9 +138,88 @@ public class BybitRestAPIClient {
 
         try {
             Response response = call.execute();
-            System.out.println(response);
+            if (!response.isSuccessful()) {
+                LOGGER.warning("Response unsuccessful");
+                response.close();
+            }
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Severe: ", e);
+            LOGGER.log(Level.SEVERE, "Exeption caught while placing order", e);
+        }
+    }
+
+    public void replaceOrder(Order order)  throws NoSuchAlgorithmException, InvalidKeyException, IOException {
+        TreeMap<String, String> requestParams = new TreeMap<String, String>(new Comparator<String>() {
+
+            @Override
+            public int compare(String o1, String o2) {
+                return o1.compareTo(o2);
+            }
+            
+        });
+        int qty = (int) order.qty();
+        requestParams.put("symbol", symbol);
+        requestParams.put("p_r_qty", qty + "");
+        requestParams.put("p_r_price", order.price() + "");
+        requestParams.put("order_link_id", order.orderLinkId());
+        requestParams.put("timestamp", ZonedDateTime.now(ZoneOffset.UTC).toInstant().toEpochMilli() + "");
+        requestParams.put("api_key", APIKeys.key);
+
+        String queryString = generateQueryString(requestParams);
+                
+        Request request = new Request.Builder()
+            .post(RequestBody.create(new byte[0], null))
+            .url("https://api.bybit.com/v2/private/order/replace?" + queryString)
+            .build();
+
+        Call call = client.newCall(request);
+
+        try {
+            Response response = call.execute();
+            if (!response.isSuccessful()) {
+                LOGGER.warning("Response unsuccessful");
+                response.close();
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Exeption caught while placing order", e);
+        }
+    }
+
+    public void cancellAllOrders() {
+        try {
+            TreeMap<String, String> requestParams = new TreeMap<String, String>(new Comparator<String>() {
+
+                @Override
+                public int compare(String o1, String o2) {
+                    return o1.compareTo(o2);
+                }
+                
+            });
+
+            requestParams.put("symbol", symbol);
+            requestParams.put("timestamp", ZonedDateTime.now(ZoneOffset.UTC).toInstant().toEpochMilli() + "");
+            requestParams.put("api_key", APIKeys.key);
+
+            String queryString = generateQueryString(requestParams);
+                    
+            Request request = new Request.Builder()
+                .post(RequestBody.create(new byte[0], null))
+                .url("https://api.bybit.com/v2/private/order/cancelAll?" + queryString)
+                .build();
+
+            Call call = client.newCall(request);
+
+            try {
+                Response response = call.execute();
+                if (!response.isSuccessful()) {
+                    LOGGER.warning("Response unsuccessful");
+                    response.close();
+                }
+            } catch (Exception e) {
+                LOGGER.log(Level.SEVERE, "Exeption caught while cancelling orders", e);
+            }
+        } catch (Exception e) {
+            // questionable
+            e.printStackTrace();
         }
     }
 
