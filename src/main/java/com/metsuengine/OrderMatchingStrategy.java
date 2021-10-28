@@ -47,6 +47,11 @@ public class OrderMatchingStrategy implements ChangeListener {
 
                 List<Order> orders = api.getOrders();
 
+                if (orders.size() < 1) {
+                    api.placeOrder(bid);
+                    api.placeOrder(ask);
+                }
+
                 for (Order order : orders) {
                     if (order.orderLinkId() == bid.orderLinkId()) {
                         if (order.price() != bid.price() || order.qty() != bid.qty()) {
@@ -66,7 +71,7 @@ public class OrderMatchingStrategy implements ChangeListener {
                 }
 
             } catch (Exception ex) {
-                LOGGER.log(Level.SEVERE, "CANCELING ALL ORDERS", ex);
+                LOGGER.log(Level.SEVERE, "CANCELLING ALL ORDERS", ex);
                 api.cancellAllOrders();
             }
                 

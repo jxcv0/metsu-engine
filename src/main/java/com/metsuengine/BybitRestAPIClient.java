@@ -138,9 +138,11 @@ public class BybitRestAPIClient {
 
         try {
             Response response = call.execute();
+            response.body().close();
             if (!response.isSuccessful()) {
                 LOGGER.warning("Response unsuccessful");
-                response.close();
+                System.out.println(response);
+                response.body().close();
             }
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Exeption caught while placing order", e);
@@ -177,7 +179,8 @@ public class BybitRestAPIClient {
             Response response = call.execute();
             if (!response.isSuccessful()) {
                 LOGGER.warning("Response unsuccessful");
-                response.close();
+                System.out.println(response);
+                response.body().close();
             }
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Exeption caught while placing order", e);
@@ -212,7 +215,8 @@ public class BybitRestAPIClient {
                 Response response = call.execute();
                 if (!response.isSuccessful()) {
                     LOGGER.warning("Response unsuccessful");
-                    response.close();
+                    System.out.println(response);
+                    response.body().close();
                 }
             } catch (Exception e) {
                 LOGGER.log(Level.SEVERE, "Exeption caught while cancelling orders", e);
