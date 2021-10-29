@@ -1,6 +1,7 @@
 package com.metsuengine.WebSockets;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.websocket.ClientEndpoint;
@@ -12,18 +13,21 @@ import javax.websocket.Session;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.metsuengine.Enums.OrderStatus;
+import com.metsuengine.Enums.OrderType;
+import com.metsuengine.Enums.Side;
+import com.metsuengine.Enums.TimeInForce;
 import com.metsuengine.Order;
-import com.metsuengine.Tick;
-import com.metsuengine.TickSeries;
+import com.metsuengine.QuotePair;
 import com.metsuengine.WebSocketHandler;
 
 @ClientEndpoint
 public class BybitOrderWebSocket implements WebSocketHandler {
 
-    private final List<Order> orders;
+    private final QuotePair quotes;
 
-    public BybitOrderWebSocket(List<Order> orders) {
-        this.orders = orders;
+    public BybitOrderWebSocket(QuotePair quotes) {
+        this.quotes = quotes;
     }
 
     @OnOpen
@@ -46,11 +50,23 @@ public class BybitOrderWebSocket implements WebSocketHandler {
                 JsonNode data = response.findValue("data");
 
                 // TODO - parse JSON to Orders
-                // replace if different
                 if (!data.isNull()) {
+                    List<Order> orders = new ArrayList<>();
                     for (JsonNode node : data) {
-                        Order order = new Order(symbol, side, orderType, price, qty, timeInForce, orderStatus)                        
+                        Order order = new Order(
+                            node.get("symbol").asText(),
+                            Side.valueOf(node.get("side").asText()),
+                            OrderType.valueOf(node.get("order_type").asText()),
+                            node.get("price").asDouble(),
+                            node.get("qty").asDouble(),
+                            TimeInForce.valueOf(node.get("time_in_force").asText()),
+                            OrderStatus.valueOf(node.get("order_status").asText()));
+
+                        order.setId(node.get("order_id").asText());
+
+                        orders.add(order);
                     }
+                    quotes.update(orders);
                 }
             }
   
@@ -67,9 +83,5 @@ public class BybitOrderWebSocket implements WebSocketHandler {
     @OnError
     public void processError(Throwable t) {
         t.printStackTrace();
-    }
-
-    public TickSeries tickSeries() {
-        return tickSeries;
     }
 }

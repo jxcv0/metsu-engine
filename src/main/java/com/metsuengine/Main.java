@@ -3,6 +3,7 @@ package com.metsuengine;
 import com.metsuengine.WebSockets.BybitInversePerpetualOrderBookWebsocket;
 import com.metsuengine.WebSockets.BybitInversePerpetualSubscriptionSet;
 import com.metsuengine.WebSockets.BybitInversePerpetualTradeWebSocket;
+import com.metsuengine.WebSockets.BybitOrderWebSocket;
 import com.metsuengine.WebSockets.BybitWebSocketClient;
 
 public class Main {
@@ -11,8 +12,9 @@ public class Main {
 
         final TickSeries tickSeries = new TickSeries(10);
         final LimitOrderBook orderBook = new LimitOrderBook();
+        final QuotePair quotes = new QuotePair();
 
-        new OrderMatchingStrategy(tickSeries, orderBook);
+        new OrderMatchingStrategy(tickSeries, orderBook, quotes);
 
         BybitWebSocketClient client = new BybitWebSocketClient(
             new BybitInversePerpetualSubscriptionSet(
@@ -22,11 +24,13 @@ public class Main {
             new BybitInversePerpetualSubscriptionSet(
                 new BybitInversePerpetualOrderBookWebsocket(orderBook),
                     "wss://stream.bytick.com/realtime",
-                    "orderBookL2_25.BTCUSD")
-            
+                    "orderBookL2_25.BTCUSD"),
+            new BybitInversePerpetualSubscriptionSet(
+                new BybitOrderWebSocket(quotes),
+                    "wss://stream.bytick.com/realtime",
+                    "order")
         );
 
         client.start();
-
     }
 }
