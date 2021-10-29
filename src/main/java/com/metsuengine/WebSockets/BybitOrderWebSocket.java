@@ -49,7 +49,6 @@ public class BybitOrderWebSocket implements WebSocketHandler {
             if (response.has("data")) {
                 JsonNode data = response.findValue("data");
 
-                // TODO - parse JSON to Orders
                 if (!data.isNull()) {
                     List<Order> orders = new ArrayList<>();
                     for (JsonNode node : data) {
@@ -64,9 +63,15 @@ public class BybitOrderWebSocket implements WebSocketHandler {
 
                         order.setId(node.get("order_id").asText());
 
+                        if (order.orderStatus().equals(OrderStatus.Filled)) {
+                            System.out.println("filled");
+                        }
                         orders.add(order);
                     }
-                    quotes.update(orders);
+
+                    // this is replacing all orders even if still active - needs changing 
+                    quotes.setBid(orders.stream().filter(o -> o.side().equals(Side.Buy)).findAny());
+                    quotes.setAsk(orders.stream().filter(o -> o.side().equals(Side.Sell)).findAny());
                 }
             }
   

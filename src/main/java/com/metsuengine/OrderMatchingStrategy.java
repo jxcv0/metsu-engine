@@ -44,18 +44,17 @@ public class OrderMatchingStrategy implements ChangeListener {
         long start = System.currentTimeMillis();
         if (orderBook.isReady()) {
             try {
-                double bidPrice = orderBook.bestBid();
-                double askPrice = orderBook.bestAsk();
-
-                newBid.updatePrice(bidPrice);
+                newBid.updatePrice(orderBook.bestBid());
                 newBid.updateQty(1);
-                newAsk.updatePrice(askPrice);
+
+                newAsk.updatePrice(orderBook.bestAsk());
                 newAsk.updateQty(1);
 
+                System.out.println(quotes.bid().isPresent());
+
                 // if orders contains a bid - SLOOOOOOOOWWWWWWWWW
-                Optional<Order> optionalBid = quotes.bid();
-                if (optionalBid.isPresent()) {
-                    Order currentBid = optionalBid.get();
+                if (quotes.bid().isPresent()) {
+                    Order currentBid = quotes.bid().get();
                     // if current bid is not the name as the new calculated bid
                     if (!currentBid.isEquivalentTo(newBid)) {
                         api.replaceOrder(currentBid.orderId(), newBid);
@@ -65,9 +64,8 @@ public class OrderMatchingStrategy implements ChangeListener {
                 }
 
                 // if orders contains an ask - ALSO SLOOOOOOOOOOWWWWWWWWW
-                Optional<Order> optionalAsk = quotes.ask();
-                if (optionalAsk.isPresent()) {
-                    Order currentAsk = optionalAsk.get();
+                if (quotes.ask().isPresent()) {
+                    Order currentAsk = quotes.ask().get();
                     // if current ask is not the name as the new calculated bid
                     if (!currentAsk.isEquivalentTo(newAsk)) {
                         api.replaceOrder(currentAsk.orderId(), newAsk);
@@ -83,6 +81,6 @@ public class OrderMatchingStrategy implements ChangeListener {
         }
         long end = System.currentTimeMillis();
         ds.addValue(end - start);
-        System.out.println(ds.getMean());
+        // System.out.println(ds.getMean());
     }    
 }

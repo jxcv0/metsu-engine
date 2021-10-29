@@ -36,6 +36,14 @@ public class QuotePair {
         }
     }
 
+    public void setBid(Optional<Order> order) {
+        this.bid = order;
+    }
+
+    public void setAsk(Optional<Order> order) {
+        this.ask = order;
+    }
+
     public Optional<Order> bid() {
         return bid;
     }
