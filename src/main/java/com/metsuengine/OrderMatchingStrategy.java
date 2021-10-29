@@ -1,5 +1,8 @@
 package com.metsuengine;
 
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -8,30 +11,45 @@ import java.util.logging.Logger;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import com.metsuengine.Enums.OrderStatus;
 import com.metsuengine.Enums.OrderType;
 import com.metsuengine.Enums.Side;
 import com.metsuengine.Enums.TimeInForce;
-import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
+import com.metsuengine.WebSockets.BybitInversePerpetualSubscriptionSet;
+import com.metsuengine.WebSockets.BybitInversePerpetualTradeWebSocket;
+import com.metsuengine.WebSockets.BybitWebSocketClient;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 public class OrderMatchingStrategy implements ChangeListener {
 
     private static final Logger LOGGER = Logger.getLogger(OrderMatchingStrategy.class.getName());
+    private final BybitWebSocketClient client;
     private final BybitRestAPIClient api;
     private final LimitOrderBook orderBook;
     private final DescriptiveStatistics ds = new DescriptiveStatistics();
+    private final Order newBid;
+    private final Order newAsk;
 
     public OrderMatchingStrategy(TickSeries tickSeries, LimitOrderBook orderBook) {
-        extracted(tickSeries);
+        listen(tickSeries);
+        this.client = startClient();
         this.orderBook = orderBook;
         this.api = new BybitRestAPIClient("BTCUSD");
+        this.newBid = new Order("BTCUSD", Side.Buy, OrderType.Limit, TimeInForce.GoodTillCancel);
+        this.newAsk = new Order("BTCUSD", Side.Sell, OrderType.Limit, TimeInForce.GoodTillCancel);
     }
 
-    private void extracted(TickSeries tickSeries) {
+    private BybitWebSocketClient startClient() {
+        return new BybitWebSocketClient(
+            new BybitInversePerpetualSubscriptionSet(
+                // new handler required to handle order stream
+                new BybitInversePerpetualTradeWebSocket(tickSeries),
+                    "wss://stream.bytick.com/realtime",
+                    "trade.BTCUSD")
+        );
+    }
+
+    private void listen(TickSeries tickSeries) {
         tickSeries.addChangeListener(this);
     }
 
@@ -42,9 +60,12 @@ public class OrderMatchingStrategy implements ChangeListener {
             try {
                 double bidPrice = orderBook.bestBid();
                 double askPrice = orderBook.bestAsk();
-                
-                Order newBid = new Order("BTCUSD", Side.Buy, OrderType.Limit, bidPrice, 1, TimeInForce.GoodTillCancel, OrderStatus.New);
-                Order newAsk = new Order("BTCUSD", Side.Sell, OrderType.Limit, askPrice, 1, TimeInForce.GoodTillCancel, OrderStatus.New);
+
+                // TODO - Order.Builder
+                newBid.updatePrice(bidPrice);
+                newBid.updateQty(1);
+                newAsk.updatePrice(askPrice);
+                newAsk.updateQty(1);
 
                 List<Order> orders = api.getOrders();
 

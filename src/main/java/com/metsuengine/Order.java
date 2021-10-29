@@ -16,12 +16,10 @@ public class Order {
     private OrderStatus orderStatus;
     private String orderId;
 
-    public Order (String symbol, Side side, OrderType orderType, double price, double qty, TimeInForce timeInForce) {
+    public Order (String symbol, Side side, OrderType orderType, TimeInForce timeInForce) {
         this.symbol = symbol;
         this.side = side;
         this.orderType = orderType;
-        this.price = price;
-        this.qty = qty;
         this.timeInForce = timeInForce;
     }
     
@@ -51,8 +49,16 @@ public class Order {
         return price;
     }
 
+    public void updatePrice(double price) {
+        this.price = price;
+    }
+
     public double qty() {
         return qty;
+    }
+
+    public void updateQty(double qty) {
+        this.qty = qty;
     }
 
     public TimeInForce timeInForce() {
@@ -81,5 +87,5 @@ public class Order {
         } else {
             return false;
         }
-    }
+    }   
 }
