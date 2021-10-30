@@ -52,9 +52,7 @@ public class QuotePair {
         return ask;
     }
 
-    // only set optional to empty if filled
     public void update(List<Order> orders) {
-        // if orders contains a bid
         Optional<Order> optionalBid = orders.stream().filter(o -> o.side().equals(Side.Buy)).findAny();
         if (optionalBid.isPresent()) {
             Order bid = optionalBid.get();

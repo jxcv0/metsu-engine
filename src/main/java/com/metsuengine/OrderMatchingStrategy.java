@@ -52,7 +52,7 @@ public class OrderMatchingStrategy implements ChangeListener {
                 // if orders contains a bid
                 if (quotes.bid().isPresent()) {
                     // if current bid is not the name as the new calculated bid
-                    if (quotes.bid().get().isEquivalentTo(newBid)) {
+                    if (!quotes.bid().get().isEquivalentTo(newBid)) {
                         api.replaceOrder(quotes.bid().get().orderId(), newBid);
                     }
                 } else {
@@ -62,7 +62,7 @@ public class OrderMatchingStrategy implements ChangeListener {
                 // if orders contains an ask
                 if (quotes.ask().isPresent()) {
                     // if current ask is not the name as the new calculated bid
-                    if (quotes.ask().get().isEquivalentTo(newAsk)) {
+                    if (!quotes.ask().get().isEquivalentTo(newAsk)) {
                         api.replaceOrder(quotes.ask().get().orderId(), newAsk);
                     }
                 } else {
