@@ -55,8 +55,7 @@ public class QuotePair {
     public void update(List<Order> orders) {
         Optional<Order> optionalBid = orders.stream().filter(o -> o.side().equals(Side.Buy)).findAny();
         if (optionalBid.isPresent()) {
-            Order bid = optionalBid.get();
-            switch (bid.orderStatus()) {
+            switch (optionalBid.get().orderStatus()) {
                 case New:
                     setBid(bid);
                     break;
@@ -72,8 +71,8 @@ public class QuotePair {
 
         Optional<Order> optionalAsk = orders.stream().filter(o -> o.side().equals(Side.Sell)).findAny();
         if (optionalAsk.isPresent()) {
-            Order ask = optionalAsk.get();
-            switch (ask.orderStatus()) {
+            System.out.println(optionalAsk.get().orderStatus());
+            switch (optionalAsk.get().orderStatus()) {
                 case New:
                     setAsk(ask);
                     break;
@@ -86,6 +85,5 @@ public class QuotePair {
                     break;
             }
         }
-        System.out.println(bid() + " " + ask());
     }
 }

@@ -49,22 +49,14 @@ public class OrderMatchingStrategy implements ChangeListener {
                 newAsk.updatePrice(orderBook.bestAsk());
                 newAsk.updateQty(1);
 
-                // if orders contains a bid
                 if (quotes.bid().isPresent()) {
-                    // if current bid is not the name as the new calculated bid
-                    if (!quotes.bid().get().isEquivalentTo(newBid)) {
-                        api.replaceOrder(quotes.bid().get().orderId(), newBid);
-                    }
+                    api.replaceOrder(quotes.bid().get().orderId(), newBid);
                 } else {
                     api.placeOrder(newBid);
                 }
 
-                // if orders contains an ask
                 if (quotes.ask().isPresent()) {
-                    // if current ask is not the name as the new calculated bid
-                    if (!quotes.ask().get().isEquivalentTo(newAsk)) {
-                        api.replaceOrder(quotes.ask().get().orderId(), newAsk);
-                    }
+                    api.replaceOrder(quotes.ask().get().orderId(), newAsk);
                 } else {
                     api.placeOrder(newAsk);
                 }
@@ -76,6 +68,6 @@ public class OrderMatchingStrategy implements ChangeListener {
         }
         long end = System.currentTimeMillis();
         ds.addValue(end - start);
-        // System.out.println(ds.getMean());
+        System.out.println(ds.getMean());
     }    
 }
