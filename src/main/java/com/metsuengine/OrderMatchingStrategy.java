@@ -3,7 +3,6 @@ package com.metsuengine;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -50,25 +49,21 @@ public class OrderMatchingStrategy implements ChangeListener {
                 newAsk.updatePrice(orderBook.bestAsk());
                 newAsk.updateQty(1);
 
-                System.out.println(quotes.bid().isPresent());
-
-                // if orders contains a bid - SLOOOOOOOOWWWWWWWWW
+                // if orders contains a bid
                 if (quotes.bid().isPresent()) {
-                    Order currentBid = quotes.bid().get();
                     // if current bid is not the name as the new calculated bid
-                    if (!currentBid.isEquivalentTo(newBid)) {
-                        api.replaceOrder(currentBid.orderId(), newBid);
+                    if (quotes.bid().get().isEquivalentTo(newBid)) {
+                        api.replaceOrder(quotes.bid().get().orderId(), newBid);
                     }
                 } else {
                     api.placeOrder(newBid);
                 }
 
-                // if orders contains an ask - ALSO SLOOOOOOOOOOWWWWWWWWW
+                // if orders contains an ask
                 if (quotes.ask().isPresent()) {
-                    Order currentAsk = quotes.ask().get();
                     // if current ask is not the name as the new calculated bid
-                    if (!currentAsk.isEquivalentTo(newAsk)) {
-                        api.replaceOrder(currentAsk.orderId(), newAsk);
+                    if (quotes.ask().get().isEquivalentTo(newAsk)) {
+                        api.replaceOrder(quotes.ask().get().orderId(), newAsk);
                     }
                 } else {
                     api.placeOrder(newAsk);

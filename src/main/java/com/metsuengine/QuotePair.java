@@ -4,6 +4,7 @@ import java.security.InvalidParameterException;
 import java.util.List;
 import java.util.Optional;
 
+import com.metsuengine.Enums.OrderStatus;
 import com.metsuengine.Enums.Side;
 
 public class QuotePair {
@@ -53,9 +54,9 @@ public class QuotePair {
     }
 
     public void update(List<Order> orders) {
-        this.bid = orders.stream().filter(o -> o.side().equals(Side.Buy)).findAny();
-        this.ask = orders.stream().filter(o -> o.side().equals(Side.Sell)).findAny();
+        // TODO - unfinished
+        List<Order> newBids = orders.stream().filter(o -> o.orderStatus().equals(OrderStatus.New)).toList();
+        List<Order> filledOrders = orders.stream().filter(o -> o.orderStatus().equals(OrderStatus.Filled)).toList();
+        System.out.println("filled orders: " + filledOrders);
     }
-
-    // Optional<Order> optionalBid = orders.stream().filter(o -> o.side().equals(Side.Buy)).findAny();
 }

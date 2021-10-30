@@ -62,16 +62,9 @@ public class BybitOrderWebSocket implements WebSocketHandler {
                             OrderStatus.valueOf(node.get("order_status").asText()));
 
                         order.setId(node.get("order_id").asText());
-
-                        if (order.orderStatus().equals(OrderStatus.Filled)) {
-                            System.out.println("filled");
-                        }
                         orders.add(order);
                     }
-
-                    // this is replacing all orders even if still active - needs changing 
-                    quotes.setBid(orders.stream().filter(o -> o.side().equals(Side.Buy)).findAny());
-                    quotes.setAsk(orders.stream().filter(o -> o.side().equals(Side.Sell)).findAny());
+                    quotes.update(orders);
                 }
             }
   
