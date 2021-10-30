@@ -50,13 +50,17 @@ public class OrderMatchingStrategy implements ChangeListener {
                 newAsk.updateQty(1);
 
                 if (quotes.bid().isPresent()) {
-                    api.replaceOrder(quotes.bid().get().orderId(), newBid);
+                    if (!quotes.bid().get().isEquivalentTo(newBid)) {
+                        api.replaceOrder(quotes.bid().get().orderId(), newBid);
+                    }
                 } else {
                     api.placeOrder(newBid);
                 }
 
                 if (quotes.ask().isPresent()) {
-                    api.replaceOrder(quotes.ask().get().orderId(), newAsk);
+                    if (!quotes.ask().get().isEquivalentTo(newAsk)) {
+                        api.replaceOrder(quotes.ask().get().orderId(), newAsk);
+                    }
                 } else {
                     api.placeOrder(newAsk);
                 }

@@ -1,8 +1,6 @@
 package com.metsuengine.WebSockets;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.websocket.ClientEndpoint;
 import javax.websocket.OnClose;
@@ -45,11 +43,10 @@ public class BybitOrderWebSocket implements WebSocketHandler {
         try {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode response = mapper.readTree(message);
-            System.out.println(response);
+
             if (response.has("data")) {
                 JsonNode data = response.findValue("data");
                 if (!data.isEmpty()) {
-                    List<Order> orders = new ArrayList<>();
                     for (JsonNode node : data) {
                         Order order = new Order(
                             node.get("symbol").asText(),
@@ -61,11 +58,10 @@ public class BybitOrderWebSocket implements WebSocketHandler {
                             OrderStatus.valueOf(node.get("order_status").asText()));
 
                         order.setId(node.get("order_id").asText());
-                        orders.add(order);
-                        System.out.println("in loop");
+                        
+                        quotes.update(order);
                     }
-                    System.out.println(orders.size());
-                    quotes.update(orders);
+
                 }
             }
   
