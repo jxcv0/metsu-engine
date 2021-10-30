@@ -30,7 +30,7 @@ public class QuotePair {
 
     public void setAsk(Order order) {
         if (order.side() == Side.Sell) {
-            this.bid = Optional.of(order);
+            this.ask = Optional.of(order);
         } else {
             throw new InvalidParameterException("New ask quote must be a sell order");
         }
@@ -54,10 +54,40 @@ public class QuotePair {
 
     // only set optional to empty if filled
     public void update(List<Order> orders) {
-        orders.stream().filter(o -> o.side().equals(Side.Buy)).findAny()
-            .ifPresent(o -> setBid(o));
-        
-        orders.stream().filter(o -> o.side().equals(Side.Sell)).findAny()
-            .ifPresent(o -> setAsk(o));
+        // if orders contains a bid
+        Optional<Order> optionalBid = orders.stream().filter(o -> o.side().equals(Side.Buy)).findAny();
+        if (optionalBid.isPresent()) {
+            Order bid = optionalBid.get();
+            switch (bid.orderStatus()) {
+                case New:
+                    setBid(bid);
+                    break;
+                
+                case Filled:
+                    setBid(Optional.empty());
+                    break;
+            
+                default:
+                    break;
+            }
+        }
+
+        Optional<Order> optionalAsk = orders.stream().filter(o -> o.side().equals(Side.Sell)).findAny();
+        if (optionalAsk.isPresent()) {
+            Order ask = optionalAsk.get();
+            switch (ask.orderStatus()) {
+                case New:
+                    setAsk(ask);
+                    break;
+                
+                case Filled:
+                    setAsk(Optional.empty());
+                    break;
+            
+                default:
+                    break;
+            }
+        }
+        System.out.println(bid() + " " + ask());
     }
 }
