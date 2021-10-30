@@ -63,7 +63,7 @@ public class BybitWebSocketClient extends Thread {
         JSONObject req=new JSONObject();
         req.put("op", "auth");
         List<String> args = new LinkedList<String>();
-        String expires = String.valueOf(System.currentTimeMillis()+1000);
+        String expires = String.valueOf(System.currentTimeMillis() + 2500);
         args.add(APIKeys.key);
         args.add(expires);
         args.add(generate_signature(expires));

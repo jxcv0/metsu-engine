@@ -63,7 +63,27 @@ public class QuotePair {
                 case Filled:
                     setBid(Optional.empty());
                     break;
-            
+
+                case Created:
+                    setBid(bid);
+                    break;
+
+                case Cancelled:
+                    setBid(Optional.empty());
+                    break;
+
+                case PartiallyFilled:
+                    setBid(bid);
+                    break;
+
+                case PendingCancel:
+                    setBid(Optional.empty());
+                    break;
+
+                case Rejected:
+                    setBid(Optional.empty());
+                    break;
+
                 default:
                     break;
             }
@@ -71,7 +91,6 @@ public class QuotePair {
 
         Optional<Order> optionalAsk = orders.stream().filter(o -> o.side().equals(Side.Sell)).findAny();
         if (optionalAsk.isPresent()) {
-            System.out.println(optionalAsk.get().orderStatus());
             switch (optionalAsk.get().orderStatus()) {
                 case New:
                     setAsk(ask);
@@ -80,7 +99,27 @@ public class QuotePair {
                 case Filled:
                     setAsk(Optional.empty());
                     break;
-            
+
+                case Created:
+                    setAsk(ask);
+                    break;
+
+                case Cancelled:
+                    setAsk(Optional.empty());
+                    break;
+
+                case PartiallyFilled:
+                    setBid(bid);
+                    break;
+
+                case PendingCancel:
+                    setAsk(Optional.empty());
+                    break;
+
+                case Rejected:
+                    setAsk(Optional.empty());
+                    break;
+
                 default:
                     break;
             }

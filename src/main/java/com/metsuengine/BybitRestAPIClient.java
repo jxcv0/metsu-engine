@@ -73,7 +73,6 @@ public class BybitRestAPIClient {
         return Optional.of(position);
     }
 
-    // TODO - this is really really slow, move to websocket/calculated
     public List<Order> getOrders() throws NoSuchAlgorithmException, InvalidKeyException, IOException {
         
         TreeMap<String, String> requestParams = new TreeMap<>((o1, o2) -> o1.compareTo(o2));
@@ -206,7 +205,7 @@ public class BybitRestAPIClient {
      * @throws NoSuchAlgorithmException
      * @throws InvalidKeyException
      */
-    public String generateQueryString(TreeMap<String, String> requestParams) throws NoSuchAlgorithmException, InvalidKeyException {
+    public static String generateQueryString(TreeMap<String, String> requestParams) throws NoSuchAlgorithmException, InvalidKeyException {
         Set<String> keySet = requestParams.keySet();
         Iterator<String> iterator = keySet.iterator();
         StringBuilder stringBuilder = new StringBuilder();
@@ -229,7 +228,7 @@ public class BybitRestAPIClient {
      * @param hash the hashed String
      * @return the converted hash
      */
-    private String bytesToHex(byte[] hash) {
+    public static String bytesToHex(byte[] hash) {
         StringBuffer hexString = new StringBuffer();
         for (int i = 0; i < hash.length; i++) {
             String hex = Integer.toHexString(0xff & hash[i]);

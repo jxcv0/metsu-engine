@@ -45,11 +45,10 @@ public class BybitOrderWebSocket implements WebSocketHandler {
         try {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode response = mapper.readTree(message);
-
+            System.out.println(response);
             if (response.has("data")) {
                 JsonNode data = response.findValue("data");
-
-                if (!data.isNull()) {
+                if (!data.isEmpty()) {
                     List<Order> orders = new ArrayList<>();
                     for (JsonNode node : data) {
                         Order order = new Order(
@@ -63,7 +62,9 @@ public class BybitOrderWebSocket implements WebSocketHandler {
 
                         order.setId(node.get("order_id").asText());
                         orders.add(order);
+                        System.out.println("in loop");
                     }
+                    System.out.println(orders.size());
                     quotes.update(orders);
                 }
             }
