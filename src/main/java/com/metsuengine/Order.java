@@ -82,10 +82,6 @@ public class Order {
     }
 
     public boolean isEquivalentTo(Order order) {
-        if (order.side() == this.side && order.price() == this.price && order.qty() == this.qty) {
-            return true;
-        } else {
-            return false;
-        }
+        return order.price() == price && order.qty() == qty ? true : false;
     }   
 }

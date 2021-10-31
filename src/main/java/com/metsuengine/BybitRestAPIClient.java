@@ -115,7 +115,7 @@ public class BybitRestAPIClient {
 
         Request request = new Request.Builder()
             .post(RequestBody.create(new byte[0], null))
-            .url("https://api.bybit.com/v2/private/order/create?" + queryString)
+            .url("https://api-testnet.bybit.com/v2/private/order/create?" + queryString)
             .build();
 
         Call call = client.newCall(request);
@@ -126,7 +126,7 @@ public class BybitRestAPIClient {
                 LOGGER.warning("Response unsuccessful");
                 System.out.println(response.body().string());
             }
-            System.out.println(response.body().string());
+            getMessage(response);
             response.body().close();
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Exeption caught while placing order", e);
@@ -148,7 +148,7 @@ public class BybitRestAPIClient {
                 
         Request request = new Request.Builder()
             .post(RequestBody.create(new byte[0], null))
-            .url("https://api.bybit.com/v2/private/order/replace?" + queryString)
+            .url("https://api-testnet.bybit.com/v2/private/order/replace?" + queryString)
             .build();
 
         Call call = client.newCall(request);
@@ -159,6 +159,7 @@ public class BybitRestAPIClient {
                 LOGGER.warning("Response unsuccessful");
                 System.out.println(response.body().string());
             }
+            getMessage(response);
             response.body().close();
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Exeption caught while placing order", e);
@@ -177,7 +178,7 @@ public class BybitRestAPIClient {
                     
             Request request = new Request.Builder()
                 .post(RequestBody.create(new byte[0], null))
-                .url("https://api.bybit.com/v2/private/order/cancelAll?" + queryString)
+                .url("https://api-testnet.bybit.com/v2/private/order/cancelAll?" + queryString)
                 .build();
 
             Call call = client.newCall(request);
@@ -188,6 +189,7 @@ public class BybitRestAPIClient {
                     LOGGER.warning("Response unsuccessful");
                     System.out.println(response.body().string());
                 }
+                getMessage(response);
                 response.body().close();
             } catch (IOException e) {
                 LOGGER.log(Level.SEVERE, "Exeption caught while cancelling orders", e);
@@ -295,6 +297,16 @@ public class BybitRestAPIClient {
             LOGGER.log(Level.SEVERE, LOGGER.getName(), e);
         }
         return orders;
+    }
+
+    private void getMessage(Response response) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode node = mapper.readTree(response.body().string());
+            System.out.println(node.get("ret_code") + " " + node.get("ret_msg"));
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, LOGGER.getName(), e);
+        }
     }
 
     /**

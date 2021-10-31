@@ -23,11 +23,11 @@ public class Main {
                     "trade.BTCUSD"),
             new BybitInversePerpetualSubscriptionSet(
                 new BybitInversePerpetualOrderBookWebsocket(orderBook),
-                    "wss://stream.bytick.com/realtime",
+                    "wss://stream-testnet.bytick.com/realtime",
                     "orderBookL2_25.BTCUSD"),
             new BybitInversePerpetualSubscriptionSet(
                 new BybitOrderWebSocket(quotes),
-                    "wss://stream.bytick.com/realtime",
+                    "wss://stream-testnet.bytick.com/realtime",
                     "order")
         );
 
