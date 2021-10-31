@@ -82,6 +82,6 @@ public class Order {
     }
 
     public boolean isEquivalentTo(Order order) {
-        return order.price() == price && order.qty() == qty ? true : false;
+        return order.price() == price? true : false;
     }   
 }

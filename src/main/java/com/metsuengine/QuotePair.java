@@ -2,6 +2,8 @@ package com.metsuengine;
 
 import java.util.Optional;
 
+import com.metsuengine.Enums.State;
+
 public class QuotePair {
     private Optional<Order> bid;
     private Optional<Order> ask;
@@ -106,6 +108,18 @@ public class QuotePair {
         
             default:
                 break;
+        }
+    }
+
+    public State state() {
+        if (bid.isPresent() && ask.isPresent()) {
+            return State.HasBoth;
+        } else if (bid.isPresent() && ask.isEmpty()) {
+            return State.HasBid;
+        } else if (bid.isEmpty() && ask.isPresent()) {
+            return State.HasAsk;
+        } else {
+            return State.HasNone;
         }
     }
 }

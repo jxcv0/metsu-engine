@@ -29,4 +29,11 @@ public class Enums {
         FillOrKill,
         PostOnly
     }
+
+    public enum State {
+        HasAsk,
+        HasBid,
+        HasBoth,
+        HasNone
+    }
 }

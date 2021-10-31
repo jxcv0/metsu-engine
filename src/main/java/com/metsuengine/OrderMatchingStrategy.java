@@ -40,27 +40,32 @@ public class OrderMatchingStrategy implements ChangeListener {
         long start = System.currentTimeMillis();
         if (orderBook.isReady()) {
             try {
-
                 newBid.updatePrice(orderBook.bestBid());
-                newBid.updateQty(1);
+                newBid.updateQty(100);
 
                 newAsk.updatePrice(orderBook.bestAsk());
-                newAsk.updateQty(1);
+                newAsk.updateQty(100);
 
-                if (quotes.bid().isPresent()) {
-                    if (quotes.bid().get().price() != newBid.price()) {
-                        api.replaceOrder(quotes.bid().get().orderId(), newBid);
-                    }
-                } else {
-                    api.placeOrder(newBid);
-                }
+                switch (quotes.state()) {
+                    case HasBoth:
+                        compareBid();
+                        compareAsk();
+                        break;
+                    
+                    case HasBid:
+                        compareBid();
+                        api.placeOrder(newAsk);
+                        break;
 
-                if (quotes.ask().isPresent()) {
-                    if (quotes.ask().get().price() != newAsk.price()) {
-                        api.replaceOrder(quotes.ask().get().orderId(), newAsk);
-                    }
-                } else {
-                    api.placeOrder(newAsk);
+                    case HasAsk:
+                        compareAsk();
+                        api.placeOrder(newBid);
+                        break;
+
+                    default:
+                        api.placeOrder(newBid);
+                        api.placeOrder(newAsk);
+                        break;
                 }
 
             } catch (IOException | InvalidKeyException | NoSuchAlgorithmException ex) {
@@ -69,5 +74,27 @@ public class OrderMatchingStrategy implements ChangeListener {
             }    
         }
         System.out.println(System.currentTimeMillis() - start + "ms");
-    }    
+    }
+    
+    public void compareBid() {
+        try {
+            if (quotes.bid().get().price() != newBid.price()) {
+                api.replaceOrder(quotes.bid().get().orderId(), newBid);
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "CANCELLING ALL ORDERS", e);
+            api.cancellAllOrders();
+        }
+    }
+
+    public void compareAsk() {
+        try {
+            if (quotes.ask().get().price() != newAsk.price()) {
+                api.replaceOrder(quotes.ask().get().orderId(), newAsk);
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "CANCELLING ALL ORDERS", e);
+            api.cancellAllOrders();
+        }
+    }
 }
