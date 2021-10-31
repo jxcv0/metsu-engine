@@ -126,6 +126,7 @@ public class BybitRestAPIClient {
                 LOGGER.warning("Response unsuccessful");
                 System.out.println(response.body().string());
             }
+            System.out.println(response.body().string());
             response.body().close();
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Exeption caught while placing order", e);

@@ -40,6 +40,8 @@ public class OrderMatchingStrategy implements ChangeListener {
         long start = System.currentTimeMillis();
         if (orderBook.isReady()) {
             try {
+
+                // TODO - being rate limited
                 newBid.updatePrice(orderBook.bestBid());
                 newBid.updateQty(1);
 
