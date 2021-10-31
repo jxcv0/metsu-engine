@@ -13,14 +13,11 @@ import com.metsuengine.Enums.OrderType;
 import com.metsuengine.Enums.Side;
 import com.metsuengine.Enums.TimeInForce;
 
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-
 public class OrderMatchingStrategy implements ChangeListener {
 
     private static final Logger LOGGER = Logger.getLogger(OrderMatchingStrategy.class.getName());
     private final BybitRestAPIClient api;
     private final LimitOrderBook orderBook;
-    private final DescriptiveStatistics ds = new DescriptiveStatistics();
     private final Order newBid;
     private final Order newAsk;
     private final QuotePair quotes;
@@ -50,17 +47,13 @@ public class OrderMatchingStrategy implements ChangeListener {
                 newAsk.updateQty(1);
 
                 if (quotes.bid().isPresent()) {
-                    if (!quotes.bid().get().isEquivalentTo(newBid)) {
-                        api.replaceOrder(quotes.bid().get().orderId(), newBid);
-                    }
+                    api.replaceOrder(quotes.bid().get().orderId(), newBid);
                 } else {
                     api.placeOrder(newBid);
                 }
 
                 if (quotes.ask().isPresent()) {
-                    if (!quotes.ask().get().isEquivalentTo(newAsk)) {
-                        api.replaceOrder(quotes.ask().get().orderId(), newAsk);
-                    }
+                    api.replaceOrder(quotes.ask().get().orderId(), newAsk);
                 } else {
                     api.placeOrder(newAsk);
                 }
@@ -70,8 +63,6 @@ public class OrderMatchingStrategy implements ChangeListener {
                 api.cancellAllOrders();
             }    
         }
-        long end = System.currentTimeMillis();
-        ds.addValue(end - start);
-        System.out.println(ds.getMean());
+        System.out.println(System.currentTimeMillis() - start);
     }    
 }
