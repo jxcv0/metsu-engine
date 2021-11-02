@@ -9,8 +9,7 @@ public class Position {
     private double size;
     private double entryPrice;
     
-    public Position(String symbol) {
-        this.symbol = symbol;
+    public Position() {
         this.side = Side.None;
         this.size = 0;
         this.entryPrice = 0;
