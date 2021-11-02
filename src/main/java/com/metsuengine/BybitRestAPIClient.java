@@ -84,7 +84,7 @@ public class BybitRestAPIClient {
 
         Request request = new Request.Builder()
             .post(RequestBody.create(new byte[0], null))
-            .url("https://api-testnet.bybit.com/v2/private/order/create?" + queryString)
+            .url("https://api.bybit.com/v2/private/order/create?" + queryString)
             .build();
 
         Call call = client.newCall(request);
@@ -117,7 +117,7 @@ public class BybitRestAPIClient {
                 
         Request request = new Request.Builder()
             .post(RequestBody.create(new byte[0], null))
-            .url("https://api-testnet.bybit.com/v2/private/order/replace?" + queryString)
+            .url("https://api.bybit.com/v2/private/order/replace?" + queryString)
             .build();
 
         Call call = client.newCall(request);
@@ -147,7 +147,7 @@ public class BybitRestAPIClient {
                     
             Request request = new Request.Builder()
                 .post(RequestBody.create(new byte[0], null))
-                .url("https://api-testnet.bybit.com/v2/private/order/cancelAll?" + queryString)
+                .url("https://api.bybit.com/v2/private/order/cancelAll?" + queryString)
                 .build();
 
             Call call = client.newCall(request);

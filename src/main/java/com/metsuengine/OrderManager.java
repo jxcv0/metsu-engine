@@ -52,12 +52,12 @@ public class OrderManager implements ChangeListener {
                 newBid.updatePrice(
                     Math.min(orderBook.bestBid(),
                     Math.round(model.expectedAssetValueAfterSell(tickSeries.lastTick().price() + 100, tickSeries.lastTick().price() - 100))));
-                newBid.updateQty(100);
+                newBid.updateQty(1);
 
                 newAsk.updatePrice(
                     Math.max(orderBook.bestAsk(),
                     Math.round(model.expectedAssetValueAfterBuy(tickSeries.lastTick().price() + 100, tickSeries.lastTick().price() - 100))));
-                newAsk.updateQty(100);
+                newAsk.updateQty(1);
 
                 switch (quotes.state()) {
                     case HasBoth:

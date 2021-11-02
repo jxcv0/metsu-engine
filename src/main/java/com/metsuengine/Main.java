@@ -19,11 +19,11 @@ public class Main {
         BybitWebSocketClient client = new BybitWebSocketClient(
             new BybitInversePerpetualSubscriptionSet(
                 new BybitOrderWebSocket(quotes),
-                    "wss://stream-testnet.bytick.com/realtime",
+                    "wss://stream.bytick.com/realtime",
                     "order"),
             new BybitInversePerpetualSubscriptionSet(
                 new BybitPositionWebSocket(position),
-                    "wss://stream-testnet.bytick.com/realtime",
+                    "wss://stream.bytick.com/realtime",
                     "position"),
             new BybitInversePerpetualSubscriptionSet(
                 new BybitInversePerpetualTradeWebSocket(tickSeries),
@@ -31,9 +31,8 @@ public class Main {
                     "trade.BTCUSD"),
             new BybitInversePerpetualSubscriptionSet(
                 new BybitInversePerpetualOrderBookWebsocket(orderBook),
-                    "wss://stream-testnet.bytick.com/realtime",
-                    "orderBookL2_25.BTCUSD")
-        );
+                    "wss://stream.bytick.com/realtime",
+                    "orderBookL2_25.BTCUSD"));
 
         new OrderManager(tickSeries, orderBook, quotes, new GlostenMilgrom(0.2));
 

@@ -4,6 +4,7 @@ import java.time.ZonedDateTime;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -47,6 +48,10 @@ public class TickSeries {
 
     public List<Tick> getTicks() {
         return ticks;
+    }
+
+    public double[] toArray() {
+        return ticks.stream().mapToDouble(t -> t.price()).toArray();
     }
 
     public Tick lastTick() {
