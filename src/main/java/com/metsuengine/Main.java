@@ -29,7 +29,7 @@ public class Main {
                     "orderBookL2_25.BTCUSD")
         );
 
-        new OrderManager(tickSeries, orderBook, quotes);
+        new OrderManager(tickSeries, orderBook, quotes, new GlostenMilgrom(0.2));
 
         client.start();
     }

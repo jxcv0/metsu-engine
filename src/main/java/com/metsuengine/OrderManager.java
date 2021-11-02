@@ -21,30 +21,40 @@ public class OrderManager implements ChangeListener {
     private final Order newBid;
     private final Order newAsk;
     private final QuotePair quotes;
+    private final GlostenMilgrom model;
 
-    public OrderManager(TickSeries tickSeries, LimitOrderBook orderBook, QuotePair quotes) {
+    public OrderManager(TickSeries tickSeries, LimitOrderBook orderBook, QuotePair quotes, GlostenMilgrom model) {
         listen(tickSeries);
         this.orderBook = orderBook;
         this.api = new BybitRestAPIClient("BTCUSD");
         this.newBid = new Order("BTCUSD", Side.Buy, OrderType.Limit, TimeInForce.GoodTillCancel);
         this.newAsk = new Order("BTCUSD", Side.Sell, OrderType.Limit, TimeInForce.GoodTillCancel);
         this.quotes = quotes;
+        this.model = model;
     }
 
     private void listen(TickSeries tickSeries) {
         tickSeries.addChangeListener(this);
     }
 
+    // TODO - still exceeding rate limit
+    // TODO - generate array of orders up to gm quote or best quote ( whichever comes first)
     @Override
     public void stateChanged(ChangeEvent e) {
+        TickSeries tickSeries = (TickSeries) e.getSource();
         long start = System.currentTimeMillis();
         if (orderBook.isReady()) {
             try {
+
+                // This needs to go
+                Thread.sleep(500);
                         
-                newBid.updatePrice(orderBook.bestBid());
+                newBid.updatePrice(
+                    Math.round(model.expectedAssetValueAfterSell(tickSeries.lastTick().price() + 100, tickSeries.lastTick().price() - 100)));
                 newBid.updateQty(100);
 
-                newAsk.updatePrice(orderBook.bestAsk());
+                newAsk.updatePrice(
+                    Math.round(model.expectedAssetValueAfterBuy(tickSeries.lastTick().price() + 100, tickSeries.lastTick().price() - 100)));
                 newAsk.updateQty(100);
 
                 switch (quotes.state()) {
@@ -69,7 +79,7 @@ public class OrderManager implements ChangeListener {
                         break;
                 }
 
-            } catch (IOException | InvalidKeyException | NoSuchAlgorithmException ex) {
+            } catch (IOException | InvalidKeyException | NoSuchAlgorithmException | InterruptedException ex) {
                 LOGGER.log(Level.SEVERE, "CANCELLING ALL ORDERS", ex);
                 api.cancellAllOrders();
             }  

@@ -5,21 +5,21 @@ public class GlostenMilgrom {
     /**
      * The probability a trade is from a trader with private information
      */
-    private double speculatorProbability;
+    private final double speculatorProbability;
 
     /**
      * The prior probability that the asset value is high TODO - get from delta
      */
-    private double theta;
+    private final double theta;
 
     /**
      * 
      * @param speculatorProbability the probability a trade is from a trader with private information
      * @param theta the prior probability that the asset value is high
      */
-    public GlostenMilgrom(double speculatorProbability, double theta) {
+    public GlostenMilgrom(double speculatorProbability) {
         this.speculatorProbability = speculatorProbability;
-        this.theta = theta;
+        this.theta = 0.5;
     }
 
     /**
