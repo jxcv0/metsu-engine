@@ -9,11 +9,11 @@ public class Position {
     private double size;
     private double entryPrice;
     
-    public Position(String symbol, Side side, double size, double entryPrice) {
+    public Position(String symbol) {
         this.symbol = symbol;
-        this.side = side;
-        this.size = size;
-        this.entryPrice = entryPrice;
+        this.side = Side.None;
+        this.size = 0;
+        this.entryPrice = 0;
     }
 
     public String symbol() {
@@ -24,11 +24,36 @@ public class Position {
         return side;
     }
 
+    public void setSide(Side side) {
+        this.side = side;
+    }
+
     public double size() {
         return size;
     }
 
+    public void setSize(double size) {
+        this.size = size;
+    }
+
+    public double signedValue() {
+        switch (side) {
+            case Buy:
+                return size;
+
+            case Sell:
+                return -size;
+        
+            default:
+                return 0;
+        }
+    }
+
     public double entryPrice() {
         return entryPrice;
+    }
+
+    public void setEntryPrice(double price) {
+        this.entryPrice = price;
     }
  }

@@ -47,14 +47,16 @@ public class OrderManager implements ChangeListener {
             try {
 
                 // This needs to go
-                Thread.sleep(500);
+                Thread.sleep(100);
                         
                 newBid.updatePrice(
-                    Math.round(model.expectedAssetValueAfterSell(tickSeries.lastTick().price() + 100, tickSeries.lastTick().price() - 100)));
+                    Math.min(orderBook.bestBid(),
+                    Math.round(model.expectedAssetValueAfterSell(tickSeries.lastTick().price() + 100, tickSeries.lastTick().price() - 100))));
                 newBid.updateQty(100);
 
                 newAsk.updatePrice(
-                    Math.round(model.expectedAssetValueAfterBuy(tickSeries.lastTick().price() + 100, tickSeries.lastTick().price() - 100)));
+                    Math.max(orderBook.bestAsk(),
+                    Math.round(model.expectedAssetValueAfterBuy(tickSeries.lastTick().price() + 100, tickSeries.lastTick().price() - 100))));
                 newAsk.updateQty(100);
 
                 switch (quotes.state()) {
