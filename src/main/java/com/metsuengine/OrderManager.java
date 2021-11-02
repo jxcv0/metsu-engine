@@ -13,16 +13,16 @@ import com.metsuengine.Enums.OrderType;
 import com.metsuengine.Enums.Side;
 import com.metsuengine.Enums.TimeInForce;
 
-public class OrderMatchingStrategy implements ChangeListener {
+public class OrderManager implements ChangeListener {
 
-    private static final Logger LOGGER = Logger.getLogger(OrderMatchingStrategy.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(OrderManager.class.getName());
     private final BybitRestAPIClient api;
     private final LimitOrderBook orderBook;
     private final Order newBid;
     private final Order newAsk;
     private final QuotePair quotes;
 
-    public OrderMatchingStrategy(TickSeries tickSeries, LimitOrderBook orderBook, QuotePair quotes) {
+    public OrderManager(TickSeries tickSeries, LimitOrderBook orderBook, QuotePair quotes) {
         listen(tickSeries);
         this.orderBook = orderBook;
         this.api = new BybitRestAPIClient("BTCUSD");
@@ -40,6 +40,7 @@ public class OrderMatchingStrategy implements ChangeListener {
         long start = System.currentTimeMillis();
         if (orderBook.isReady()) {
             try {
+                        
                 newBid.updatePrice(orderBook.bestBid());
                 newBid.updateQty(100);
 
@@ -71,7 +72,7 @@ public class OrderMatchingStrategy implements ChangeListener {
             } catch (IOException | InvalidKeyException | NoSuchAlgorithmException ex) {
                 LOGGER.log(Level.SEVERE, "CANCELLING ALL ORDERS", ex);
                 api.cancellAllOrders();
-            }    
+            }  
         }
         System.out.println(System.currentTimeMillis() - start + "ms");
     }

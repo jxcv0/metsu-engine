@@ -14,9 +14,11 @@ public class Main {
         final LimitOrderBook orderBook = new LimitOrderBook();
         final QuotePair quotes = new QuotePair();
 
-        new OrderMatchingStrategy(tickSeries, orderBook, quotes);
-
         BybitWebSocketClient client = new BybitWebSocketClient(
+            new BybitInversePerpetualSubscriptionSet(
+                new BybitOrderWebSocket(quotes),
+                    "wss://stream-testnet.bytick.com/realtime",
+                    "order"),
             new BybitInversePerpetualSubscriptionSet(
                 new BybitInversePerpetualTradeWebSocket(tickSeries),
                     "wss://stream.bytick.com/realtime",
@@ -24,12 +26,10 @@ public class Main {
             new BybitInversePerpetualSubscriptionSet(
                 new BybitInversePerpetualOrderBookWebsocket(orderBook),
                     "wss://stream-testnet.bytick.com/realtime",
-                    "orderBookL2_25.BTCUSD"),
-            new BybitInversePerpetualSubscriptionSet(
-                new BybitOrderWebSocket(quotes),
-                    "wss://stream-testnet.bytick.com/realtime",
-                    "order")
+                    "orderBookL2_25.BTCUSD")
         );
+
+        new OrderManager(tickSeries, orderBook, quotes);
 
         client.start();
     }
