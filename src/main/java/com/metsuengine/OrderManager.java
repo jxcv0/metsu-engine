@@ -21,9 +21,10 @@ public class OrderManager implements ChangeListener {
     private final Order newBid;
     private final Order newAsk;
     private final QuotePair quotes;
-    private final GlostenMilgrom model;
+    private final Model model;
+    private final Position position; 
 
-    public OrderManager(TickSeries tickSeries, LimitOrderBook orderBook, QuotePair quotes, GlostenMilgrom model) {
+    public OrderManager(TickSeries tickSeries, LimitOrderBook orderBook, QuotePair quotes, Position position, Model model) {
         listen(tickSeries);
         this.orderBook = orderBook;
         this.api = new BybitRestAPIClient("BTCUSD");
@@ -31,17 +32,16 @@ public class OrderManager implements ChangeListener {
         this.newAsk = new Order("BTCUSD", Side.Sell, OrderType.Limit, TimeInForce.GoodTillCancel);
         this.quotes = quotes;
         this.model = model;
+        this.position = position;
     }
 
     private void listen(TickSeries tickSeries) {
         tickSeries.addChangeListener(this);
     }
 
-    // TODO - still exceeding rate limit
-    // TODO - generate array of orders up to gm quote or best quote ( whichever comes first)
     @Override
     public void stateChanged(ChangeEvent e) {
-        TickSeries tickSeries = (TickSeries) e.getSource();
+        // TickSeries tickSeries = (TickSeries) e.getSource();
         long start = System.currentTimeMillis();
         if (orderBook.isReady()) {
             try {
@@ -49,14 +49,10 @@ public class OrderManager implements ChangeListener {
                 // This needs to go
                 Thread.sleep(100);
                         
-                newBid.updatePrice(
-                    Math.min(orderBook.bestBid(),
-                    Math.round(model.expectedAssetValueAfterSell(tickSeries.lastTick().price() + 100, tickSeries.lastTick().price() - 100))));
+                newBid.updatePrice(Math.round(model.bidPrice(orderBook.midPrice(), position.signedValue())));
                 newBid.updateQty(1);
 
-                newAsk.updatePrice(
-                    Math.max(orderBook.bestAsk(),
-                    Math.round(model.expectedAssetValueAfterBuy(tickSeries.lastTick().price() + 100, tickSeries.lastTick().price() - 100))));
+                newAsk.updatePrice(Math.round(model.askPrice(orderBook.midPrice(), position.signedValue())));
                 newAsk.updateQty(1);
 
                 switch (quotes.state()) {

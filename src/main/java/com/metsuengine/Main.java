@@ -34,7 +34,7 @@ public class Main {
                     "wss://stream.bytick.com/realtime",
                     "orderBookL2_25.BTCUSD"));
 
-        new OrderManager(tickSeries, orderBook, quotes, new GlostenMilgrom(0.2));
+        new OrderManager(tickSeries, orderBook, quotes, position, new Model(tickSeries, 0.01, 0.3));
 
         client.start();
     }

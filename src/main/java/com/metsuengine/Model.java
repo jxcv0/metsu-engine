@@ -10,14 +10,20 @@ public class Model {
     
     private final TickSeries tickSeries;
     private final DescriptiveStatistics stats;
+    private final double riskAversionParam;
+    private final double orderBookDensityParam;
 
     /**
      * The constructor
      * @param tickSeries the TickSeries
+     * @param riskAversionParam the risk aversion parameter
+     * @param orderBookDensityParam the liquidity / order book density parameter
      */
-    public Model(TickSeries tickSeries) {
+    public Model(TickSeries tickSeries, double riskAversionParam, double orderBookDensityParam) {
         this.tickSeries = tickSeries;
         this.stats = new DescriptiveStatistics();
+        this.riskAversionParam = riskAversionParam;
+        this.orderBookDensityParam = orderBookDensityParam;
     }
 
     /**
@@ -28,5 +34,27 @@ public class Model {
         stats.clear();
         tickSeries.getTicks().forEach(t -> stats.addValue(t.price()));
         return stats.getStandardDeviation();
+    }
+
+    /**
+     * Calculates reservation (mid price) 
+     * @param marketMidprice the current market midprice
+     * @param positionSize the current position size
+     * @return the reservation price     
+     */
+    public double reservationPrice(double marketMidprice, double positionSize) {
+        return marketMidprice - positionSize * riskAversionParam * Math.pow(volatility(), 2);
+    }
+
+    public double halfSpread() {
+        return (riskAversionParam * Math.pow(volatility(), 2) + ((2 / riskAversionParam) * Math.log(1 + (riskAversionParam / orderBookDensityParam)))) / 2 ;
+    }
+
+    public double askPrice(double marketMidprice, double positionSize) {
+        return reservationPrice(marketMidprice, positionSize) + halfSpread();
+    }
+
+    public double bidPrice(double marketMidprice, double positionSize) {
+        return reservationPrice(marketMidprice, positionSize) - halfSpread();
     }
 }

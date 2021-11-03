@@ -96,6 +96,10 @@ public class LimitOrderBook {
             .min().getAsDouble();
     }
 
+    public double midPrice() {
+        return (bestAsk() + bestAsk()) / 2;
+    }
+
     public int size() {
         return orderBook.size();
     }
