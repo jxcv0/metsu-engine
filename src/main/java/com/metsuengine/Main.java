@@ -1,41 +1,17 @@
 package com.metsuengine;
 
-import com.metsuengine.WebSockets.BybitInversePerpetualOrderBookWebsocket;
-import com.metsuengine.WebSockets.BybitInversePerpetualSubscriptionSet;
-import com.metsuengine.WebSockets.BybitInversePerpetualTradeWebSocket;
-import com.metsuengine.WebSockets.BybitOrderWebSocket;
-import com.metsuengine.WebSockets.BybitPositionWebSocket;
-import com.metsuengine.WebSockets.BybitWebSocketClient;
-
 public class Main {
 
     public static void main( String[] args ) {
 
-        final TradeSeries tickSeries = new TradeSeries(100);
+        final TradeSeries tradeSeries = new TradeSeries(100);
         final LimitOrderBook orderBook = new LimitOrderBook();
         final QuotePair quotes = new QuotePair();
         final Position position = new Position();
+       
+        BybitWebSocketClient client = new BybitWebSocketClient("BTCUSD", tradeSeries, orderBook, quotes, position);
 
-        // Uggo websockets need finally fixing
-        BybitWebSocketClient client = new BybitWebSocketClient(
-            new BybitInversePerpetualSubscriptionSet(
-                new BybitOrderWebSocket(quotes),
-                    "wss://stream.bytick.com/realtime",
-                    "order"),
-            new BybitInversePerpetualSubscriptionSet(
-                new BybitPositionWebSocket(position),
-                    "wss://stream.bytick.com/realtime",
-                    "position"),
-            new BybitInversePerpetualSubscriptionSet(
-                new BybitInversePerpetualTradeWebSocket(tickSeries),
-                    "wss://stream.bytick.com/realtime",
-                    "trade.BTCUSD"),
-            new BybitInversePerpetualSubscriptionSet(
-                new BybitInversePerpetualOrderBookWebsocket(orderBook),
-                    "wss://stream.bytick.com/realtime",
-                    "orderBookL2_25.BTCUSD"));
-
-        new OrderManager(tickSeries, orderBook, quotes, position, new Model(tickSeries, 0.1, 0.1));
+        new OrderManager(tradeSeries, orderBook, quotes, position, new Model(tradeSeries, 0.1, 0.1));
 
         client.start();
     }

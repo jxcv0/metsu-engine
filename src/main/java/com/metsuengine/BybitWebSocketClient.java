@@ -1,31 +1,30 @@
-package com.metsuengine.WebSockets;
+package com.metsuengine;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import javax.websocket.ClientEndpointConfig;
 import javax.websocket.ContainerProvider;
 import javax.websocket.Session;
 import javax.websocket.WebSocketContainer;
-
-import com.metsuengine.APIKeys;
 
 import org.json.JSONObject;
 
 public class BybitWebSocketClient extends Thread {
     
+    private final String symbol;
     static Session session;
-    private final List<BybitInversePerpetualSubscriptionSet> subscriptionSets;
+    final ClientEndpointConfig cec;
+    private final BybitAnnotatedEndpoint endpoint;
 
-    @SafeVarargs
-    public BybitWebSocketClient(BybitInversePerpetualSubscriptionSet... sets) {
-        this.subscriptionSets = new ArrayList<>(
-            Arrays.asList(sets)
-        );    
+    public BybitWebSocketClient(String symbol, TradeSeries tradeSeries, LimitOrderBook orderBook, QuotePair quotes, Position position) {
+        this.symbol = symbol;
+        this.cec = ClientEndpointConfig.Builder.create().build();
+        this.endpoint = new BybitAnnotatedEndpoint(symbol, tradeSeries, orderBook, quotes, position);
     }
 
     private String generate_signature(String expires){
@@ -71,24 +70,29 @@ public class BybitWebSocketClient extends Thread {
         return (req.toString());
     }
 
-    private String subscribe(String op, String argv){
+    private String subscribe(String op, List<String> argv){
         JSONObject request = new JSONObject();
         request.put("op", op);
         List<String> args = new LinkedList<>();
-        args.add(argv);
+        argv.forEach(a -> args.add(a));
         request.put("args", args);
+        System.out.println(request.toString());
         return request.toString();
     }
 
     @Override
     public void run() {
         try {
+            List<String> topics = new ArrayList<>();
+            topics.add("trade." + symbol);
+            topics.add("orderBook_200.100ms." + symbol);
+            topics.add("position");
+            topics.add("order");
+
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-            for (BybitInversePerpetualSubscriptionSet set : subscriptionSets) {
-                container.connectToServer(set.getHandler(), URI.create("wss://stream.bytick.com/realtime"));
-                session.getBasicRemote().sendText(getAuthMessage());
-                session.getBasicRemote().sendText(subscribe("subscribe", set.getTopic()));
-            }
+            container.connectToServer(endpoint, URI.create("wss://stream.bytick.com/realtime"));
+            session.getBasicRemote().sendText(getAuthMessage());
+            session.getBasicRemote().sendText(subscribe("subscribe", topics));
 
             while(true) {
                 session.getBasicRemote().sendText("{\"op\":\"ping\"}");

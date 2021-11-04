@@ -194,6 +194,32 @@ public class BybitRestAPIClient {
 
         return stringBuilder + "&sign=" + bytesToHex(sha256_HMAC.doFinal(stringBuilder.toString().getBytes()));
     }
+
+    /**
+     * Generates a query string for websocket private endpoints
+     * 
+     * @param params the alphabetically sorted TreeMap containing request parameters
+     * @return the query string
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeyException
+     */
+    public static String generateWSQueryString(TreeMap<String, String> requestParams) throws NoSuchAlgorithmException, InvalidKeyException {
+        Set<String> keySet = requestParams.keySet();
+        Iterator<String> iterator = keySet.iterator();
+        StringBuilder stringBuilder = new StringBuilder();
+        while (iterator.hasNext()) {
+            String key = iterator.next();
+            stringBuilder.append(key).append("=").append(requestParams.get(key));
+            stringBuilder.append("&");
+        }
+        stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+
+        Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
+        SecretKeySpec secretKey = new SecretKeySpec(APIKeys.secret.getBytes(), "HmacSHA256");
+        sha256_HMAC.init(secretKey);
+
+        return stringBuilder + "&signature=" + bytesToHex(sha256_HMAC.doFinal(stringBuilder.toString().getBytes()));
+    }
     
     /**
      * Converts hashed string to hex
