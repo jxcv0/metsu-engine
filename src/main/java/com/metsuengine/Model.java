@@ -8,7 +8,7 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
  */
 public class Model {
     
-    private final TickSeries tickSeries;
+    private final TradeSeries tickSeries;
     private final DescriptiveStatistics stats;
     private final double riskAversionParam;
     private final double orderBookDensityParam;
@@ -19,7 +19,7 @@ public class Model {
      * @param riskAversionParam the risk aversion parameter
      * @param orderBookDensityParam the liquidity / order book density parameter
      */
-    public Model(TickSeries tickSeries, double riskAversionParam, double orderBookDensityParam) {
+    public Model(TradeSeries tickSeries, double riskAversionParam, double orderBookDensityParam) {
         this.tickSeries = tickSeries;
         this.stats = new DescriptiveStatistics();
         this.riskAversionParam = riskAversionParam;

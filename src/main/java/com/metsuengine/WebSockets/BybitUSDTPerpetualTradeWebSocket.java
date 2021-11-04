@@ -11,16 +11,16 @@ import javax.websocket.Session;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.metsuengine.Tick;
-import com.metsuengine.TickSeries;
+import com.metsuengine.Trade;
+import com.metsuengine.TradeSeries;
 import com.metsuengine.WebSocketHandler;
 
 @ClientEndpoint
 public class BybitUSDTPerpetualTradeWebSocket implements WebSocketHandler {
 
-    private final TickSeries tickSeries;
+    private final TradeSeries tickSeries;
 
-    public BybitUSDTPerpetualTradeWebSocket(TickSeries tickSeries) {
+    public BybitUSDTPerpetualTradeWebSocket(TradeSeries tickSeries) {
         this.tickSeries = tickSeries;
     }
 
@@ -45,7 +45,7 @@ public class BybitUSDTPerpetualTradeWebSocket implements WebSocketHandler {
                 JsonNode data = response.findValue("data");
 
                 if (!data.isNull()) {
-                    Tick tick = new Tick(
+                    Trade tick = new Trade(
                         data.findValue("timestamp").asText(),
                         data.findValue("side").asText(),
                         data.findValue("price").asDouble(),
@@ -70,7 +70,7 @@ public class BybitUSDTPerpetualTradeWebSocket implements WebSocketHandler {
         t.printStackTrace();
     }
 
-    public TickSeries tickSeries() {
+    public TradeSeries tickSeries() {
         return tickSeries;
     }
 }

@@ -24,7 +24,7 @@ public class OrderManager implements ChangeListener {
     private final Model model;
     private final Position position; 
 
-    public OrderManager(TickSeries tickSeries, LimitOrderBook orderBook, QuotePair quotes, Position position, Model model) {
+    public OrderManager(TradeSeries tickSeries, LimitOrderBook orderBook, QuotePair quotes, Position position, Model model) {
         listen(tickSeries);
         this.orderBook = orderBook;
         this.api = new BybitRestAPIClient("BTCUSD");
@@ -35,7 +35,7 @@ public class OrderManager implements ChangeListener {
         this.position = position;
     }
 
-    private void listen(TickSeries tickSeries) {
+    private void listen(TradeSeries tickSeries) {
         tickSeries.addChangeListener(this);
     }
 
@@ -45,9 +45,6 @@ public class OrderManager implements ChangeListener {
         long start = System.currentTimeMillis();
         if (orderBook.isReady()) {
             try {
-
-                // This needs to go
-                Thread.sleep(100);
                         
                 newBid.updatePrice(Math.round(model.bidPrice(orderBook.midPrice(), position.signedValue())));
                 newBid.updateQty(1);
@@ -77,7 +74,7 @@ public class OrderManager implements ChangeListener {
                         break;
                 }
 
-            } catch (IOException | InvalidKeyException | NoSuchAlgorithmException | InterruptedException ex) {
+            } catch (IOException | InvalidKeyException | NoSuchAlgorithmException ex) {
                 LOGGER.log(Level.SEVERE, "CANCELLING ALL ORDERS", ex);
                 api.cancellAllOrders();
             }  

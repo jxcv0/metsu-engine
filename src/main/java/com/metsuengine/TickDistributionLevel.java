@@ -7,20 +7,20 @@ import java.util.List;
 
 public class TickDistributionLevel {
     
-    private final List<Tick> ticks;
+    private final List<Trade> ticks;
 
-    public TickDistributionLevel(Tick initialTick) {
-        this.ticks = new ArrayList<Tick>();
+    public TickDistributionLevel(Trade initialTick) {
+        this.ticks = new ArrayList<Trade>();
         addTick(initialTick);
     }
 
-    public void addTick(Tick tick) {
+    public void addTick(Trade tick) {
         ticks.add(tick);
     }
 
     public double getVolume() {
         double total = 0;
-        for (Tick tick : ticks) {
+        for (Trade tick : ticks) {
             total += tick.size();
         }
         return total;
@@ -28,7 +28,7 @@ public class TickDistributionLevel {
 
     public double getTotalDelta() {
         double total = 0;
-        for (Tick tick : ticks) {
+        for (Trade tick : ticks) {
             total += tick.signedVolume();
         }
         return total;
@@ -38,13 +38,13 @@ public class TickDistributionLevel {
         return ticks.size();
     }
 
-    public List<Tick> getTicks() {
+    public List<Trade> getTicks() {
         return ticks;
     }
 
     public void removeByTime(int seconds) {
-        List<Tick> toRemove = new ArrayList<Tick>();
-        for (Tick tick : ticks) {
+        List<Trade> toRemove = new ArrayList<Trade>();
+        for (Trade tick : ticks) {
             if (tick.time().isBefore(ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(seconds))) {
                 toRemove.add(tick);
             }

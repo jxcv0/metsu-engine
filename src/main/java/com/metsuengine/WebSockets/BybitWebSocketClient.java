@@ -17,7 +17,7 @@ import com.metsuengine.APIKeys;
 import org.json.JSONObject;
 
 public class BybitWebSocketClient extends Thread {
-
+    
     static Session session;
     private final List<BybitInversePerpetualSubscriptionSet> subscriptionSets;
 
@@ -85,7 +85,7 @@ public class BybitWebSocketClient extends Thread {
         try {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             for (BybitInversePerpetualSubscriptionSet set : subscriptionSets) {
-                container.connectToServer(set.getHandler(), URI.create(set.getURI()));
+                container.connectToServer(set.getHandler(), URI.create("wss://stream.bytick.com/realtime"));
                 session.getBasicRemote().sendText(getAuthMessage());
                 session.getBasicRemote().sendText(subscribe("subscribe", set.getTopic()));
             }

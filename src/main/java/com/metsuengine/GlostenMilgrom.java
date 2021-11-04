@@ -8,7 +8,7 @@ public class GlostenMilgrom {
     private final double speculatorProbability;
 
     /**
-     * The prior probability that the asset value is high TODO - get from delta
+     * The prior probability that the asset value is high
      */
     private final double theta;
 

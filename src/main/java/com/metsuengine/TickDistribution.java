@@ -12,7 +12,7 @@ public class TickDistribution implements ChangeListener {
     private final Map<Double, TickDistributionLevel> distribution;
     private final int seconds;
 
-    public TickDistribution(String name, TickSeries tickSeries, int seconds) {
+    public TickDistribution(String name, TradeSeries tickSeries, int seconds) {
         this.name = name;
         this.distribution = new ConcurrentHashMap<Double, TickDistributionLevel>();
         this.seconds = seconds;
@@ -21,11 +21,11 @@ public class TickDistribution implements ChangeListener {
 
     @Override
     public void stateChanged(ChangeEvent e) {
-        TickSeries source = (TickSeries) e.getSource();
+        TradeSeries source = (TradeSeries) e.getSource();
         addTick(source.lastTick());
     }
 
-    public void addTick(Tick tick) {
+    public void addTick(Trade tick) {
         if (distribution.containsKey(tick.price())) {
             distribution.get(tick.price()).addTick(tick);
         } else {

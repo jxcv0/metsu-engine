@@ -255,13 +255,13 @@ public class BybitRestAPIClient {
      * @param to    The end date
      * @return      The trades that took place bwtween the "from" and "to" dates
      */
-    public TickSeries getTradingRecords(ZonedDateTime from, ZonedDateTime to) {
+    public TradeSeries getTradingRecords(ZonedDateTime from, ZonedDateTime to) {
 
         String url = "https://api.bybit.com/v2/public/trading-records?symbol="+ this.symbol
             + "&from=" + from.toEpochSecond()
             + "&limit=1000";
 
-        TickSeries tickSeries = new TickSeries();
+        TradeSeries tickSeries = new TradeSeries();
 
         try {
             Request request = new Request.Builder()
@@ -281,7 +281,7 @@ public class BybitRestAPIClient {
                 JsonNode results = jsonNode.findValue("result");
 
                 for (JsonNode result : results) {
-                    Tick tick = new Tick(
+                    Trade tick = new Trade(
                         ZonedDateTime.parse(result.findValue("time").asText()),
                         result.findValue("side").asText(),
                         result.findValue("price").asDouble(),

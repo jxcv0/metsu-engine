@@ -19,14 +19,14 @@ import com.opencsv.CSVWriter;
 public class CSVManager {
 
     private final Path path;
-    private TickSeries tickSeries;
+    private TradeSeries tickSeries;
 
     public CSVManager(String file) {
         this.path = Paths.get(file);
-        this.tickSeries = new TickSeries();
+        this.tickSeries = new TradeSeries();
     }
 
-    public CSVManager(String file, TickSeries tickSeries) {
+    public CSVManager(String file, TradeSeries tickSeries) {
         this.path = Paths.get(file);
         this.tickSeries = tickSeries;
     }
@@ -41,18 +41,18 @@ public class CSVManager {
         }
     }
 
-    public TickSeries createTickSeries() {
-        TickSeries tickSeries = new TickSeries();
+    public TradeSeries createTickSeries() {
+        TradeSeries tickSeries = new TradeSeries();
         try {
             InputStream stream = this.getClass().getClassLoader().getResourceAsStream(this.path.toString());
             CSVReader reader = new CSVReader(new InputStreamReader(stream, Charset.forName("UTF-8")));
             List<String[]> lines = reader.readAll();
             reader.close();
 
-            List<Tick> ticks = new ArrayList<Tick>();
+            List<Trade> ticks = new ArrayList<Trade>();
 
             for (String[] line : lines) {
-                ticks.add(new Tick(
+                ticks.add(new Trade(
                     epochtoZonedDateTime(Double.parseDouble(line[0])),
                     line[2],
                     Double.parseDouble(line[4]),
@@ -68,15 +68,15 @@ public class CSVManager {
         return tickSeries;
     }
 
-    public List<Tick> getTicks() {
+    public List<Trade> getTicks() {
         return tickSeries.getTicks();
     }
 
-    public List<Tick> buildAndSort(List<String[]> lines) {
-        List<Tick> ticks = new ArrayList<Tick>();
+    public List<Trade> buildAndSort(List<String[]> lines) {
+        List<Trade> ticks = new ArrayList<Trade>();
 
         for (String[] line : lines) {
-            ticks.add(new Tick(
+            ticks.add(new Trade(
                 epochtoZonedDateTime(Double.parseDouble(line[0])),
                 line[2],
                 Double.parseDouble(line[4]),

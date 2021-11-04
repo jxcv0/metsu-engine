@@ -11,11 +11,12 @@ public class Main {
 
     public static void main( String[] args ) {
 
-        final TickSeries tickSeries = new TickSeries(10);
+        final TradeSeries tickSeries = new TradeSeries(100);
         final LimitOrderBook orderBook = new LimitOrderBook();
         final QuotePair quotes = new QuotePair();
         final Position position = new Position();
 
+        // Uggo websockets need finally fixing
         BybitWebSocketClient client = new BybitWebSocketClient(
             new BybitInversePerpetualSubscriptionSet(
                 new BybitOrderWebSocket(quotes),
@@ -34,7 +35,7 @@ public class Main {
                     "wss://stream.bytick.com/realtime",
                     "orderBookL2_25.BTCUSD"));
 
-        new OrderManager(tickSeries, orderBook, quotes, position, new Model(tickSeries, 0.01, 0.3));
+        new OrderManager(tickSeries, orderBook, quotes, position, new Model(tickSeries, 0.1, 0.1));
 
         client.start();
     }

@@ -9,25 +9,25 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
 
-public class TickSeries {
+public class TradeSeries {
 
-    private final LinkedList<Tick> ticks;
+    private final LinkedList<Trade> ticks;
     private final EventListenerList listenerList;
     private final int seconds;
 
-    public TickSeries() {
-        this.ticks = new LinkedList<Tick>();
+    public TradeSeries() {
+        this.ticks = new LinkedList<Trade>();
         this.listenerList = new EventListenerList();
         this.seconds = Integer.MAX_VALUE;
     }
 
-    public TickSeries(int seconds) {
-        this.ticks = new LinkedList<Tick>();
+    public TradeSeries(int seconds) {
+        this.ticks = new LinkedList<Trade>();
         this.listenerList = new EventListenerList();
         this.seconds = seconds;
     }
 
-    public void addTick(Tick tick) {
+    public void addTick(Trade tick) {
         ticks.add(tick);
         trimExcessValues();
         fireStateChanged();
@@ -45,7 +45,7 @@ public class TickSeries {
         return delta()/volume();
     }
 
-    public List<Tick> getTicks() {
+    public List<Trade> getTicks() {
         return ticks;
     }
 
@@ -53,7 +53,7 @@ public class TickSeries {
         return ticks.stream().mapToDouble(t -> t.price()).toArray();
     }
 
-    public Tick lastTick() {
+    public Trade lastTick() {
         return ticks.getLast();
     }
 
@@ -61,7 +61,7 @@ public class TickSeries {
         return ticks.size();
     }
 
-    public void addAll(List<Tick> ticks) {
+    public void addAll(List<Trade> ticks) {
         this.ticks.addAll(ticks);
     }
 
@@ -70,8 +70,8 @@ public class TickSeries {
     }
 
     private void trimExcessValues() {
-        for (Iterator<Tick> t = ticks.iterator(); t.hasNext();) {
-            Tick tick = t.next();
+        for (Iterator<Trade> t = ticks.iterator(); t.hasNext();) {
+            Trade tick = t.next();
             ZonedDateTime cutoff = ticks.getLast().time().minusSeconds(seconds);
             if (tick.time().isBefore(cutoff)) {
                 t.remove();
@@ -79,7 +79,7 @@ public class TickSeries {
         }
     }
 
-    public boolean contains(Tick tick) {
+    public boolean contains(Trade tick) {
         return ticks.contains(tick);
     }
 

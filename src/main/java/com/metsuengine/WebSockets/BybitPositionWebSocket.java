@@ -39,6 +39,7 @@ public class BybitPositionWebSocket implements WebSocketHandler {
         try {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode response = mapper.readTree(message);
+            System.out.println(response);
 
             if (response.has("data")) {
                 JsonNode data = response.findValue("data");
@@ -61,6 +62,7 @@ public class BybitPositionWebSocket implements WebSocketHandler {
     public void onClose(Session session) throws IOException {
         LOGGER.info("Disconnected");
     }
+    
 
     @OnError
     public void processError(Throwable t) {
