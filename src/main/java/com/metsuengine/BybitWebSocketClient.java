@@ -21,10 +21,10 @@ public class BybitWebSocketClient extends Thread {
     final ClientEndpointConfig cec;
     private final BybitAnnotatedEndpoint endpoint;
 
-    public BybitWebSocketClient(String symbol, TradeSeries tradeSeries, LimitOrderBook orderBook, QuotePair quotes, Position position) {
+    public BybitWebSocketClient(String symbol, TradeSeries tradeSeries, LimitOrderBook orderBook, OrderManager orders, Position position) {
         this.symbol = symbol;
         this.cec = ClientEndpointConfig.Builder.create().build();
-        this.endpoint = new BybitAnnotatedEndpoint(symbol, tradeSeries, orderBook, quotes, position);
+        this.endpoint = new BybitAnnotatedEndpoint(symbol, tradeSeries, orderBook, orders, position);
     }
 
     private String generate_signature(String expires){
@@ -90,7 +90,7 @@ public class BybitWebSocketClient extends Thread {
             topics.add("order");
 
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-            container.connectToServer(endpoint, URI.create("wss://stream.bytick.com/realtime"));
+            container.connectToServer(endpoint, URI.create("wss://stream.bytrade.com/realtime"));
             session.getBasicRemote().sendText(getAuthMessage());
             session.getBasicRemote().sendText(subscribe("subscribe", topics));
 

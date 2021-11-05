@@ -6,30 +6,30 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class TickDistribution implements ChangeListener {
+public class TradeDistribution implements ChangeListener {
 
     private final String name;
-    private final Map<Double, TickDistributionLevel> distribution;
+    private final Map<Double, TradeDistributionLevel> distribution;
     private final int seconds;
 
-    public TickDistribution(String name, TradeSeries tickSeries, int seconds) {
+    public TradeDistribution(String name, TradeSeries tradeSeries, int seconds) {
         this.name = name;
-        this.distribution = new ConcurrentHashMap<Double, TickDistributionLevel>();
+        this.distribution = new ConcurrentHashMap<Double, TradeDistributionLevel>();
         this.seconds = seconds;
-        tickSeries.addChangeListener(this);
+        tradeSeries.addChangeListener(this);
     }
 
     @Override
     public void stateChanged(ChangeEvent e) {
         TradeSeries source = (TradeSeries) e.getSource();
-        addTick(source.lastTick());
+        addtrade(source.lasttrade());
     }
 
-    public void addTick(Trade tick) {
-        if (distribution.containsKey(tick.price())) {
-            distribution.get(tick.price()).addTick(tick);
+    public void addtrade(Trade trade) {
+        if (distribution.containsKey(trade.price())) {
+            distribution.get(trade.price()).addtrade(trade);
         } else {
-            distribution.put(tick.price(), new TickDistributionLevel(tick));
+            distribution.put(trade.price(), new TradeDistributionLevel(trade));
         }
         trimExcessValues();
     }
@@ -46,7 +46,7 @@ public class TickDistribution implements ChangeListener {
         return name;
     }
 
-    public Map<Double, TickDistributionLevel> getLevels() {
+    public Map<Double, TradeDistributionLevel> getLevels() {
         return this.distribution;
     }
 

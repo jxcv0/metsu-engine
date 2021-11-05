@@ -8,31 +8,31 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
  */
 public class Model {
     
-    private final TradeSeries tickSeries;
+    private final TradeSeries tradeSeries;
     private final DescriptiveStatistics stats;
     private final double riskAversionParam;
     private final double orderBookDensityParam;
 
     /**
      * The constructor
-     * @param tickSeries the TickSeries
+     * @param tradeSeries the tradeSeries
      * @param riskAversionParam the risk aversion parameter
      * @param orderBookDensityParam the liquidity / order book density parameter
      */
-    public Model(TradeSeries tickSeries, double riskAversionParam, double orderBookDensityParam) {
-        this.tickSeries = tickSeries;
+    public Model(TradeSeries tradeSeries, double riskAversionParam, double orderBookDensityParam) {
+        this.tradeSeries = tradeSeries;
         this.stats = new DescriptiveStatistics();
         this.riskAversionParam = riskAversionParam;
         this.orderBookDensityParam = orderBookDensityParam;
     }
 
     /**
-     * Get std deviation of the prices within the TickSeries as a proxy for volatility
+     * Get std deviation of the prices within the tradeSeries as a proxy for volatility
      * @return the standard deviation
      */
     public double volatility() {
         stats.clear();
-        tickSeries.getTicks().forEach(t -> stats.addValue(t.price()));
+        tradeSeries.gettrades().forEach(t -> stats.addValue(t.price()));
         return stats.getStandardDeviation();
     }
 

@@ -27,14 +27,14 @@ public class BybitAnnotatedEndpoint {
     private final String symbol;
     private final TradeSeries tradeSeries;
     private final LimitOrderBook orderBook;
-    private final QuotePair quotes;
+    private final OrderManager orders;
     private final Position position;
 
-    public BybitAnnotatedEndpoint(String symbol, TradeSeries tradeSeries, LimitOrderBook orderBook, QuotePair quotes, Position position) {
+    public BybitAnnotatedEndpoint(String symbol, TradeSeries tradeSeries, LimitOrderBook orderBook, OrderManager orders, Position position) {
         this.symbol = symbol;
         this.tradeSeries = tradeSeries;
         this.orderBook = orderBook;
-        this.quotes = quotes;
+        this.orders = orders;
         this.position = position;
     }
 
@@ -94,7 +94,7 @@ public class BybitAnnotatedEndpoint {
                     data.findValue("price").asDouble(),
                     data.findValue("size").asDouble());
                 
-                tradeSeries.addTick(trade);
+                tradeSeries.addtrade(trade);
             }
         }
     }
@@ -152,7 +152,7 @@ public class BybitAnnotatedEndpoint {
 
                     order.setId(node.get("order_id").asText());
                     
-                    quotes.update(order);
+                    orders.proccessOrder(order);
                 }
             }
         }

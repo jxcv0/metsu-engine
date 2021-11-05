@@ -11,76 +11,76 @@ import javax.swing.event.EventListenerList;
 
 public class TradeSeries {
 
-    private final LinkedList<Trade> ticks;
+    private final LinkedList<Trade> trades;
     private final EventListenerList listenerList;
     private final int seconds;
 
     public TradeSeries() {
-        this.ticks = new LinkedList<Trade>();
+        this.trades = new LinkedList<Trade>();
         this.listenerList = new EventListenerList();
         this.seconds = Integer.MAX_VALUE;
     }
 
     public TradeSeries(int seconds) {
-        this.ticks = new LinkedList<Trade>();
+        this.trades = new LinkedList<Trade>();
         this.listenerList = new EventListenerList();
         this.seconds = seconds;
     }
 
-    public void addTick(Trade tick) {
-        ticks.add(tick);
+    public void addtrade(Trade trade) {
+        trades.add(trade);
         trimExcessValues();
         fireStateChanged();
     }
 
     public double delta() {
-        return ticks.stream().mapToDouble(t -> t.signedVolume()).sum();
+        return trades.stream().mapToDouble(t -> t.signedVolume()).sum();
     }
 
     public double volume() {
-        return ticks.stream().mapToDouble(t -> t.size()).sum();
+        return trades.stream().mapToDouble(t -> t.size()).sum();
     }
 
     public double deltaRatio() {
         return delta()/volume();
     }
 
-    public List<Trade> getTicks() {
-        return ticks;
+    public List<Trade> gettrades() {
+        return trades;
     }
 
     public double[] toArray() {
-        return ticks.stream().mapToDouble(t -> t.price()).toArray();
+        return trades.stream().mapToDouble(t -> t.price()).toArray();
     }
 
-    public Trade lastTick() {
-        return ticks.getLast();
+    public Trade lasttrade() {
+        return trades.getLast();
     }
 
     public double size() {
-        return ticks.size();
+        return trades.size();
     }
 
-    public void addAll(List<Trade> ticks) {
-        this.ticks.addAll(ticks);
+    public void addAll(List<Trade> trades) {
+        this.trades.addAll(trades);
     }
 
     public boolean isEmpty() {
-        return ticks.isEmpty();
+        return trades.isEmpty();
     }
 
     private void trimExcessValues() {
-        for (Iterator<Trade> t = ticks.iterator(); t.hasNext();) {
-            Trade tick = t.next();
-            ZonedDateTime cutoff = ticks.getLast().time().minusSeconds(seconds);
-            if (tick.time().isBefore(cutoff)) {
+        for (Iterator<Trade> t = trades.iterator(); t.hasNext();) {
+            Trade trade = t.next();
+            ZonedDateTime cutoff = trades.getLast().time().minusSeconds(seconds);
+            if (trade.time().isBefore(cutoff)) {
                 t.remove();
             }
         }
     }
 
-    public boolean contains(Trade tick) {
-        return ticks.contains(tick);
+    public boolean contains(Trade trade) {
+        return trades.contains(trade);
     }
 
     public void addChangeListener(ChangeListener listener) {

@@ -135,6 +135,36 @@ public class BybitRestAPIClient {
         }
     }
 
+    public void cancelOrder(String orderId)  throws NoSuchAlgorithmException, InvalidKeyException, IOException {
+        TreeMap<String, String> requestParams = new TreeMap<>((o1, o2) -> o1.compareTo(o2));
+
+        requestParams.put("symbol", symbol);
+        requestParams.put("order_id", orderId);
+        requestParams.put("timestamp", ZonedDateTime.now(ZoneOffset.UTC).toInstant().toEpochMilli() + "");
+        requestParams.put("api_key", APIKeys.key);
+
+        String queryString = generateQueryString(requestParams);
+                
+        Request request = new Request.Builder()
+            .post(RequestBody.create(new byte[0], null))
+            .url("https://api.bybit.com/v2/private/order/cancel?" + queryString)
+            .build();
+
+        Call call = client.newCall(request);
+
+        try {
+            Response response = call.execute();
+            if (!response.isSuccessful()) {
+                LOGGER.warning("Response unsuccessful");
+                System.out.println(response.body().string());
+            }
+            getMessage(response);
+            response.body().close();
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Exeption caught while cencelling order", e);
+        }
+    }
+
     public void cancellAllOrders() {
         try {
             TreeMap<String, String> requestParams = new TreeMap<>((o1, o2) -> o1.compareTo(o2));
@@ -287,7 +317,7 @@ public class BybitRestAPIClient {
             + "&from=" + from.toEpochSecond()
             + "&limit=1000";
 
-        TradeSeries tickSeries = new TradeSeries();
+        TradeSeries tradeSeries = new TradeSeries();
 
         try {
             Request request = new Request.Builder()
@@ -307,14 +337,14 @@ public class BybitRestAPIClient {
                 JsonNode results = jsonNode.findValue("result");
 
                 for (JsonNode result : results) {
-                    Trade tick = new Trade(
+                    Trade trade = new Trade(
                         ZonedDateTime.parse(result.findValue("time").asText()),
                         result.findValue("side").asText(),
                         result.findValue("price").asDouble(),
                         result.findValue("qty").asDouble());
                     
-                    if (tick.time().isAfter(from) && tick.time().isBefore(to)) {
-                        tickSeries.addTick(tick);
+                    if (trade.time().isAfter(from) && trade.time().isBefore(to)) {
+                        tradeSeries.addtrade(trade);
                     }
                 }
             }
@@ -323,7 +353,7 @@ public class BybitRestAPIClient {
             LOGGER.log(Level.SEVERE, LOGGER.getName(), e);
         }
 
-        return tickSeries;
+        return tradeSeries;
     }
 
     

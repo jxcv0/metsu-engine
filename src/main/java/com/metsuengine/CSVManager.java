@@ -19,16 +19,16 @@ import com.opencsv.CSVWriter;
 public class CSVManager {
 
     private final Path path;
-    private TradeSeries tickSeries;
+    private TradeSeries tradeSeries;
 
     public CSVManager(String file) {
         this.path = Paths.get(file);
-        this.tickSeries = new TradeSeries();
+        this.tradeSeries = new TradeSeries();
     }
 
-    public CSVManager(String file, TradeSeries tickSeries) {
+    public CSVManager(String file, TradeSeries tradeSeries) {
         this.path = Paths.get(file);
-        this.tickSeries = tickSeries;
+        this.tradeSeries = tradeSeries;
     }
 
     public void writeLine(String[] line) {
@@ -41,50 +41,50 @@ public class CSVManager {
         }
     }
 
-    public TradeSeries createTickSeries() {
-        TradeSeries tickSeries = new TradeSeries();
+    public TradeSeries createtradeSeries() {
+        TradeSeries tradeSeries = new TradeSeries();
         try {
             InputStream stream = this.getClass().getClassLoader().getResourceAsStream(this.path.toString());
             CSVReader reader = new CSVReader(new InputStreamReader(stream, Charset.forName("UTF-8")));
             List<String[]> lines = reader.readAll();
             reader.close();
 
-            List<Trade> ticks = new ArrayList<Trade>();
+            List<Trade> trades = new ArrayList<Trade>();
 
             for (String[] line : lines) {
-                ticks.add(new Trade(
+                trades.add(new Trade(
                     epochtoZonedDateTime(Double.parseDouble(line[0])),
                     line[2],
                     Double.parseDouble(line[4]),
                     Double.parseDouble(line[3])));
             }
     
-            Collections.reverse(ticks);
-            tickSeries.addAll(ticks);
+            Collections.reverse(trades);
+            tradeSeries.addAll(trades);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return tickSeries;
+        return tradeSeries;
     }
 
-    public List<Trade> getTicks() {
-        return tickSeries.getTicks();
+    public List<Trade> gettrades() {
+        return tradeSeries.gettrades();
     }
 
     public List<Trade> buildAndSort(List<String[]> lines) {
-        List<Trade> ticks = new ArrayList<Trade>();
+        List<Trade> trades = new ArrayList<Trade>();
 
         for (String[] line : lines) {
-            ticks.add(new Trade(
+            trades.add(new Trade(
                 epochtoZonedDateTime(Double.parseDouble(line[0])),
                 line[2],
                 Double.parseDouble(line[4]),
                 Double.parseDouble(line[3])));
         }
 
-        Collections.reverse(ticks);
-        return ticks;
+        Collections.reverse(trades);
+        return trades;
 
     }
 

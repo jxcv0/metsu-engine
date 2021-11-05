@@ -83,5 +83,13 @@ public class Order {
 
     public boolean isEquivalentTo(Order order) {
         return order.price() == price? true : false;
-    }   
+    }
+
+    public boolean isBuy() {
+        if (side.equals(Side.Buy)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

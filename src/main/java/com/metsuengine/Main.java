@@ -6,13 +6,13 @@ public class Main {
 
         final TradeSeries tradeSeries = new TradeSeries(100);
         final LimitOrderBook orderBook = new LimitOrderBook();
-        final QuotePair quotes = new QuotePair();
+        final OrderManager orders = new OrderManager();
         final Position position = new Position();
-       
-        BybitWebSocketClient client = new BybitWebSocketClient("BTCUSD", tradeSeries, orderBook, quotes, position);
+        final Model model = new Model(tradeSeries, 0.1, 0.3);
 
-        new OrderManager(tradeSeries, orderBook, quotes, position, new Model(tradeSeries, 0.1, 0.1));
+        new Strategy(tradeSeries, orderBook, orders, position, model);
 
+        BybitWebSocketClient client = new BybitWebSocketClient("BTCUSD", tradeSeries, orderBook, orders, position);
         client.start();
     }
 }
