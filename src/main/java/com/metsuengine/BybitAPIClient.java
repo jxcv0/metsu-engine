@@ -7,9 +7,7 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Level;
@@ -20,7 +18,6 @@ import javax.crypto.spec.SecretKeySpec;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.metsuengine.Enums.OrderStatus;
 import com.metsuengine.Enums.OrderType;
 import com.metsuengine.Enums.Side;
 import com.metsuengine.Enums.TimeInForce;
@@ -31,52 +28,26 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class BybitRestAPIClient {
+public class BybitAPIClient {
 
-    private static final Logger LOGGER = Logger.getLogger(BybitRestAPIClient.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(BybitAPIClient.class.getName());
     private final OkHttpClient client;
     private final String symbol;
 
-    public BybitRestAPIClient(String symbol) {
+    public BybitAPIClient(String symbol) {
         this.symbol = symbol;
         this.client = new OkHttpClient();
     }
 
-    public List<Order> getOrders() throws NoSuchAlgorithmException, InvalidKeyException, IOException {
-        
+    public void placeOrder(String symbol, Side side, OrderType orderType, double price, int qty, TimeInForce timeInForce)  throws NoSuchAlgorithmException, InvalidKeyException, IOException {
         TreeMap<String, String> requestParams = new TreeMap<>((o1, o2) -> o1.compareTo(o2));
 
+        requestParams.put("side", side.toString());
         requestParams.put("symbol", symbol);
-        requestParams.put("timestamp", ZonedDateTime.now(ZoneOffset.UTC).toInstant().toEpochMilli() + "");
-        requestParams.put("api_key", APIKeys.key);
-
-        String queryString = generateQueryString(requestParams);
-        
-        Request request = new Request.Builder()
-            .url("https://api.bybit.com/v2/private/order?" + queryString)
-            .build();
-        Call call = client.newCall(request);
-
-        List<Order> orders = new ArrayList<>();
-        try {
-            Response response = call.execute();
-            orders.addAll(mapToOrder(response));
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "", e);
-        }
-        return orders;
-    }
-
-    public void placeOrder(Order order)  throws NoSuchAlgorithmException, InvalidKeyException, IOException {
-        TreeMap<String, String> requestParams = new TreeMap<>((o1, o2) -> o1.compareTo(o2));
-
-        int qty = (int) order.qty();
-        requestParams.put("side", order.side().toString());
-        requestParams.put("symbol", symbol);
-        requestParams.put("order_type", order.orderType().toString());
+        requestParams.put("order_type", orderType.toString());
         requestParams.put("qty", qty + "");
-        requestParams.put("price", order.price() + "");
-        requestParams.put("time_in_force", order.timeInForce().toString());
+        requestParams.put("price", price + "");
+        requestParams.put("time_in_force", timeInForce.toString());
         requestParams.put("timestamp", ZonedDateTime.now(ZoneOffset.UTC).toInstant().toEpochMilli() + "");
         requestParams.put("api_key", APIKeys.key);
 
@@ -266,34 +237,6 @@ public class BybitRestAPIClient {
             hexString.append(hex);
         }
         return hexString.toString();
-    }
-
-    private List<Order> mapToOrder(Response response) {
-        List<Order> orders = new ArrayList<>();
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode node = mapper.readTree(response.body().string());
-
-            if (node.has("result")) {
-                JsonNode results = node.get("result");
-                for (JsonNode result : results) {
-                    Order order = new Order(
-                        symbol,
-                        Side.valueOf(result.get("side").asText()),
-                        OrderType.valueOf(result.get("order_type").asText()),
-                        result.get("price").asDouble(),
-                        result.get("qty").asDouble(),
-                        TimeInForce.valueOf(result.get("time_in_force").asText()),
-                        OrderStatus.valueOf(result.get("order_status").asText()));
-                        
-                        order.setId(result.get("order_id").asText());
-                        orders.add(order);
-                }
-            }
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, LOGGER.getName(), e);
-        }
-        return orders;
     }
 
     private void getMessage(Response response) {

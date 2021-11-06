@@ -1,14 +1,10 @@
 package com.metsuengine;
 
-import java.util.logging.Logger;
-
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public class Strategy implements ChangeListener {
 
-    private static final Logger LOGGER = Logger.getLogger(Strategy.class.getName());
-    private final BybitRestAPIClient api;
     private final LimitOrderBook orderBook;
     private final OrderManager orders;
     private final Model model;
@@ -17,7 +13,6 @@ public class Strategy implements ChangeListener {
     public Strategy(TradeSeries tradeSeries, LimitOrderBook orderBook, OrderManager orders, Position position, Model model) {
         listen(tradeSeries);
         this.orderBook = orderBook;
-        this.api = new BybitRestAPIClient("BTCUSD");
         this.orders = orders;
         this.model = model;
         this.position = position;
@@ -30,12 +25,13 @@ public class Strategy implements ChangeListener {
     @Override
     public void stateChanged(ChangeEvent e) {
         // tradeSeries tradeSeries = (tradeSeries) e.getSource();
-        long start = System.currentTimeMillis();
+        // long start = System.currentTimeMillis();
         if (orderBook.isReady()) {
-
-            // TODO 
-            
+            orders.update(
+                Math.min(model.bidPrice(position.signedValue()), orderBook.bestBid()),
+                Math.max(model.askPrice(position.signedValue()), orderBook.bestAsk())
+            );
         }
-        System.out.println(System.currentTimeMillis() - start + "ms");
+        // System.out.println(System.currentTimeMillis() - start + " ms");
     }
 }

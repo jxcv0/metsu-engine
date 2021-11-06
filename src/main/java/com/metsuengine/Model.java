@@ -9,6 +9,7 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 public class Model {
     
     private final TradeSeries tradeSeries;
+    private final LimitOrderBook orderBook;
     private final DescriptiveStatistics stats;
     private final double riskAversionParam;
     private final double orderBookDensityParam;
@@ -19,8 +20,9 @@ public class Model {
      * @param riskAversionParam the risk aversion parameter
      * @param orderBookDensityParam the liquidity / order book density parameter
      */
-    public Model(TradeSeries tradeSeries, double riskAversionParam, double orderBookDensityParam) {
+    public Model(TradeSeries tradeSeries, LimitOrderBook orderBook, double riskAversionParam, double orderBookDensityParam) {
         this.tradeSeries = tradeSeries;
+        this.orderBook = orderBook;
         this.stats = new DescriptiveStatistics();
         this.riskAversionParam = riskAversionParam;
         this.orderBookDensityParam = orderBookDensityParam;
@@ -42,19 +44,23 @@ public class Model {
      * @param positionSize the current position size
      * @return the reservation price     
      */
-    public double reservationPrice(double marketMidprice, double positionSize) {
-        return marketMidprice - positionSize * riskAversionParam * Math.pow(volatility(), 2);
+    public double reservationPrice(double positionSize) {
+        return  orderBook.midPrice() - positionSize * riskAversionParam * Math.pow(volatility(), 2);
     }
 
     public double halfSpread() {
         return (riskAversionParam * Math.pow(volatility(), 2) + ((2 / riskAversionParam) * Math.log(1 + (riskAversionParam / orderBookDensityParam)))) / 2 ;
     }
 
-    public double askPrice(double marketMidprice, double positionSize) {
-        return reservationPrice(marketMidprice, positionSize) + halfSpread();
+    public double askPrice(double positionSize) {
+        return roundToTick(reservationPrice(positionSize) + halfSpread(), 0.5);
     }
 
-    public double bidPrice(double marketMidprice, double positionSize) {
-        return reservationPrice(marketMidprice, positionSize) - halfSpread();
+    public double bidPrice(double positionSize) {
+        return roundToTick(reservationPrice(positionSize) - halfSpread(), 0.5);
+    }
+    
+    public double roundToTick(double num, double tick) {
+        return Math.round(num / tick) * tick;
     }
 }

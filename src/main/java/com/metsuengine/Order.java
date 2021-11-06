@@ -16,14 +16,14 @@ public class Order {
     private OrderStatus orderStatus;
     private String orderId;
 
-    public Order (String symbol, Side side, OrderType orderType, TimeInForce timeInForce) {
-        this.symbol = symbol;
-        this.side = side;
-        this.orderType = orderType;
-        this.timeInForce = timeInForce;
-    }
-    
-    public Order (String symbol, Side side, OrderType orderType, double price, double qty, TimeInForce timeInForce, OrderStatus orderStatus) {
+    /**
+     * Constructor for parsing from JSON response
+     * @param symbol
+     * @param side
+     * @param orderType
+     * @param timeInForce
+     */
+    public Order(String symbol, Side side, OrderType orderType, double price, double qty, TimeInForce timeInForce, OrderStatus orderStatus, String orderId) {
         this.symbol = symbol;
         this.side = side;
         this.orderType = orderType;
@@ -31,8 +31,9 @@ public class Order {
         this.qty = qty;
         this.timeInForce = timeInForce;
         this.orderStatus = orderStatus;
+        this.orderId = orderId;
     }
-    
+
     public String symbol() {
         return symbol;
     }

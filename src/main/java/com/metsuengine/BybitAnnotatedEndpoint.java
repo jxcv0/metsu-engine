@@ -140,7 +140,8 @@ public class BybitAnnotatedEndpoint {
         if (response.has("data")) {
             JsonNode data = response.findValue("data");
             if (!data.isEmpty()) {
-                for (JsonNode node : data) {
+                for (JsonNode node : data) { 
+
                     Order order = new Order(
                         node.get("symbol").asText(),
                         Side.valueOf(node.get("side").asText()),
@@ -148,9 +149,8 @@ public class BybitAnnotatedEndpoint {
                         node.get("price").asDouble(),
                         node.get("qty").asDouble(),
                         TimeInForce.valueOf(node.get("time_in_force").asText()),
-                        OrderStatus.valueOf(node.get("order_status").asText()));
-
-                    order.setId(node.get("order_id").asText());
+                        OrderStatus.valueOf(node.get("order_status").asText()),
+                        node.get("order_id").asText());
                     
                     orders.proccessOrder(order);
                 }
@@ -167,7 +167,6 @@ public class BybitAnnotatedEndpoint {
                     position.setSize(node.get("size").asDouble());
                     position.setEntryPrice(node.get("entry_price").asDouble());
                 }
-
             }
         }
     }

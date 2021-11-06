@@ -1,68 +1,71 @@
 package com.metsuengine;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import com.metsuengine.Enums.OrderType;
+import com.metsuengine.Enums.Side;
+import com.metsuengine.Enums.TimeInForce;
 
 public class OrderManager {
     
-    private final Map<String, Order> buyOrders;
-    private final Map<String, Order> sellOrders;
+    private final String symbol;
+    private static final Logger LOGGER = Logger.getLogger(OrderManager.class.getName());
+    private final Map<String, Order> orders;
+    private final BybitAPIClient api;
 
-    public OrderManager() {
-        this.buyOrders = new HashMap<>();
-        this.sellOrders = new HashMap<>();
+    public OrderManager(String symbol, BybitAPIClient api) {
+        this.symbol = symbol;
+        this.orders = new ConcurrentHashMap<>();
+        this.api = api;
     }
 
     /**
-     * Either adds, removes or replaces an order depending on OrderState
-     * @param order the order
+     * Either adds or removes an order depending on OrderState of order recieved through websocket
+     * @param order the order to proccess
      */
     public void proccessOrder(Order order) {
-        if (order.isBuy()) {
-            switch (order.orderStatus()) {
-                case New:
-                    buyOrders.put(order.orderId(), order);
-                    break;
-                
-                case Created:
-                    buyOrders.put(order.orderId(), order);
-                    break;
-                
-                case PartiallyFilled:
-                    buyOrders.put(order.orderId(), order);
-                    break;
+        switch (order.orderStatus()) {
+            case New:
+                LOGGER.info("Order " + order.orderId() + " is new");
+                orders.put(order.orderId(), order);
+                break;
             
-                default:
-                    buyOrders.remove(order.orderId());
-                    break;
-            }
-        } else {
-            switch (order.orderStatus()) {
-                case New:
-                    sellOrders.put(order.orderId(), order);
-                    break;
-                
-                case Created:
-                    sellOrders.put(order.orderId(), order);
-                    break;
-                
-                case PartiallyFilled:
-                    sellOrders.put(order.orderId(), order);
-                    break;
+            case Created:
+                LOGGER.info("Order " + order.orderId() + " created");
+                orders.put(order.orderId(), order);
+                break;
             
-                default:
-                    sellOrders.remove(order.orderId());
-                    break;
-            }
+            case PartiallyFilled:
+                LOGGER.info("Order " + order.orderId() + " partially filled");
+                orders.put(order.orderId(), order);
+                break;
+        
+            default:
+                LOGGER.info("Order " + order.orderId() + " cancelled");
+                orders.remove(order.orderId());
+                break;
         }
+        System.out.println(orders.size());
     }
 
     /**
-     * Checks if a new order is equivalent (not equal) to an existing order
-     * @param order the order
-     * @return boolean result
+     * Check if there is an order at a price
+     * @param price the price to check at
+     * @return true if order is present
      */
-    public boolean hasEquivalentBid(Order order) {
-        return buyOrders.values().stream().anyMatch(o -> o.price() == order.price()) ? true : false;
+    public boolean orderAtPrice(double price) {
+        return orders.values().stream().anyMatch(o -> o.price() == price);
+    }
+
+    /**
+     * Manages orders based on bid prices supplied by model
+     * @param bidPrice
+     * @param askPrice
+     */
+    public void update(double bidPrice, double askPrice) {
+        // TODO
     }
 }

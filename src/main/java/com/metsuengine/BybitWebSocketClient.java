@@ -90,7 +90,7 @@ public class BybitWebSocketClient extends Thread {
             topics.add("order");
 
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-            container.connectToServer(endpoint, URI.create("wss://stream.bytrade.com/realtime"));
+            container.connectToServer(endpoint, URI.create("wss://stream.bytick.com/realtime"));
             session.getBasicRemote().sendText(getAuthMessage());
             session.getBasicRemote().sendText(subscribe("subscribe", topics));
 
