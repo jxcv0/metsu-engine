@@ -3,18 +3,18 @@ package com.metsuengine;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class Strategy implements ChangeListener {
+public class Implimentation implements ChangeListener {
 
     private final LimitOrderBook orderBook;
     private final OrderManager orders;
     private final Model model;
     private final Position position; 
 
-    public Strategy(TradeSeries tradeSeries, LimitOrderBook orderBook, OrderManager orders, Position position, Model model) {
+    public Implimentation(TradeSeries tradeSeries, LimitOrderBook orderBook, OrderManager orders, Position position) {
         listen(tradeSeries);
         this.orderBook = orderBook;
         this.orders = orders;
-        this.model = model;
+        this.model = new Model(tradeSeries, orderBook, 1, 1);
         this.position = position;
     }
 

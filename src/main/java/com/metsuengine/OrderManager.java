@@ -2,12 +2,7 @@ package com.metsuengine;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import com.metsuengine.Enums.OrderType;
-import com.metsuengine.Enums.Side;
-import com.metsuengine.Enums.TimeInForce;
 
 public class OrderManager {
     
@@ -66,6 +61,8 @@ public class OrderManager {
      * @param askPrice
      */
     public void update(double bidPrice, double askPrice) {
+
         // TODO
+        
     }
 }

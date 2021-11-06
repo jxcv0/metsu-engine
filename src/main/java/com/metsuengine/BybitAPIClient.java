@@ -73,13 +73,12 @@ public class BybitAPIClient {
         }
     }
 
-    public void replaceOrder(String orderId, Order order)  throws NoSuchAlgorithmException, InvalidKeyException, IOException {
+    public void replaceOrder(String orderId, String symbol, double price, int qty)  throws NoSuchAlgorithmException, InvalidKeyException, IOException {
         TreeMap<String, String> requestParams = new TreeMap<>((o1, o2) -> o1.compareTo(o2));
 
-        int qty = (int) order.qty();
         requestParams.put("symbol", symbol);
         requestParams.put("p_r_qty", qty + "");
-        requestParams.put("p_r_price", order.price() + "");
+        requestParams.put("p_r_price", price + "");
         requestParams.put("order_id", orderId);
         requestParams.put("timestamp", ZonedDateTime.now(ZoneOffset.UTC).toInstant().toEpochMilli() + "");
         requestParams.put("api_key", APIKeys.key);
