@@ -1,8 +1,17 @@
 package com.metsuengine;
 
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.metsuengine.Enums.OrderType;
+import com.metsuengine.Enums.Side;
+import com.metsuengine.Enums.TimeInForce;
 
 public class OrderManager {
     
@@ -54,6 +63,7 @@ public class OrderManager {
     public boolean orderAtPrice(double price) {
         return orders.values().stream().anyMatch(o -> o.price() == price);
     }
+    
 
     /**
      * Manages orders based on bid prices supplied by model
@@ -61,8 +71,68 @@ public class OrderManager {
      * @param askPrice
      */
     public void update(double bidPrice, double askPrice) {
+        // TODO - make readable
+        try {
+            if (bids().size() > 0) {
+                if (bids().size() > 1) {
+                    bids().forEach(o -> {
+                        try {
+                            api.cancelOrder(o.orderId());
+                        } catch (InvalidKeyException | NoSuchAlgorithmException | IOException e) {
+                            LOGGER.log(Level.SEVERE, "Unable to cancel Buy orders", e);
+                        }
+                    });
+                    api.placeOrder(symbol, Side.Buy, OrderType.Limit, bidPrice, 1, TimeInForce.GoodTillCancel);
+                } else {
+                    bids().stream().findAny().ifPresent(o -> {
+                        if (o.price() != bidPrice) {
+                            try {
+                                api.replaceOrder(o.orderId(), symbol, bidPrice, 1);
+                            } catch (InvalidKeyException | NoSuchAlgorithmException | IOException e) {
+                                LOGGER.log(Level.SEVERE, "Unable to replace Buy order", e);
+                            }
+                        }
+                    });
+                }
+            } else {
+                api.placeOrder(symbol, Side.Buy, OrderType.Limit, bidPrice, 1, TimeInForce.GoodTillCancel);
+            }
 
-        // TODO
-        
+            if (asks().size() > 0) {
+                if (asks().size() > 1) {
+                    asks().forEach(o -> {
+                        try {
+                            api.cancelOrder(o.orderId());
+                        } catch (InvalidKeyException | NoSuchAlgorithmException | IOException e) {
+                            LOGGER.log(Level.SEVERE, "Unable to cancel Sell orders", e);
+                        }
+                    });
+                    api.placeOrder(symbol, Side.Sell, OrderType.Limit, askPrice, 1, TimeInForce.GoodTillCancel);
+                } else {
+                    asks().stream().findAny().ifPresent(o -> {
+                        if (o.price() != askPrice) {
+                            try {
+                                api.replaceOrder(o.orderId(), symbol, askPrice, 1);
+                            } catch (InvalidKeyException | NoSuchAlgorithmException | IOException e) {
+                                LOGGER.log(Level.SEVERE, "Unable to replace Buy order", e);
+                            }
+                        }
+                    });
+                }
+            } else {
+                api.placeOrder(symbol, Side.Sell, OrderType.Limit, askPrice, 1, TimeInForce.GoodTillCancel);
+            }
+
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error while managing orders", e);
+        }        
+    }
+
+    public List<Order> bids() {
+        return orders.values().stream().filter(o -> o.isBuy()).toList();
+    }
+
+    public List<Order> asks() {
+        return orders.values().stream().filter(o -> !o.isBuy()).toList();
     }
 }
