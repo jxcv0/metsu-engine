@@ -15,7 +15,7 @@ public class Implimentation implements ChangeListener {
         listen(tradeSeries);
         this.orderBook = orderBook;
         this.orders = orders;
-        this.model = new Model(tradeSeries, orderBook, 1, 1);
+        this.model = new Model(tradeSeries, orderBook, 0.01, 0.1);
         this.position = position;
         this.count = 0;
     }

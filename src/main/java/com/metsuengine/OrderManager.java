@@ -33,26 +33,25 @@ public class OrderManager {
     public void proccessOrder(Order order) {
         switch (order.orderStatus()) {
             case New:
-                LOGGER.info("Order " + order.orderId() + " is new");
+                LOGGER.info("New order placed @ " + order.price());
                 orders.put(order.orderId(), order);
                 break;
             
             case Created:
-                LOGGER.info("Order " + order.orderId() + " created");
+                LOGGER.info("Order created @ " + order.price());
                 orders.put(order.orderId(), order);
                 break;
             
             case PartiallyFilled:
-                LOGGER.info("Order " + order.orderId() + " partially filled");
+                LOGGER.info("Order partially filled @" + order.price());
                 orders.put(order.orderId(), order);
                 break;
         
             default:
-                LOGGER.info("Order " + order.orderId() + " cancelled");
+                LOGGER.info("Order cancelled @" + order.price());
                 orders.remove(order.orderId());
                 break;
         }
-        System.out.println(orders.size());
     }
 
     /**
