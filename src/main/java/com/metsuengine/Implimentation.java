@@ -9,6 +9,7 @@ public class Implimentation implements ChangeListener {
     private final OrderManager orders;
     private final Model model;
     private final Position position; 
+    private int count;
 
     public Implimentation(TradeSeries tradeSeries, LimitOrderBook orderBook, OrderManager orders, Position position) {
         listen(tradeSeries);
@@ -16,6 +17,7 @@ public class Implimentation implements ChangeListener {
         this.orders = orders;
         this.model = new Model(tradeSeries, orderBook, 1, 1);
         this.position = position;
+        this.count = 0;
     }
 
     private void listen(TradeSeries tradeSeries) {
@@ -26,11 +28,15 @@ public class Implimentation implements ChangeListener {
     public void stateChanged(ChangeEvent e) {
         // tradeSeries tradeSeries = (tradeSeries) e.getSource();
         // long start = System.currentTimeMillis();
+        count++;
         if (orderBook.isReady()) {
-            orders.update(
-                Math.min(model.bidPrice(position.signedValue()), orderBook.bestBid()),
-                Math.max(model.askPrice(position.signedValue()), orderBook.bestAsk())
-            );
+            if (count >= 5) {
+                orders.update(
+                    Math.min(model.bidPrice(position.signedValue()), orderBook.bestBid()),
+                    Math.max(model.askPrice(position.signedValue()), orderBook.bestAsk())
+                );
+                count = 0;
+            }
         }
         // System.out.println(System.currentTimeMillis() - start + " ms");
     }
