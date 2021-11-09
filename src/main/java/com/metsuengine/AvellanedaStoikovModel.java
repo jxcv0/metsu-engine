@@ -6,7 +6,7 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
  * A market-making model based on Avellaneda & Stoikov
  * @link https://www.math.nyu.edu/~avellane/HighFrequencyTrading.pdf
  */
-public class Model {
+public class AvellanedaStoikovModel {
     
     private final TradeSeries tradeSeries;
     private final LimitOrderBook orderBook;
@@ -20,7 +20,7 @@ public class Model {
      * @param riskAversionParam the risk aversion parameter
      * @param orderBookDensityParam the liquidity / order book density parameter
      */
-    public Model(TradeSeries tradeSeries, LimitOrderBook orderBook, double riskAversionParam, double orderBookDensityParam) {
+    public AvellanedaStoikovModel(TradeSeries tradeSeries, LimitOrderBook orderBook, double riskAversionParam, double orderBookDensityParam) {
         this.tradeSeries = tradeSeries;
         this.orderBook = orderBook;
         this.stats = new DescriptiveStatistics();

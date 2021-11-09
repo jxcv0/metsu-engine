@@ -7,15 +7,15 @@ public class Implimentation implements ChangeListener {
 
     private final LimitOrderBook orderBook;
     private final OrderManager orders;
-    private final Model model;
+    private final AvellanedaStoikovModel model;
     private final Position position; 
     private int count;
 
-    public Implimentation(TradeSeries tradeSeries, LimitOrderBook orderBook, OrderManager orders, Position position) {
+    public Implimentation(TradeSeries tradeSeries, LimitOrderBook orderBook, OrderManager orders, Position position, AvellanedaStoikovModel model) {
         listen(tradeSeries);
         this.orderBook = orderBook;
         this.orders = orders;
-        this.model = new Model(tradeSeries, orderBook, 0.01, 0.1);
+        this.model = model;
         this.position = position;
         this.count = 0;
     }

@@ -5,14 +5,16 @@ public class Main {
     public static void main( String[] args ) {
 
         final String symbol = "BTCUSD";
-        final TradeSeries tradeSeries = new TradeSeries(100);
+        final TradeSeries tradeSeries = new TradeSeries(50);
         final LimitOrderBook orderBook = new LimitOrderBook();
         final Position position = new Position();
 
         final BybitAPIClient api = new BybitAPIClient(symbol);
         final OrderManager orders = new OrderManager(symbol, api);
 
-        new Implimentation(tradeSeries, orderBook, orders, position);
+        final AvellanedaStoikovModel model = new AvellanedaStoikovModel(tradeSeries, orderBook, 0.01, 0.25);
+
+        new Implimentation(tradeSeries, orderBook, orders, position, model);
 
         BybitWebSocketClient client = new BybitWebSocketClient(symbol, tradeSeries, orderBook, orders, position);
         client.start();
