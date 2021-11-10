@@ -26,8 +26,8 @@ public class Implimentation implements ChangeListener {
 
     @Override
     public void stateChanged(ChangeEvent e) {
-        // tradeSeries tradeSeries = (tradeSeries) e.getSource();
-        // long start = System.currentTimeMillis();
+        //TODO - count system costs money, impliment rate limit system / interval system
+
         count++;
         if (orderBook.isReady()) {
             if (count >= 5) {
@@ -38,6 +38,10 @@ public class Implimentation implements ChangeListener {
                 count = 0;
             }
         }
-        // System.out.println(System.currentTimeMillis() - start + " ms");
+
+        if (model.shouldLiquidate()) {
+            orders.liquidate(position);
+            model.setCount(0);
+        }
     }
 }

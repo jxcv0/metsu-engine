@@ -73,6 +73,39 @@ public class BybitAPIClient {
         }
     }
 
+    public void placeOrder(String symbol, Side side, OrderType orderType, double qty, TimeInForce timeInForce)  throws NoSuchAlgorithmException, InvalidKeyException, IOException {
+        TreeMap<String, String> requestParams = new TreeMap<>((o1, o2) -> o1.compareTo(o2));
+
+        requestParams.put("side", side.toString());
+        requestParams.put("symbol", symbol);
+        requestParams.put("order_type", orderType.toString());
+        requestParams.put("qty", qty + "");
+        requestParams.put("time_in_force", timeInForce.toString());
+        requestParams.put("timestamp", ZonedDateTime.now(ZoneOffset.UTC).toInstant().toEpochMilli() + "");
+        requestParams.put("api_key", APIKeys.key);
+
+        String queryString = generateQueryString(requestParams);
+
+        Request request = new Request.Builder()
+            .post(RequestBody.create(new byte[0], null))
+            .url("https://api.bybit.com/v2/private/order/create?" + queryString)
+            .build();
+
+        Call call = client.newCall(request);
+
+        try {
+            Response response = call.execute();
+            if (!response.isSuccessful()) {
+                LOGGER.warning("Response unsuccessful");
+                System.out.println(response.body().string());
+            }
+            getMessage(response);
+            response.body().close();
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Exeption caught while placing order", e);
+        }
+    }
+
     public void replaceOrder(String orderId, String symbol, double price, int qty)  throws NoSuchAlgorithmException, InvalidKeyException, IOException {
         TreeMap<String, String> requestParams = new TreeMap<>((o1, o2) -> o1.compareTo(o2));
 

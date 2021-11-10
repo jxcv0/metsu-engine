@@ -88,7 +88,7 @@ public class OrderManager {
                             try {
                                 api.replaceOrder(o.orderId(), symbol, bidPrice, 1);
                             } catch (InvalidKeyException | NoSuchAlgorithmException | IOException e) {
-                                LOGGER.log(Level.SEVERE, "Unable to replace Buy order", e);
+                                LOGGER.log(Level.SEVERE, "Unable to replace Buy orders", e);
                             }
                         }
                     });
@@ -133,5 +133,24 @@ public class OrderManager {
 
     public List<Order> asks() {
         return orders.values().stream().filter(o -> !o.isBuy()).toList();
+    }
+
+    /**
+     * Closes a position at market
+     * @param position the position to close
+     */
+    public void liquidate(Position position) {
+        if (position.size() > 0) {
+            try {
+                api.placeOrder(
+                    symbol, 
+                    position.signedValue() > 0 ? Side.Sell : Side.Buy, 
+                    OrderType.Market, position.size(), 
+                    TimeInForce.GoodTillCancel);
+
+            } catch (InvalidKeyException | NoSuchAlgorithmException | IOException e) {
+                LOGGER.log(Level.SEVERE, "Liquidation failure", e);
+            }
+        }  
     }
 }
